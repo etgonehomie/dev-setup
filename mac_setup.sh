@@ -85,14 +85,17 @@ run_ansible_playbook() {
 
 # Main script execution
 main() {
-    log "Starting Homebrew and Ansible installation process..."
+    log "Setting up new dev workstation..."
 
     # Execute steps in synchronous order
     # any functions called within a function execute synchronously
-    install_homebrew
-    update_homebrew
-    upgrade_homebrew
-    install_ansible
+    
+    # Comment out for testing for now
+    # install_homebrew
+    # update_homebrew
+    # upgrade_homebrew
+    # install_ansible
+
     get_ansible_playbook
     run_ansible_playbook
     log "All steps completed successfully!"
