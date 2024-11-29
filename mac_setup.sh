@@ -8,7 +8,7 @@
 set -e
 
 # Set variables
-PLAYBOOK_URL="hhttps://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/" # Replace with your playbook URL
+PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/" # Replace with your playbook URL
 PLAYBOOK_FILE="setup.yml"    
 
 # Function to log messages
