@@ -8,9 +8,8 @@
 - Need curl to be installed on your OS
 
 # Process
-1. Run the `dev_workstation_setup.sh`
-Run the `dev_workstation_setup.sh`
-	- this will install and update homebrew
-	- then it will install ansible
-2. TODO: Automate the following steps by using a curl commmand
-2. Then run the `dev-setup.yml` using ansible-playbook
+1. Run the `mac_setup.sh`
+	- can do this via curl command or download the script and modify/run directly
+```
+curl -fsSL https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/mac_setup.sh | bash
+```
