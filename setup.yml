@@ -11,61 +11,73 @@
 
   vars:
     oh_my_posh_zen_theme_filename: 'zen-mod.toml'
+    tasks_brew_cli:
+      - package: curl 
+        description: "Allows download of external binaries"
+      - package: fzf 
+        description: "Allows fuzzy search (and case insensitivity) in terminal"
+      - package: bat
+        description: "View file content with syntax highlighting (cat replacement)"
+      - package: zsh-autosuggestions
+        description: "CLI history suggestions"
+      - package: zsh-autocomplete
+        description: "CLI command autocomplete"
+      - package: zsh-fast-syntax-highlighting
+        description: "Syntax highlighting for CLI commands"
+      - package: neovim
+        description: "Terminal text editor (vim replacement)"
+      - package: oh-my-posh 
+        description: "Prompt theme engine for any shell"
+      - package: font-hack-nerd-font 
+        description: "Font needed for oh-my-posh to work"
+
+    tasks_brew_dev:
+      - package: iterm2
+        description: "Terminal GUI replacement"
+      - package: git
+        description: "Source code management"
+      - package: python
+        description: "Data Engineer/Science projects"
+      - package: node
+        description: "JS development"
+
+    tasks_cask_dev:
+      - package: visual-studio-code
+        description: "IDE"
+      - package: postman
+        description: "API Tester"
+      - package: sublime-text
+        description: "Easy text file editor"
+      - package: google-chrome
+        description: "Chrome Browser"
+      - package: firefox
+        description: "Firefox Browser"
 
   tasks:
-    # - name: Update & Upgrade Homebrew
-    #   homebrew:
-    #     update_homebrew: yes
-    #     upgrade_all: yes
+    - name: Install Homebrew ZSH Tools via Loop
+      block:
+        - name: Install Homebrew ZSH Tools via Loop
+          homebrew:
+            name: "{{ item.package }}"
+            state: present
+          loop: "{{ tasks_brew_cli }}"
 
-    # - name: Install Homebrew Cask CLI
-    #   ignore_errors: yes
-    #   homebrew_cask:
-    #     name: iterm2
-    #     state: present
+    - name: Install Homebrew Dev Tools via Loop
+      block:
+        - name: Install Homebrew Dev Tools via Loop
+          homebrew:
+            name: "{{ item.package }}"
+            state: present
+          loop: "{{ tasks_brew_dev }}"
 
-    # - name: Install Homebrew ZSH Tools
-    #   homebrew:
-    #     name: 
-    #       - curl                          # allow downloading binaries
-    #       - fzf                           # allows fuzzy search (and case insensitivity) in terminal
-    #       - bat                           # view content detaisl with syntax highlighting
-    #       - zsh-autosuggestions           # cli history suggestions
-    #       - zsh-autocomplete              # cli autocomplete
-    #       - zsh-fast-syntax-highlighting  # syntax highlighting for cli commands
-    #       - neovim                        # text editor
-    #     state: present
-
-    # - name: Install Homebrew Dev packages
-    #   homebrew:
-    #     name:
-    #       - git     # to manage remote repos
-    #       - python  # for data engr/data science
-    #       - node    # for js development
-    #     state: present
-    
-    # - name: Install oh-my-posh zsh theme & Nerd font
-    #   homebrew:
-    #     name: 
-    #       - oh-my-posh
-    #       - font-hack-nerd-font
-    #     state: present
-
-    # - name: Install Homebrew Cask Browser Apps
-    #   ignore_errors: yes
-    #   homebrew_cask:
-    #     name:
-    #       - google-chrome
-    #       - firefox
-    #     state: present
-      
-    # - name: Install Homebrew Dev Tool Apps
-    #   ignore_errors: yes
-    #   homebrew_cask:
-    #     name:
-    #       - visual-studio-code
-    #       - postman
-    #     state: present
+    - name: Install Homebrew Cask Apps via Loop
+      block:
+        - name: Install Homebrew Cask Apps via Loop
+          homebrew_cask:
+            name: "{{ item.package }}"
+            state: present
+            ignore_errors:
+          loop: "{{ tasks_cask_dev }}"
     
     - name: Get Homebrew path to copy oh-my-posh theme file to
       command: "brew --prefix"
@@ -79,7 +91,6 @@
       file:
         path: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
         state: touch
-        # mode: '0644'
 
     # Can place my theme in a new dir in ~/.config/oh-my-posh and point the zshrc file to this
     # but I left it in share folder to easily find all the other themes if I want to change
@@ -88,20 +99,19 @@
         url: 'https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml'
         dest: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
       
-    - name: Update zsh to use oh-my-posh zen-mod theme
-      blockinfile:
-        insertbefore: BOF  # BOF: beginning of file / EOF: end of file
-        state: present
-        path: '{{ ansible_env.HOME }}/.zshrc'
-        # path: "{{ lookup('env', 'HOME') }}/.zshrc"
-        block: |
-          # Set oh-my-posh theme
-          BREW_PREFIX=$(brew --prefix)
+    # - name: Update zsh to use oh-my-posh zen-mod theme
+    #   blockinfile:
+    #     insertbefore: BOF  # BOF: beginning of file / EOF: end of file
+    #     state: present
+    #     path: '{{ ansible_env.HOME }}/.zshrc'
+    #     # path: "{{ lookup('env', 'HOME') }}/.zshrc"
+    #     block: |
+    #       # Set oh-my-posh theme
+    #       BREW_PREFIX=$(brew --prefix)
 
-          if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-            eval "$(oh-my-posh init zsh --config $BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml)"
-          fi
-
+    #       if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+    #         eval "$(oh-my-posh init zsh --config $BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml)"
+    #       fi
 
     # - name: Clone dotfiles repository
     #   git:

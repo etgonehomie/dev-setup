@@ -13,3 +13,7 @@
 ```
 curl -fsSL https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/mac_setup.sh | bash
 ```
+OR locally
+```
+./mac_setup.sh
+```
