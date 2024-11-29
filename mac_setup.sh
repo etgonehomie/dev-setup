@@ -60,6 +60,8 @@ install_ansible() {
 # Step 5: Download Ansible Playbook
 get_ansible_playbook() {
     echo "Downloading Ansible playbook from $PLAYBOOK_URL..."
+    echo "remote playbook: $PLAYBOOK_URL"
+    echo "local file: $PLAYBOOK_LOCAL_FILE"
     curl -fsSL -o "$PLAYBOOK_LOCAL_FILE" "$PLAYBOOK_URL"
     if [[ $? -ne 0 ]]; then
         echo "Failed to download the playbook. Exiting."
