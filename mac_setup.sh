@@ -8,7 +8,7 @@
 set -e
 
 # Set variables
-PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/" # Replace with your playbook URL
+PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main" # Replace with your playbook URL
 PLAYBOOK_FILE="setup.yml"    
 
 # Function to log messages
@@ -60,7 +60,7 @@ install_ansible() {
 # Step 5: Download Ansible Playbook
 get_ansible_playbook() {
     echo "Downloading Ansible playbook from $PLAYBOOK_URL..."
-    curl -fsSL -o "$PLAYBOOK_FILE" "$PLAYBOOK_URL"
+    curl -fsSL -o "$PLAYBOOK_FILE/$PLAYBOOK_URL"
     if [[ $? -ne 0 ]]; then
         echo "Failed to download the playbook. Exiting."
     exit 1
