@@ -1,0 +1,115 @@
+## TODO: NEED TO ENSURE that the brew directory is good and used for various machiine types
+#  - ARM Macs -> /opt/homebrew/
+#  - Intel Macs -> /usr/local/
+#  - linux -> /home/linuxbrew/.linuxbrew/
+#  - if cannot find use the command `sudo find / -name "iterm2"`
+
+- name: Set up a development workstation
+  hosts: localhost
+  # become: true  # Run tasks with sudo
+  gather_facts: yes  # don't gather system facts
+
+  vars:
+    oh_my_posh_zen_theme_filename: 'zen-mod.toml'
+
+  tasks:
+    # - name: Update & Upgrade Homebrew
+    #   homebrew:
+    #     update_homebrew: yes
+    #     upgrade_all: yes
+
+    # - name: Install Homebrew Cask CLI
+    #   ignore_errors: yes
+    #   homebrew_cask:
+    #     name: iterm2
+    #     state: present
+
+    # - name: Install Homebrew ZSH Tools
+    #   homebrew:
+    #     name: 
+    #       - curl                          # allow downloading binaries
+    #       - fzf                           # allows fuzzy search (and case insensitivity) in terminal
+    #       - bat                           # view content detaisl with syntax highlighting
+    #       - zsh-autosuggestions           # cli history suggestions
+    #       - zsh-autocomplete              # cli autocomplete
+    #       - zsh-fast-syntax-highlighting  # syntax highlighting for cli commands
+    #       - neovim                        # text editor
+    #     state: present
+
+    # - name: Install Homebrew Dev packages
+    #   homebrew:
+    #     name:
+    #       - git     # to manage remote repos
+    #       - python  # for data engr/data science
+    #       - node    # for js development
+    #     state: present
+    
+    # - name: Install oh-my-posh zsh theme & Nerd font
+    #   homebrew:
+    #     name: 
+    #       - oh-my-posh
+    #       - font-hack-nerd-font
+    #     state: present
+
+    # - name: Install Homebrew Cask Browser Apps
+    #   ignore_errors: yes
+    #   homebrew_cask:
+    #     name:
+    #       - google-chrome
+    #       - firefox
+    #     state: present
+      
+    # - name: Install Homebrew Dev Tool Apps
+    #   ignore_errors: yes
+    #   homebrew_cask:
+    #     name:
+    #       - visual-studio-code
+    #       - postman
+    #     state: present
+    
+    - name: Get Homebrew path to copy oh-my-posh theme file to
+      command: "brew --prefix"
+      register: brew_prefix_result
+
+    - name: Set the Homebrew prefix to a variable
+      set_fact:
+        brew_prefix: " {{ brew_prefix_result.stdout }}"
+
+    - name: Create an empty shell for new theme file
+      file:
+        path: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
+        state: touch
+        # mode: '0644'
+
+    # Can place my theme in a new dir in ~/.config/oh-my-posh and point the zshrc file to this
+    # but I left it in share folder to easily find all the other themes if I want to change
+    - name: Copy oh-my-posh zen theme and place in brew dir
+      get_url:
+        url: 'https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml'
+        dest: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
+      
+    - name: Update zsh to use oh-my-posh zen-mod theme
+      blockinfile:
+        insertbefore: BOF  # BOF: beginning of file / EOF: end of file
+        state: present
+        path: '{{ ansible_env.HOME }}/.zshrc'
+        # path: "{{ lookup('env', 'HOME') }}/.zshrc"
+        block: |
+          # Set oh-my-posh theme
+          BREW_PREFIX=$(brew --prefix)
+
+          if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+            eval "$(oh-my-posh init zsh --config $BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml)"
+          fi
+
+
+    # - name: Clone dotfiles repository
+    #   git:
+    #     repo: https://github.com/username/dotfiles.git
+    #     dest: ~/dotfiles
+
+    # - name: Symlink dotfiles
+    #   file:
+    #     src: ~/dotfiles/.zshrc
+    #     dest: ~/.zshrc
+    #     state: link
