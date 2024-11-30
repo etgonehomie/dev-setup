@@ -1,4 +1,7 @@
-console_title_template = '{{ .Folder }} | {{ .UserName }}@{{ .HostName }} ({{ .Shell }})'
+# For example themes and ideas: https://ohmyposh.dev/docs/themes
+# To convert json/yaml to toml: https://www.convertsimple.com/convert-json-to-toml/
+
+console_title_template = '{{ .UserName }} @ {{ .HostName }}...{{ .Folder }} ({{ .Shell }})'
 version = 3
 final_space = true
 
@@ -11,6 +14,33 @@ final_space = true
   template = '❯ '
   background = 'transparent'
   foreground_templates = ['{{if gt .Code 0}}red{{end}}', '{{if eq .Code 0}}magenta{{end}}']
+
+# [[blocks]]
+#   alignment = "left"
+#   newline = true
+#   type = "prompt"
+
+#   [[blocks.segments]]
+#     background = "#29315A"
+#     foreground = "#AEA4BF"
+#     leading_diamond = ""
+#     style = "diamond"
+#     template = "{{ .FormattedMs }}"
+#     trailing_diamond = " "
+#     type = "executiontime"
+
+#     [blocks.segments.properties]
+#       style = "austin"
+#       threshold = 150
+
+#   [[blocks.segments]]
+#     background = "#29315A"
+#     foreground = "#E64747"
+#     leading_diamond = ""
+#     style = "diamond"
+#     template = "{{ .UserName }} ❯"
+#     trailing_diamond = ""
+#     type = "text"
 
 [[blocks]]
   type = 'prompt'
@@ -28,88 +58,26 @@ final_space = true
       cache_duration = 'none'
       style = 'full'
   
-  # Git  Line Style
-    
-  # [[blocks.segments]]
-  #   # background = "#007ACC"
-  #   # foreground = "#ffffff"
-  #   foreground = "p:light-sky-blue"
-  #   style = "plain"
-  #   template = "{{ .HEAD }} {{ if and (eq .Ahead 0) (eq .Behind 0) }} ≡{{end}}{{ if gt .Ahead 0 }} ↑{{.Ahead}}{{end}}{{ if gt .Behind 0 }} ↓{{.Behind}}{{end}} {{ if .Working.Changed }}+{{ .Working.Added }} ~{{ .Working.Modified }} -{{ .Working.Deleted }} {{ end }}"
-  #   type = "git"
-
-  #   [blocks.segments.properties]
-  #     cherry_pick_icon = "✓ "
-  #     commit_icon = "▷ "
-  #     fetch_status = true
-  #     merge_icon = "◴ "
-  #     no_commits_icon = "[no commits]"
-  #     rebase_icon = "Ɫ "
-  #     tag_icon = "▶ "
-
-  # [[blocks.segments]]
-  #   type = "git"
-  #   style = "plain"
-  #   foreground = "p:light-sky-blue"
-  #   foreground_templates = [
-  #     "{{ if or (.Working.Changed) (.Staging.Changed) }}p:terminal-red{{ end }}",
-  #     "{{ if and (gt .Ahead 0) (gt .Behind 0)}}p:light-sky-blue {{ end }}",
-  #     "{{ if gt .Ahead 0 }}p:terminal-blue{{ end }}",
-  #     "{{ if gt .Behind 0 }}p:celeste-blue{{ end }}"
-  #   ]
-  #   template = "({{ .HEAD}})"
-
-  #   [blocks.segments.properties]
-  #     fetch_status = true
-  #     branch_icon = "\ue725 "
-
-
-  # [[blocks.segments]]
-  #   template = "({{ .HEAD}})"
-  #   type = "git"
-  #   style = "plain"
-  #   foreground = "p:light-sky-blue"
-  #   foreground_templates = [
-  #     "{{ if or (.Working.Changed) (.Staging.Changed) }}p:terminal-red{{ end }}",
-  #     "{{ if and (gt .Ahead 0) (gt .Behind 0)}}p:light-sky-blue {{ end }}",
-  #     "{{ if gt .Ahead 0 }}p:terminal-blue{{ end }}",
-  #     "{{ if gt .Behind 0 }}p:celeste-blue{{ end }}"
-  #   ]
-  #   [blocks.segments.properties]
-  #     fetch_status = true
-  #     branch_icon = "\ue725 "
-
-# ORIGINAL
-  # [[blocks.segments]]
-  #   template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
-  #   foreground = 'p:grey'
-  #   background = 'transparent'
-  #   type = 'git'
-  #   style = 'plain'
-
-  #   [blocks.segments.properties]
-  #     branch_icon = ''
-  #     cache_duration = 'none'
-  #     commit_icon = '@'
-  #     fetch_status = true
-
-# NEW ICONS for Language Type
+  
+# Right theme bubble icons
 [[blocks]]
   alignment = "right"
   type = "prompt"
 
-  [[blocks.segments]]
-    background = "#29315A"
-    foreground = "#3EC669"
-    leading_diamond = ""
-    style = "diamond"
-    template = " {{ .Path }}"
-    trailing_diamond = ""
-    type = "path"
+  # # Shows current directoy in bubble
+  # [[blocks.segments]]
+  #   background = "#29315A"
+  #   foreground = "#3EC669"
+  #   leading_diamond = ""
+  #   style = "diamond"
+  #   template = " {{ .Path }}"
+  #   trailing_diamond = ""
+  #   type = "path"
 
-    [blocks.segments.properties]
-      style = "folder"
+  #   [blocks.segments.properties]
+  #     style = "folder"
 
+  # Shows Git status and changes color depending on status
   [[blocks.segments]]
     background = "#29315A"
     foreground = "#43CCEA"
@@ -131,6 +99,7 @@ final_space = true
       fetch_status = true
       fetch_upstream_icon = true
 
+  # Show languages used in current dir 
   [[blocks.segments]]
     background = "#29315A"
     foreground = "#E4F34A"
@@ -178,25 +147,26 @@ final_space = true
 
     [blocks.segments.properties]
       fetch_version = false
+  
+  # # Show remaining battery
+  # [[blocks.segments]]
+  #   background = "#29315A"
+  #   foreground = "#9B6BDF"
+  #   foreground_templates = [
+  #     "{{if eq \"Charging\" .State.String}}#40c4ff{{end}}",
+  #     "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
+  #     "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
+  #   ]
+  #   leading_diamond = " "
+  #   style = "diamond"
+  #   template = "{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}"
+  #   trailing_diamond = ""
+  #   type = "battery"
 
-  [[blocks.segments]]
-    background = "#29315A"
-    foreground = "#9B6BDF"
-    foreground_templates = [
-      "{{if eq \"Charging\" .State.String}}#40c4ff{{end}}",
-      "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
-      "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
-    ]
-    leading_diamond = " "
-    style = "diamond"
-    template = "{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}"
-    trailing_diamond = ""
-    type = "battery"
-
-    [blocks.segments.properties]
-      charged_icon = " "
-      charging_icon = "⇡ "
-      discharging_icon = "⇣ "
+  #   [blocks.segments.properties]
+  #     charged_icon = " "
+  #     charging_icon = "⇡ "
+  #     discharging_icon = "⇣ "
 
 
 [[blocks]]
