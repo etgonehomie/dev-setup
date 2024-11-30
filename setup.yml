@@ -1,8 +1,5 @@
-## TODO: NEED TO ENSURE that the brew directory is good and used for various machiine types
-#  - ARM Macs -> /opt/homebrew/
-#  - Intel Macs -> /usr/local/
-#  - linux -> /home/linuxbrew/.linuxbrew/
-#  - if cannot find use the command `sudo find / -name "iterm2"`
+# Setup for Mac.
+# TODO: Make this dynamic for a linux setup
 
 - name: Set up a development workstation
   hosts: localhost
@@ -40,6 +37,8 @@
         description: "Data Engineer/Science projects"
       - package: node
         description: "JS development"
+      - package: docker
+        description: "Containerize depoloyments"
 
     tasks_cask_dev:
       - package: visual-studio-code
