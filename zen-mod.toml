@@ -1,8 +1,16 @@
-#:schema https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json
-
-version = 2
+console_title_template = '{{ .Folder }} | {{ .UserName }}@{{ .HostName }} ({{ .Shell }})'
+version = 3
 final_space = true
-console_title_template = '{{ .UserName }}@{{ .HostName }} {{ .Shell }} in {{ .Folder }}'
+
+[secondary_prompt]
+  template = '❯❯ '
+  foreground = 'magenta'
+  background = 'transparent'
+
+[transient_prompt]
+  template = '❯ '
+  background = 'transparent'
+  foreground_templates = ['{{if gt .Code 0}}red{{end}}', '{{if eq .Code 0}}magenta{{end}}']
 
 [[blocks]]
   type = 'prompt'
@@ -10,39 +18,150 @@ console_title_template = '{{ .UserName }}@{{ .HostName }} {{ .Shell }} in {{ .Fo
   newline = true
 
   [[blocks.segments]]
+    template = '{{ .Path }}'
+    foreground = 'blue'
+    background = 'transparent'
     type = 'path'
     style = 'plain'
-    background = 'transparent'
-    foreground = 'blue'
-    template = '{{ .Path }}'
 
     [blocks.segments.properties]
+      cache_duration = 'none'
       style = 'full'
+  
+  # Git  Line Style
+  [[blocks.segments]]
+    # background = "#007ACC"
+    # foreground = "#ffffff"
+    foreground = "p:light-sky-blue"
+    style = "plain"
+    template = "{{ .HEAD }} {{ if and (eq .Ahead 0) (eq .Behind 0) }} ≡{{end}}{{ if gt .Ahead 0 }} ↑{{.Ahead}}{{end}}{{ if gt .Behind 0 }} ↓{{.Behind}}{{end}} {{ if .Working.Changed }}+{{ .Working.Added }} ~{{ .Working.Modified }} -{{ .Working.Deleted }} {{ end }}"
+    type = "git"
+
+    [blocks.segments.properties]
+      cherry_pick_icon = "✓ "
+      commit_icon = "▷ "
+      fetch_status = true
+      merge_icon = "◴ "
+      no_commits_icon = "[no commits]"
+      rebase_icon = "Ɫ "
+      tag_icon = "▶ "
+
+  # [[blocks.segments]]
+  #   type = "git"
+  #   style = "plain"
+  #   foreground = "p:light-sky-blue"
+  #   foreground_templates = [
+  #     "{{ if or (.Working.Changed) (.Staging.Changed) }}p:terminal-red{{ end }}",
+  #     "{{ if and (gt .Ahead 0) (gt .Behind 0)}}p:light-sky-blue {{ end }}",
+  #     "{{ if gt .Ahead 0 }}p:terminal-blue{{ end }}",
+  #     "{{ if gt .Behind 0 }}p:celeste-blue{{ end }}"
+  #   ]
+  #   template = "({{ .HEAD}})"
+
+  #   [blocks.segments.properties]
+  #     fetch_status = true
+  #     branch_icon = "\ue725 "
+
+
+  # [[blocks.segments]]
+  #   template = "({{ .HEAD}})"
+  #   type = "git"
+  #   style = "plain"
+  #   foreground = "p:light-sky-blue"
+  #   foreground_templates = [
+  #     "{{ if or (.Working.Changed) (.Staging.Changed) }}p:terminal-red{{ end }}",
+  #     "{{ if and (gt .Ahead 0) (gt .Behind 0)}}p:light-sky-blue {{ end }}",
+  #     "{{ if gt .Ahead 0 }}p:terminal-blue{{ end }}",
+  #     "{{ if gt .Behind 0 }}p:celeste-blue{{ end }}"
+  #   ]
+  #   [blocks.segments.properties]
+  #     fetch_status = true
+  #     branch_icon = "\ue725 "
+
+# ORIGINAL
+  # [[blocks.segments]]
+  #   template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
+  #   foreground = 'p:grey'
+  #   background = 'transparent'
+  #   type = 'git'
+  #   style = 'plain'
+
+  #   [blocks.segments.properties]
+  #     branch_icon = ''
+  #     cache_duration = 'none'
+  #     commit_icon = '@'
+  #     fetch_status = true
+
+# NEW ICONS for Language Type
+[[blocks]]
+  alignment = "right"
+  overflow = "hide"
+  type = "prompt"
 
   [[blocks.segments]]
-    type = 'git'
-    style = 'plain'
-    foreground = 'p:grey'
-    background = 'transparent'
-    template = ' {{ .HEAD }}{{ if or (.Working.Changed) (.Staging.Changed) }}*{{ end }} <cyan>{{ if gt .Behind 0 }}⇣{{ end }}{{ if gt .Ahead 0 }}⇡{{ end }}</>'
+  type = "node"
+  style = "plain"
+  foreground = "p:pistachio-green"
+  # foreground = "#ffffff"
+  # background = "#6CA35E"
+  template = " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
+
+  [[blocks.segments]]
+  type = "lua"
+  style = "plain"
+  foreground = "p:pistachio-green"
+  # foreground = "white"
+  # background = "blue"
+  template = "  {{ .Full }} "
+
+  [[blocks.segments]]
+  type = "python"
+  style = "plain"
+  foreground = "p:terminal-yellow"
+  template = "\ue235 {{ .Full }}"
+
+  [[blocks.segments]]
+  type = "julia"
+  style = "plain"
+  foreground = "p:terminal-magenta"
+  template = " {{ .Full }}"
+
+  [[blocks.segments]]
+  type = "ruby"
+  style = "plain"
+  foreground = "p:terminal-red"
+  template = " {{ .Full}}"
+
+  [[blocks.segments]]
+  type = "go"
+  style = "plain"
+  foreground = "p:light-sky-blue"
+  template = "ﳑ {{ .Full}}"
+
+  [[blocks.segments]]
+  type = "command"
+  style = "plain"
+  foreground = "p:white-blue"
 
     [blocks.segments.properties]
-      branch_icon = ''
-      commit_icon = '@'
-      fetch_status = true
+    command = "git log --pretty=format:%cr -1 || date +%H:%M:%S"
+    shell = "zsh"
+
+
 
 [[blocks]]
   type = 'rprompt'
   overflow = 'hidden'
 
   [[blocks.segments]]
-    type = 'executiontime'
-    style = 'plain'
+    template = '{{ .FormattedMs }}'
     foreground = 'yellow'
     background = 'transparent'
-    template = '{{ .FormattedMs }}'
+    type = 'executiontime'
+    style = 'plain'
 
     [blocks.segments.properties]
+      cache_duration = 'none'
       threshold = 5000
 
 [[blocks]]
@@ -51,24 +170,11 @@ console_title_template = '{{ .UserName }}@{{ .HostName }} {{ .Shell }} in {{ .Fo
   newline = true
 
   [[blocks.segments]]
+    template = '❯'
+    background = 'transparent'
     type = 'text'
     style = 'plain'
-    foreground_templates = [
-      "{{if gt .Code 0}}red{{end}}",
-      "{{if eq .Code 0}}magenta{{end}}",
-    ]
-    background = 'transparent'
-    template = '❯'
+    foreground_templates = ['{{if gt .Code 0}}red{{end}}', '{{if eq .Code 0}}magenta{{end}}']
 
-[transient_prompt]
-  foreground_templates = [
-    "{{if gt .Code 0}}red{{end}}",
-    "{{if eq .Code 0}}magenta{{end}}",
-  ]
-  background = 'transparent'
-  template = '❯ '
-
-[secondary_prompt]
-  foreground = 'magenta'
-  background = 'transparent'
-  template = '❯❯ '
+    [blocks.segments.properties]
+      cache_duration = 'none'
