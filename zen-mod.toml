@@ -29,22 +29,23 @@ final_space = true
       style = 'full'
   
   # Git  Line Style
-  [[blocks.segments]]
-    # background = "#007ACC"
-    # foreground = "#ffffff"
-    foreground = "p:light-sky-blue"
-    style = "plain"
-    template = "{{ .HEAD }} {{ if and (eq .Ahead 0) (eq .Behind 0) }} ≡{{end}}{{ if gt .Ahead 0 }} ↑{{.Ahead}}{{end}}{{ if gt .Behind 0 }} ↓{{.Behind}}{{end}} {{ if .Working.Changed }}+{{ .Working.Added }} ~{{ .Working.Modified }} -{{ .Working.Deleted }} {{ end }}"
-    type = "git"
+    
+  # [[blocks.segments]]
+  #   # background = "#007ACC"
+  #   # foreground = "#ffffff"
+  #   foreground = "p:light-sky-blue"
+  #   style = "plain"
+  #   template = "{{ .HEAD }} {{ if and (eq .Ahead 0) (eq .Behind 0) }} ≡{{end}}{{ if gt .Ahead 0 }} ↑{{.Ahead}}{{end}}{{ if gt .Behind 0 }} ↓{{.Behind}}{{end}} {{ if .Working.Changed }}+{{ .Working.Added }} ~{{ .Working.Modified }} -{{ .Working.Deleted }} {{ end }}"
+  #   type = "git"
 
-    [blocks.segments.properties]
-      cherry_pick_icon = "✓ "
-      commit_icon = "▷ "
-      fetch_status = true
-      merge_icon = "◴ "
-      no_commits_icon = "[no commits]"
-      rebase_icon = "Ɫ "
-      tag_icon = "▶ "
+  #   [blocks.segments.properties]
+  #     cherry_pick_icon = "✓ "
+  #     commit_icon = "▷ "
+  #     fetch_status = true
+  #     merge_icon = "◴ "
+  #     no_commits_icon = "[no commits]"
+  #     rebase_icon = "Ɫ "
+  #     tag_icon = "▶ "
 
   # [[blocks.segments]]
   #   type = "git"
@@ -95,58 +96,107 @@ final_space = true
 # NEW ICONS for Language Type
 [[blocks]]
   alignment = "right"
-  overflow = "hide"
   type = "prompt"
 
   [[blocks.segments]]
-  type = "node"
-  style = "plain"
-  foreground = "p:pistachio-green"
-  # foreground = "#ffffff"
-  # background = "#6CA35E"
-  template = " {{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
-
-  [[blocks.segments]]
-  type = "lua"
-  style = "plain"
-  foreground = "p:pistachio-green"
-  # foreground = "white"
-  # background = "blue"
-  template = "  {{ .Full }} "
-
-  [[blocks.segments]]
-  type = "python"
-  style = "plain"
-  foreground = "p:terminal-yellow"
-  template = "\ue235 {{ .Full }}"
-
-  [[blocks.segments]]
-  type = "julia"
-  style = "plain"
-  foreground = "p:terminal-magenta"
-  template = " {{ .Full }}"
-
-  [[blocks.segments]]
-  type = "ruby"
-  style = "plain"
-  foreground = "p:terminal-red"
-  template = " {{ .Full}}"
-
-  [[blocks.segments]]
-  type = "go"
-  style = "plain"
-  foreground = "p:light-sky-blue"
-  template = "ﳑ {{ .Full}}"
-
-  [[blocks.segments]]
-  type = "command"
-  style = "plain"
-  foreground = "p:white-blue"
+    background = "#29315A"
+    foreground = "#3EC669"
+    leading_diamond = ""
+    style = "diamond"
+    template = " {{ .Path }}"
+    trailing_diamond = ""
+    type = "path"
 
     [blocks.segments.properties]
-    command = "git log --pretty=format:%cr -1 || date +%H:%M:%S"
-    shell = "zsh"
+      style = "folder"
 
+  [[blocks.segments]]
+    background = "#29315A"
+    foreground = "#43CCEA"
+    foreground_templates = [
+      "{{ if or (.Working.Changed) (.Staging.Changed) }}#FF9248{{ end }}",
+      "{{ if and (gt .Ahead 0) (gt .Behind 0) }}#ff4500{{ end }}",
+      "{{ if gt .Ahead 0 }}#B388FF{{ end }}",
+      "{{ if gt .Behind 0 }}#B388FF{{ end }}"
+    ]
+    leading_diamond = " "
+    style = "diamond"
+    template = " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }}  {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }}  {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }}  {{ .StashCount }}{{ end }} "
+    trailing_diamond = ""
+    type = "git"
+
+    [blocks.segments.properties]
+      branch_max_length = 25
+      fetch_stash_count = true
+      fetch_status = true
+      fetch_upstream_icon = true
+
+  [[blocks.segments]]
+    background = "#29315A"
+    foreground = "#E4F34A"
+    leading_diamond = " "
+    style = "diamond"
+    template = " {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}"
+    trailing_diamond = ""
+    type = "python"
+
+    [blocks.segments.properties]
+      fetch_version = false
+
+  [[blocks.segments]]
+    background = "#29315A"
+    foreground = "#7FD5EA"
+    leading_diamond = " "
+    style = "diamond"
+    template = "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+    trailing_diamond = ""
+    type = "go"
+
+    [blocks.segments.properties]
+      fetch_version = false
+
+  [[blocks.segments]]
+    background = "#29315A"
+    foreground = "#42E66C"
+    leading_diamond = " "
+    style = "diamond"
+    template = "{{ if .PackageManagerIcon }}{{ .PackageManagerIcon }} {{ end }}{{ .Full }}"
+    trailing_diamond = ""
+    type = "node"
+
+    [blocks.segments.properties]
+      fetch_version = false
+
+  [[blocks.segments]]
+    background = "#29315A"
+    foreground = "#E64747"
+    leading_diamond = " "
+    style = "diamond"
+    template = "{{ if .Error }}{{ .Error }}{{ else }}{{ .Full }}{{ end }}"
+    trailing_diamond = ""
+    type = "ruby"
+
+    [blocks.segments.properties]
+      fetch_version = false
+
+  [[blocks.segments]]
+    background = "#29315A"
+    foreground = "#9B6BDF"
+    foreground_templates = [
+      "{{if eq \"Charging\" .State.String}}#40c4ff{{end}}",
+      "{{if eq \"Discharging\" .State.String}}#ff5722{{end}}",
+      "{{if eq \"Full\" .State.String}}#4caf50{{end}}"
+    ]
+    leading_diamond = " "
+    style = "diamond"
+    template = "{{ if not .Error }}{{ .Icon }}{{ .Percentage }}{{ end }}{{ .Error }}"
+    trailing_diamond = ""
+    type = "battery"
+
+    [blocks.segments.properties]
+      charged_icon = " "
+      charging_icon = "⇡ "
+      discharging_icon = "⇣ "
 
 
 [[blocks]]
