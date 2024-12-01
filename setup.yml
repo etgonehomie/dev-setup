@@ -8,6 +8,7 @@
 
   vars:
     gitignore_global_path: "{{ ansible_env.HOME }}/.config/git/.gitignore_global"
+    oh_my_posh_themes_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
     gitignore_repo_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     oh_my_posh_theme_repo_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml"
     oh_my_posh_zen_theme_filename: 'zen-mod.toml'
@@ -56,39 +57,21 @@
         description: "Firefox Browser"
 
   tasks:
-    - name: Install Homebrew ZSH Tools via Loop
-      block:
-        - name: Install Homebrew ZSH Tools via Loop
-          homebrew:
-            name: "{{ item.package }}"
-            state: present
-          loop: "{{ tasks_brew_cli }}"
+    # - name: Install Homebrew ZSH Tools via Loop
+    #   block:
+    #     - name: Install Homebrew ZSH Tools via Loop
+    #       homebrew:
+    #         name: "{{ item.package }}"
+    #         state: present
+    #       loop: "{{ tasks_brew_cli }}"
 
-    - name: Install Homebrew Dev Tools via Loop
-      block:
-        - name: Install Homebrew Dev Tools via Loop
-          homebrew:
-            name: "{{ item.package }}"
-            state: present
-          loop: "{{ tasks_brew_dev }}"
-
-    - name: Ensure ~/.config/git directory exists
-      file:
-        path: "{{ ansible_env.HOME }}/.config/git"
-        state: directory
-        # mode: "0755"
-
-    - name: Download and create the global .gitignore file from GitHub
-      get_url:
-        url: "{{ gitignore_repo_url }}"
-        dest: "{{ gitignore_global_path }}"
-        # mode: "0644"
-
-    - name: Configure Git to use the global .gitignore
-      git_config:
-        name: core.excludesfile
-        value: "{{ gitignore_global_path }}"
-        scope: global
+    # - name: Install Homebrew Dev Tools via Loop
+    #   block:
+    #     - name: Install Homebrew Dev Tools via Loop
+    #       homebrew:
+    #         name: "{{ item.package }}"
+    #         state: present
+    #       loop: "{{ tasks_brew_dev }}"
 
     # - name: Install Homebrew Cask Apps via Loop
     #   block:
@@ -119,6 +102,41 @@
         url: '{{ oh_my_posh_theme_repo_url }}'
         dest: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
       
+    - name: Ensure ~/.config/git directory exists
+      file:
+        path: "{{ ansible_env.HOME }}/.config/git"
+        state: directory
+        # mode: "0755"
+
+    - name: Download and create the global .gitignore file from GitHub
+      get_url:
+        url: "{{ gitignore_repo_url }}"
+        dest: "{{ gitignore_global_path }}"
+        # mode: "0644"
+
+    - name: Configure Git to use the global .gitignore
+      git_config:
+        name: core.excludesfile
+        value: "{{ gitignore_global_path }}"
+        scope: global
+
+    - name: Ensure ~/.config/oh-my-posh directory exists
+      file:
+        path: "{{ ansible_env.HOME }}/.config/oh-my-posh"
+        state: directory
+        # mode: "0755"
+        
+    # - name: Ensure the Oh My Posh themes directory parent exists
+    #   file:
+    #     path: "{{ oh_my_posh_themes_dir | dirname }}"
+    #     state: directory
+
+    - name: Create a symbolic link for oh_my_posh themes dir
+      file:
+        src: '{{ brew_prefix | trim }}/share/oh-my-posh/themes'
+        dest: "{{ oh_my_posh_themes_dir }}"
+        state: link
+
     # - name: Update zsh to use oh-my-posh zen-mod theme
     #   blockinfile:
     #     insertbefore: BOF  # BOF: beginning of file / EOF: end of file

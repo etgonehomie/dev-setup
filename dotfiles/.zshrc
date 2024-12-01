@@ -1,6 +1,11 @@
 ## This allows me to use homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+# Set Oh my posh theme
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh --config $HOME/.config/oh-my-posh/themes/zen-mod.toml)"
+fi
+
 # SET STARTING TO HOME
 cd ~
 
