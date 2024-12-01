@@ -7,6 +7,9 @@
   gather_facts: yes  # don't gather system facts
 
   vars:
+    gitignore_global_path: "{{ ansible_env.HOME }}/.config/git/.gitignore_global"
+    gitignore_repo_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    oh_my_posh_theme_repo_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml"
     oh_my_posh_zen_theme_filename: 'zen-mod.toml'
     tasks_brew_cli:
       - package: curl 
@@ -69,6 +72,24 @@
             state: present
           loop: "{{ tasks_brew_dev }}"
 
+    - name: Ensure ~/.config/git directory exists
+      file:
+        path: "{{ ansible_env.HOME }}/.config/git"
+        state: directory
+        # mode: "0755"
+
+    - name: Download and create the global .gitignore file from GitHub
+      get_url:
+        url: "{{ gitignore_repo_url }}"
+        dest: "{{ gitignore_global_path }}"
+        # mode: "0644"
+
+    - name: Configure Git to use the global .gitignore
+      git_config:
+        name: core.excludesfile
+        value: "{{ gitignore_global_path }}"
+        scope: global
+
     # - name: Install Homebrew Cask Apps via Loop
     #   block:
     #     - name: Install Homebrew Cask Apps via Loop
@@ -95,7 +116,7 @@
     # but I left it in share folder to easily find all the other themes if I want to change
     - name: Copy oh-my-posh zen theme and place in brew dir
       get_url:
-        url: 'https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml'
+        url: '{{ oh_my_posh_theme_repo_url }}'
         dest: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
       
     # - name: Update zsh to use oh-my-posh zen-mod theme
