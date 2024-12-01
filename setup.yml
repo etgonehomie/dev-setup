@@ -53,21 +53,21 @@
         description: "Firefox Browser"
 
   tasks:
-  #   - name: Install Homebrew ZSH Tools via Loop
-  #     block:
-  #       - name: Install Homebrew ZSH Tools via Loop
-  #         homebrew:
-  #           name: "{{ item.package }}"
-  #           state: present
-  #         loop: "{{ tasks_brew_cli }}"
+    - name: Install Homebrew ZSH Tools via Loop
+      block:
+        - name: Install Homebrew ZSH Tools via Loop
+          homebrew:
+            name: "{{ item.package }}"
+            state: present
+          loop: "{{ tasks_brew_cli }}"
 
-  #   - name: Install Homebrew Dev Tools via Loop
-  #     block:
-  #       - name: Install Homebrew Dev Tools via Loop
-  #         homebrew:
-  #           name: "{{ item.package }}"
-  #           state: present
-  #         loop: "{{ tasks_brew_dev }}"
+    - name: Install Homebrew Dev Tools via Loop
+      block:
+        - name: Install Homebrew Dev Tools via Loop
+          homebrew:
+            name: "{{ item.package }}"
+            state: present
+          loop: "{{ tasks_brew_dev }}"
 
     # - name: Install Homebrew Cask Apps via Loop
     #   block:
