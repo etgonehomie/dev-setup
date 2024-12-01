@@ -53,30 +53,30 @@
         description: "Firefox Browser"
 
   tasks:
-    - name: Install Homebrew ZSH Tools via Loop
-      block:
-        - name: Install Homebrew ZSH Tools via Loop
-          homebrew:
-            name: "{{ item.package }}"
-            state: present
-          loop: "{{ tasks_brew_cli }}"
+  #   - name: Install Homebrew ZSH Tools via Loop
+  #     block:
+  #       - name: Install Homebrew ZSH Tools via Loop
+  #         homebrew:
+  #           name: "{{ item.package }}"
+  #           state: present
+  #         loop: "{{ tasks_brew_cli }}"
 
-    - name: Install Homebrew Dev Tools via Loop
-      block:
-        - name: Install Homebrew Dev Tools via Loop
-          homebrew:
-            name: "{{ item.package }}"
-            state: present
-          loop: "{{ tasks_brew_dev }}"
+  #   - name: Install Homebrew Dev Tools via Loop
+  #     block:
+  #       - name: Install Homebrew Dev Tools via Loop
+  #         homebrew:
+  #           name: "{{ item.package }}"
+  #           state: present
+  #         loop: "{{ tasks_brew_dev }}"
 
-    - name: Install Homebrew Cask Apps via Loop
-      block:
-        - name: Install Homebrew Cask Apps via Loop
-          homebrew_cask:
-            name: "{{ item.package }}"
-            state: present
-            ignore_errors:
-          loop: "{{ tasks_cask_dev }}"
+    # - name: Install Homebrew Cask Apps via Loop
+    #   block:
+    #     - name: Install Homebrew Cask Apps via Loop
+    #       homebrew_cask:
+    #         name: "{{ item.package }}"
+    #         state: present
+    #         ignore_errors:
+    #       loop: "{{ tasks_cask_dev }}"
     
     - name: Get Homebrew path to copy oh-my-posh theme file to
       command: "brew --prefix"

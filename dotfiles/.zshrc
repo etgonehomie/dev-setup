@@ -1,3 +1,6 @@
+## This allows me to use homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # SET STARTING TO HOME
 cd ~
 
@@ -5,15 +8,16 @@ cd ~
 EDITOR=${EDITOR:-nano}
 CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
 BREW_PREFIX=$(brew --prefix)
-PROJ_DIR='~/git-projects'
+PROJ_DIR=${PROJ_DIR:-~/git-projects}
+# PROJ_DIR='~/git-projects'
 
 # Set quick file path movement for projects
 alias auto='cd $PROJ_DIR/windsurf/auto-image'
 alias react='cd $PROJ_DIR/react'
 alias cc='cd $PROJ_DIR/cc-churning-app'
 alias churn=cc
-alias tools='cd $PROJ_DIR/tools'
-alias tool=tools
+alias dev='cd $PROJ_DIR/dev-setup'
+alias setup=dev
 
 # Enable CLI tools
 source $BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -41,9 +45,6 @@ alias re='refresh_function'
 ## brew update <-- updates the brew package insataller
 ## brew upgrade <-- updates packages that brew installed
 alias brew up='brew update && brew upgrade'
-
-## This allows me to use homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ## Brewfile is all the packages installed and maintained by homebrew
 alias brewfile='$EDITOR ~/Brewfile'
@@ -96,7 +97,7 @@ alias gcam='g commit -am' # add all and commit with a message
 alias push='g push origin'
 alias gpush='push'
 alias pull='g pull origin'
-alais gpull='pull'
+alias gpull='pull'
 
 # SSH Aliases
 # Add private ssh key to agent to enable ssh access to pi
