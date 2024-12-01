@@ -1,5 +1,10 @@
 # TO-DO
-- make something that whenever .zshrc file is updated, it automatically replaces the cli.md file here
+- [ ] automatic a bash script to make something that whenever .zshrc file is updated, it automatically replaces the cli.md file here
+- [ ] add a global .gitignore file and save it in .config folder
+	- git config --global core.excludesfile ~/.gitignore_global 
+		- this code wil make it ignore globally
+	- git config --global core.excludesfile
+		- this checks if it is loaded correctly
 
 # Limitations
 - currently only for ARM MacOS
