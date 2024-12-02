@@ -2,7 +2,9 @@
 - [ ] automatic a bash script to make something that whenever .zshrc file is updated, it automatically replaces the cli.md file here
 - [X] add a global .gitignore file and save it in .config folder
 - [ ] updated `ls` with `exa`. See this [tutorial](https://www.youtube.com/watch?v=M4UAePWHtbs). Add it to ansible to install and then upd aliases
-	- git config --global core.excludesfile ~/.gitignore_global 
+  - `exa` is no longer active so `eza` was forked see this [repo](https://github.com/eza-community/eza). Add this to ansible and then upd aliases
+- git config --global core.excludesfile ~/.gitignore_global 
+- [ ] Install Nix package manager for my RPI5
 - [ ] Use this [Chezmoi YouTube](https://youtu.be/-RkANM9FfTM?si=CoKFs_fzKWlJnxiY) to make dotfile management easy
     - this is the [github repo](https://github.com/logandonley/dotfiles) that does ansible and chezmoi to automate dev setup
 - [ ] This is another [Chezmoi Tutorial](https://medium.com/@alfor93/cross-platform-dotfiles-with-chezmoi-nix-brew-and-devpod-0fd478e40ce)
