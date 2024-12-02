@@ -1,14 +1,14 @@
 # TO-DO
 - [ ] automatic a bash script to make something that whenever .zshrc file is updated, it automatically replaces the cli.md file here
-- [ ] update my dev-setup using nix
-	- https://www.youtube.com/watch?v=Z8BL8mdzWHI
 - [X] add a global .gitignore file and save it in .config folder
 	- git config --global core.excludesfile ~/.gitignore_global 
 		- this code wil make it ignore globally
 	- git config --global core.excludesfile
 		- this checks if it is loaded correctly
-- [ ] Use this to make dotfile management easy:
-  -  https://www.youtube.com/watch?v=y6XCebnB9gs&t=28s
+- [ ] Maybe don't need this if i use Nix Home Manager. Use this [Chezmoi YouTube](https://youtu.be/-RkANM9FfTM?si=CoKFs_fzKWlJnxiY) to make dotfile management easy
+- [X] Setup [Nix Home Manager](https://www.youtube.com/watch?v=xXlCcdPz6Vc) for auto setup dev station with dotfiles and application and app settings. It doesn't work on my work macbook because of certain certs. Use Chezmoi instead
+- [ ] Look at various people's dotfiles to see which to copy 
+  - Example using chezmoi -> https://github.com/sudopluto/dotfiles/tree/main?tab=readme-ov-file
 
 # Limitations
 - currently only for ARM MacOS

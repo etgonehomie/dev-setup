@@ -17,7 +17,7 @@
         description: "Allows download of external binaries"
       - package: fzf 
         description: "Allows fuzzy search (and case insensitivity) in terminal"
-      - package: stow
+      - package: chezmoi
         description: Organize and sync dotfiles seamlessly across systems
       - package: bat
         description: "View file content with syntax highlighting (cat replacement)"

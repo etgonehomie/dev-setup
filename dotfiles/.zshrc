@@ -67,13 +67,14 @@ alias myips='ip addr'
 alias myip='myips'
 
 # CLI - Modify Files Aliases
-alias v='version'
+alias ver='version'
 alias mk='touch'
 alias create='touch'
 alias rename='mv'
 
 # Go into Config File to Edit Aliases
 alias vim='nvim'
+alias v='nvim'
 
 # List Aliases
 alias lsl='ls -l'
