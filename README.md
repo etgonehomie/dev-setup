@@ -4,6 +4,7 @@
 - [ ] updated `ls` with `exa`. See this [tutorial](https://www.youtube.com/watch?v=M4UAePWHtbs). Add it to ansible to install and then upd aliases
   - `exa` is no longer active so `eza` was forked see this [repo](https://github.com/eza-community/eza). Add this to ansible and then upd aliases
 - git config --global core.excludesfile ~/.gitignore_global 
+- [ ] Learn how to use `defaults read` on mac to export my mac config files and be able to save it and port it on another mac
 - [ ] Install Nix package manager for my RPI5
 - [ ] Use this [Chezmoi YouTube](https://youtu.be/-RkANM9FfTM?si=CoKFs_fzKWlJnxiY) to make dotfile management easy
     - this is the [github repo](https://github.com/logandonley/dotfiles) that does ansible and chezmoi to automate dev setup
