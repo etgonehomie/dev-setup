@@ -1,6 +1,13 @@
 # For example themes and ideas: https://ohmyposh.dev/docs/themes
 # To convert json/yaml to toml: https://www.convertsimple.com/convert-json-to-toml/
 
+# How to define a bubble
+# background = "#29315A"    # bubble background color
+# foreground = "#E64747"    # bubble text color
+# style = "diamond"            # creates bubble diamond template which is modified by leading/trailing diamond
+# leading_diamond = "\ue0b6"  # creates curved left side of bubble
+# trailing_diamond = "\ue0b4 " # creates curved right side of bubble
+
 console_title_template = '{{ .UserName }} @ {{ .HostName }}...{{ .Folder }} ({{ .Shell }})'
 version = 3
 final_space = true
@@ -15,38 +22,12 @@ final_space = true
   background = 'transparent'
   foreground_templates = ['{{if gt .Code 0}}red{{end}}', '{{if eq .Code 0}}magenta{{end}}']
 
-# [[blocks]]
-#   alignment = "left"
-#   newline = true
-#   type = "prompt"
-
-#   [[blocks.segments]]
-#     background = "#29315A"
-#     foreground = "#AEA4BF"
-#     leading_diamond = "\ue0b6"
-#     style = "diamond"
-#     template = "{{ .FormattedMs }}"
-#     trailing_diamond = "\ue0b4 "
-#     type = "executiontime"
-
-#     [blocks.segments.properties]
-#       style = "austin"
-#       threshold = 150
-
-#   [[blocks.segments]]
-#     background = "#29315A"
-#     foreground = "#E64747"
-#     leading_diamond = "\ue0b6"
-#     style = "diamond"
-#     template = "{{ .UserName }} \u276f"
-#     trailing_diamond = "\ue0b4 "
-#     type = "text"
-
 [[blocks]]
   type = 'prompt'
   alignment = 'left'
   newline = true
 
+  # Shows full path on transient line
   [[blocks.segments]]
     template = '{{ .Path }}'
     foreground = 'blue'
@@ -58,15 +39,30 @@ final_space = true
       cache_duration = 'none'
       style = 'full'
       
+  # Shows current user on transient line in bubble format    
   [[blocks.segments]]
     background = "#29315A"
     foreground = "#E64747"
     leading_diamond = "\ue0b6"
     style = "diamond"
-    template = "{{ .UserName }} \u276f"
     trailing_diamond = "\ue0b4 "
+    template = " {{ .UserName }}"
     type = "text"
   
+  # Shows execution time in bubble format 
+  # [[blocks.segments]]
+  #   background = "#29315A"
+  #   foreground = "#AEA4BF"
+  #   leading_diamond = "\ue0b6"
+  #   style = "diamond"
+  #   template = "{{ .FormattedMs }}"
+  #   trailing_diamond = "\ue0b4 "
+  #   type = "executiontime"
+
+  #   [blocks.segments.properties]
+  #     style = "austin"
+  #     threshold = 150
+
   
 # Right theme bubble icons
 [[blocks]]
@@ -98,8 +94,8 @@ final_space = true
     ]
     leading_diamond = " \ue0b6"
     style = "diamond"
-    template = " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} "
     trailing_diamond = "\ue0b4"
+    template = " {{ .UpstreamIcon }}{{ .HEAD }}{{if .BranchStatus }} {{ .BranchStatus }}{{ end }}{{ if .Working.Changed }} \uf044 {{ .Working.String }}{{ end }}{{ if and (.Working.Changed) (.Staging.Changed) }} |{{ end }}{{ if .Staging.Changed }} \uf046 {{ .Staging.String }}{{ end }}{{ if gt .StashCount 0 }} \ueb4b {{ .StashCount }}{{ end }} "
     type = "git"
 
     [blocks.segments.properties]
