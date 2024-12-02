@@ -29,7 +29,7 @@ final_space = true
 
   # Shows full path on transient line
   [[blocks.segments]]
-    template = '{{ .Path }}'
+    template = '{{ .Path }} '
     foreground = 'blue'
     background = 'transparent'
     type = 'path'
@@ -46,7 +46,7 @@ final_space = true
     leading_diamond = "\ue0b6"
     style = "diamond"
     trailing_diamond = "\ue0b4 "
-    template = " {{ .UserName }}"
+    template = "{{ .UserName }}"
     type = "text"
   
   # Shows execution time in bubble format 
