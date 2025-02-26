@@ -9,11 +9,11 @@
   - `exa` is no longer active so `eza` was forked see this [repo](https://github.com/eza-community/eza). Add this to ansible and then upd aliases
 - git config --global core.excludesfile ~/.gitignore_global 
 - [ ] Learn how to use `defaults read` on mac to export my mac config files and be able to save it and port it on another mac
-~~- [ ] Install Nix package manager for my RPI5~~ DON'T USE CHEZMOI. It is overkill for me. just make sure all .dot files are in the same place for easier maintenance.
-~~- [ ] Use this [Chezmoi YouTube](https://youtu.be/-RkANM9FfTM?si=CoKFs_fzKWlJnxiY) to make dotfile management easy~~
-    ~~- this is the [github repo](https://github.com/logandonley/dotfiles) that does ansible and chezmoi to automate dev setup~~
-~~- [ ] This is another [Chezmoi Tutorial](https://medium.com/@alfor93/cross-platform-dotfiles-with-chezmoi-nix-brew-and-devpod-0fd478e40ce)~~
-~~- [X] Setup [Nix Home Manager](https://www.youtube.com/watch?v=xXlCcdPz6Vc) for auto setup dev station with dotfiles and application and app settings. It doesn't work on my work macbook because of certain certs. Use Chezmoi instead~~
+- [ ] DON'T USE CHEZMOI. It is overkill for me. just make sure all .dot files are in the same place for easier maintenance. ~~Install Nix package manager for my RPI5~~ 
+- [ ] ~~Use this [Chezmoi YouTube](https://youtu.be/-RkANM9FfTM?si=CoKFs_fzKWlJnxiY) to make dotfile management easy~~
+	- ~~this is the [github repo](https://github.com/logandonley/dotfiles) that does ansible and chezmoi to automate dev setup~~
+- [ ] ~~This is another [Chezmoi Tutorial](https://medium.com/@alfor93/cross-platform-dotfiles-with-chezmoi-nix-brew-and-devpod-0fd478e40ce)~~
+- [X] ~~Setup [Nix Home Manager](https://www.youtube.com/watch?v=xXlCcdPz6Vc) for auto setup dev station with dotfiles and application and app settings. It doesn't work on my work macbook because of certain certs. Use Chezmoi instead~~
 - [ ] Look at various people's dotfiles to see which to copy 
   - Example using chezmoi -> https://github.com/sudopluto/dotfiles/tree/main?tab=readme-ov-file
 
