@@ -1,16 +1,34 @@
-# testing
+
+# Set Terminal Home Starting
+cd ~
+
 ## This allows me to use homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 ####################################
 # Variables
 ####################################
-BREW_PREFIX=$(brew --prefix)
 export EDITOR=nvim
+BREW_PREFIX=$(brew --prefix)
 CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
+PERSONAL_DIR="~/git-projects/personal"
+WORK_DIR="~/git-projects/work"     
 
-# Change this to dir where you house all git projects
-PROJ_DIR="~/git-projects/personal"     
+####################################
+# Quick links to project dirs
+####################################
+alias home='cd ~'
+alias setup="cd $PERSONAL_DIR/dev-setup"
+alias dev=setup
+alias tesla="cd $PERSONAL_DIR/tesla-tracker"
+alias tes=tesla
+
+# Use specific SSH keys based on directory
+if [[ $(pwd) == $PERSONAL_DIR/* ]]; then
+  export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_personal"
+elif [[ $(pwd) == $WORK_DIR/* ]]; then
+  export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_work"
+fi
 
 # Change this to be .config/oh-my-posh/[theme.toml/yaml/json] if desired
 # Info for how to use this theming: https://ohmyposh.dev/docs
@@ -22,9 +40,6 @@ OH_MY_POSH_THEME_PATH="$BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml"
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config $OH_MY_POSH_THEME_PATH)"
 fi
-
-# Set Terminal Home Starting
-cd ~
 
 # Set quick file path movement for projects
 alias auto='cd $PROJ_DIR/windsurf/auto-image'
@@ -114,14 +129,17 @@ alias py='python'
 alias deact='deactivate'
 
 # Git Aliases
-alias g='git'
-alias gb='g branch'
-alias ga='g add'
-alias gcm='g commit -m'
-alias gcam='g commit -am' # add all and commit with a message
-alias push='g push origin'
+alias ga='git add'
+alias gaa='git add .'
+alias gb='git branch'
+alias gch='git checkout -b'
+alias gcm='git commit -m'
+alias gcam='git commit -am' # add all and commit with a message
+alias gs='git status'
+alias gsw='git switch'
+alias push='git push origin'
 alias gpush='push'
-alias pull='g pull origin'
+alias pull='git pull origin'
 alias gpull='pull'
 
 # SSH Aliases
