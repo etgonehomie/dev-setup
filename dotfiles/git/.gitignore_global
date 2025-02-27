@@ -19,6 +19,35 @@
 *.gpg
 secrets.json
 
+# Virtual environment directory (common names)
+venv/
+.venv/
+env/
+virtualenv/
+
+# Compiled Python files (often in venv, but good to catch strays)
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+
+# Pip-related caches or logs (sometimes in venv)
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Conda environment directories
+condaenv/
+.conda/
+envs/
+miniconda*/
+anaconda*/
+
+# Conda-specific files
+.conda_envs/
+conda-meta/
+*.conda_lock.yml
+environment.yml.lock
+
 # --- macOS Files ---
 .DS_Store
 .AppleDouble
@@ -71,6 +100,8 @@ System Volume Information/
 *.a
 *.out
 *.class
+*.dll
+*.exe
 *.jar
 *.pyc
 *.pyo

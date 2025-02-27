@@ -7,18 +7,25 @@
   gather_facts: yes  # don't gather system facts
 
   vars:
-    gitignore_global_path: "{{ ansible_env.HOME }}/.config/git/.gitignore_global"
-    oh_my_posh_themes_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
-    gitignore_repo_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
-    oh_my_posh_theme_repo_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml"
+    # Destination system paths
+    dotfile_local_dir: "{{ ansible_env.HOME }}/.config"
+    git_global_local_dir: "{{ dotfile_local_dir }}/git/.gitignore_global"
+    oh_my_posh_themes_local_dir: "{{ dotfile_local_dir }}/oh-my-posh/themes"
+    zshrc_local_dir: "{{ dotfile_local_dir }}/terminal"
+    zshenv_local_dir: "{{ ansible_env.HOME }}"    # this needs to stay in home dir in order to move the zshrc file elsewhere
+
+    # Source paths of dotfile templates
+    gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    gitconfig__global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    zshrc_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    zshenv_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml"
     oh_my_posh_zen_theme_filename: 'zen-mod.toml'
     tasks_brew_cli:
       - package: curl 
         description: "Allows download of external binaries"
       - package: fzf 
         description: "Allows fuzzy search (and case insensitivity) in terminal"
-      - package: chezmoi
-        description: Organize and sync dotfiles seamlessly across systems
       - package: bat
         description: "View file content with syntax highlighting (cat replacement)"
       - package: zsh-autosuggestions
@@ -48,42 +55,85 @@
 
     tasks_cask_dev:
       - package: visual-studio-code
-        description: "IDE"
+        description: "VS Code: IDE"
+      - package: raycast
+        description: 'Raycast: Mac Finder Replacement'
       - package: postman
-        description: "API Tester"
+        description: "Postman: API Tester"
       - package: sublime-text
-        description: "Easy text file editor"
+        description: "Sublime: Easy text file editor"
       - package: google-chrome
         description: "Chrome Browser"
       - package: firefox
         description: "Firefox Browser"
+      - package: vivaldi
+        description: "Vivaldi Browser"
 
   tasks:
-    # - name: Install Homebrew ZSH Tools via Loop
-    #   block:
-    #     - name: Install Homebrew ZSH Tools via Loop
-    #       homebrew:
-    #         name: "{{ item.package }}"
-    #         state: present
-    #       loop: "{{ tasks_brew_cli }}"
+    # Install necessary programs
+    - name: Install Homebrew ZSH Tools via Loop
+      block:
+        - name: Install Homebrew ZSH Tools via Loop
+          homebrew:
+            name: "{{ item.package }}"
+            state: present
+          loop: "{{ tasks_brew_cli }}"
 
-    # - name: Install Homebrew Dev Tools via Loop
-    #   block:
-    #     - name: Install Homebrew Dev Tools via Loop
-    #       homebrew:
-    #         name: "{{ item.package }}"
-    #         state: present
-    #       loop: "{{ tasks_brew_dev }}"
+    - name: Install Homebrew Dev Tools via Loop
+      block:
+        - name: Install Homebrew Dev Tools via Loop
+          homebrew:
+            name: "{{ item.package }}"
+            state: present
+          loop: "{{ tasks_brew_dev }}"
 
-    # - name: Install Homebrew Cask Apps via Loop
-    #   block:
-    #     - name: Install Homebrew Cask Apps via Loop
-    #       homebrew_cask:
-    #         name: "{{ item.package }}"
-    #         state: present
-    #         ignore_errors:
-    #       loop: "{{ tasks_cask_dev }}"
-    
+    - name: Install Homebrew Cask Apps via Loop
+      block:
+        - name: Install Homebrew Cask Apps via Loop
+          homebrew_cask:
+            name: "{{ item.package }}"
+            state: present
+            ignore_errors:
+          loop: "{{ tasks_cask_dev }}"
+
+
+    # Mode 0644: Readable by the owner and possibly others (e.g., for sourcing in scripts). 
+    #            Writable only by the owner to prevent unauthorized changes.
+    # Update terminal files
+    - name: Download and store the .zshenv file from GitHub
+      get_url:
+        url: "{{ zshenv_git_url }}"
+        dest: "{{ zshenv_local_dir }}"
+
+    - name: Download and store the .zshrc file from GitHub
+      get_url:
+        url: "{{ zshrc_git_url }}"
+        dest: "{{ zshrc_local_dir }}"
+
+    # Update global git file
+    - name: Ensure ~/.config/git directory exists to place all git dotfiles``
+      file:
+        path: "{{ git_global_local_dir }}"
+        state: directory
+
+    - name: Download and create the global .gitconfig file from GitHub
+      get_url:
+        url: "{{ gitconfig_global_git_url }}"
+        dest: "{{ git_global_local_dir }}"
+
+    - name: Download and create the global .gitignore file from GitHub
+      get_url:
+        url: "{{ gitignore_global_git_url }}"
+        dest: "{{ git_global_local_dir }}"
+
+    - name: Modify .gitconfig file to use the global .gitignore_global
+      git_config:
+        name: core.excludesfile
+        value: "{{ gitignore_global_path }}/.gitignore_global"
+        scope: global
+
+    # TODO: Start from here
+    # Update terminal theming
     - name: Get Homebrew path to copy oh-my-posh theme file to
       command: "brew --prefix"
       register: brew_prefix_result
@@ -101,26 +151,8 @@
     # but I left it in share folder to easily find all the other themes if I want to change
     - name: Copy oh-my-posh zen theme and place in brew dir
       get_url:
-        url: '{{ oh_my_posh_theme_repo_url }}'
+        url: '{{ oh_my_posh_theme_git_url }}'
         dest: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
-      
-    - name: Ensure ~/.config/git directory exists
-      file:
-        path: "{{ ansible_env.HOME }}/.config/git"
-        state: directory
-        # mode: "0755"
-
-    - name: Download and create the global .gitignore file from GitHub
-      get_url:
-        url: "{{ gitignore_repo_url }}"
-        dest: "{{ gitignore_global_path }}"
-        # mode: "0644"
-
-    - name: Configure Git to use the global .gitignore
-      git_config:
-        name: core.excludesfile
-        value: "{{ gitignore_global_path }}"
-        scope: global
 
     - name: Ensure ~/.config/oh-my-posh directory exists
       file:
@@ -130,13 +162,13 @@
         
     # - name: Ensure the Oh My Posh themes directory parent exists
     #   file:
-    #     path: "{{ oh_my_posh_themes_dir | dirname }}"
+    #     path: "{{ oh_my_posh_themes_local_dir | dirname }}"
     #     state: directory
 
     - name: Create a symbolic link for oh_my_posh themes dir
       file:
         src: '{{ brew_prefix | trim }}/share/oh-my-posh/themes'
-        dest: "{{ oh_my_posh_themes_dir }}"
+        dest: "{{ oh_my_posh_themes_local_dir }}"
         state: link
 
     # - name: Update zsh to use oh-my-posh zen-mod theme

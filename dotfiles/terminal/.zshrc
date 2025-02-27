@@ -1,3 +1,18 @@
+####################################
+# Set config Variables
+####################################
+
+BREW_PREFIX=$(brew --prefix)
+CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
+PERSONAL_DIR="~/git-projects/personal"
+WORK_DIR="~/git-projects/work"     
+OH_MY_POSH_THEME_PATH="$BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml"
+
+####################################
+# Set System ENV Variables
+####################################
+export GIT_CONFIG_GLOBAL=~/dotfiles/.gitconfig
+export EDITOR=nvim
 
 # Set Terminal Home Starting
 cd ~
@@ -5,14 +20,6 @@ cd ~
 ## This allows me to use homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-####################################
-# Variables
-####################################
-export EDITOR=nvim
-BREW_PREFIX=$(brew --prefix)
-CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
-PERSONAL_DIR="~/git-projects/personal"
-WORK_DIR="~/git-projects/work"     
 
 ####################################
 # Quick links to project dirs
@@ -22,6 +29,12 @@ alias setup="cd $PERSONAL_DIR/dev-setup"
 alias dev=setup
 alias tesla="cd $PERSONAL_DIR/tesla-tracker"
 alias tes=tesla
+alias auto='cd $PROJ_DIR/windsurf/auto-image'
+alias react='cd $PROJ_DIR/react-learning/auto-image'
+alias autoimage='react'
+alias auto-image='react'
+alias cc='cd $PROJ_DIR/cc-churning-app'
+alias churn=cc
 
 # Use specific SSH keys based on directory
 if [[ $(pwd) == $PERSONAL_DIR/* ]]; then
@@ -30,26 +43,14 @@ elif [[ $(pwd) == $WORK_DIR/* ]]; then
   export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_work"
 fi
 
+########################################################################
 # Change this to be .config/oh-my-posh/[theme.toml/yaml/json] if desired
 # Info for how to use this theming: https://ohmyposh.dev/docs
-OH_MY_POSH_THEME_PATH="$BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml"
-
 ########################################################################
-
 # Set oh-my-posh theme
 if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config $OH_MY_POSH_THEME_PATH)"
 fi
-
-# Set quick file path movement for projects
-alias auto='cd $PROJ_DIR/windsurf/auto-image'
-alias react='cd $PROJ_DIR/react-learning/auto-image'
-alias autoimage='react'
-alias auto-image='react'
-alias cc='cd $PROJ_DIR/cc-churning-app'
-alias churn=cc
-alias tools='cd $PROJ_DIR/tools'
-alias tool=tools
 
 # Enable CLI tools
 source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
@@ -78,10 +79,6 @@ alias re='refresh_function'
 ## brew upgrade <-- updates packages that brew installed
 alias brew up='brew update && brew upgrade'
 
-# Chezmoi dotfile manager
-alias dot='cd $HOME/.local/share/chezmoi'
-alias cvi='chezmoi edit'
-
 # CLI - Random Aliases
 alias ..='cd ..'
 alias test='echo hello-world'
@@ -107,7 +104,7 @@ alias vdif='vimdiff'
 alias vdiff='vimdiff'
 
 # List Aliases
-alias ls='ls --color=auto'
+alias ls='ls --color=auto -a'
 alias lsl='ls -l'
 alias lsh='ls -h' 
 alias lsa='ls -a'
@@ -116,16 +113,17 @@ alias l='list'
 
 # Grep (find) Aliases
 alias grep='grep --color=auto'
+alias find=grep
 
 # Python Aliases
 alias python='python3'
 alias py='python'
 
 # VENV Aliases
-# source [vpathname]/activate <- activates the venv
+# source [venv_pathname]/activate <- activates the venv
 # deactivate <- deactivates
 # alias v='py -m venv' # this creates a venv where you then have to put a '.' director name after 
-  # for example v .my_venv_proj <-- this creates a venv for the project folder .my_venv_proj
+# for example v .my_venv_proj <-- this creates a venv for the project folder .my_venv_proj
 alias deact='deactivate'
 
 # Git Aliases
