@@ -11,8 +11,7 @@
     dotfile_local_dir: "{{ ansible_env.HOME }}/.config"
     git_global_local_dir: "{{ dotfile_local_dir }}/git/.gitignore_global"
     oh_my_posh_themes_local_dir: "{{ dotfile_local_dir }}/oh-my-posh/themes"
-    zshrc_local_dir: "{{ dotfile_local_dir }}/terminal"
-    zshenv_local_dir: "{{ ansible_env.HOME }}"    # this needs to stay in home dir in order to move the zshrc file elsewhere
+    oh_my_posh_theme_filename: 'zen.toml'
 
     # Source paths of dotfile templates
     gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
@@ -20,7 +19,8 @@
     zshrc_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     zshenv_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml"
-    oh_my_posh_zen_theme_filename: 'zen-mod.toml'
+    
+    
     tasks_brew_cli:
       - package: curl 
         description: "Allows download of external binaries"
@@ -96,22 +96,38 @@
             ignore_errors:
           loop: "{{ tasks_cask_dev }}"
 
+    # Setup homebrew to work with CLI plugins
+    
+    - name: Detect Homebrew prefix dynamically
+      ansible.builtin.shell: "brew --prefix"
+      register: brew_prefix_result
+      changed_when: false  # Read-only check
+      become: no
 
-    # Mode 0644: Readable by the owner and possibly others (e.g., for sourcing in scripts). 
-    #            Writable only by the owner to prevent unauthorized changes.
+    - name: Set Homebrew prefix fact
+      ansible.builtin.set_fact:
+        brew_prefix: "{{ brew_prefix_result.stdout }}"
+
+    - name: Remove group/other write perms from dynamic Zsh dir
+      ansible.builtin.file:
+        path: "{{ brew_prefix }}/share"
+        mode: "go-w"  # Removes write for group and others (e.g., 775 -> 755)
+        recurse: yes  # Equivalent to -R
+      become: yes  # Equivalent to sudo
+
     # Update terminal files
     - name: Download and store the .zshenv file from GitHub
       get_url:
         url: "{{ zshenv_git_url }}"
-        dest: "{{ zshenv_local_dir }}"
+        dest: "{{ ansible_env.HOME }}"
 
     - name: Download and store the .zshrc file from GitHub
       get_url:
         url: "{{ zshrc_git_url }}"
-        dest: "{{ zshrc_local_dir }}"
+        dest: "{{ ansible_env.HOME }}"
 
     # Update global git file
-    - name: Ensure ~/.config/git directory exists to place all git dotfiles``
+    - name: Ensure ~/.config/git dir exists to place all git dotfiles
       file:
         path: "{{ git_global_local_dir }}"
         state: directory
@@ -133,65 +149,27 @@
         scope: global
 
     # TODO: Start from here
-    # Update terminal theming
-    - name: Get Homebrew path to copy oh-my-posh theme file to
-      command: "brew --prefix"
-      register: brew_prefix_result
-
-    - name: Set the Homebrew prefix to a variable
-      set_fact:
-        brew_prefix: " {{ brew_prefix_result.stdout }}"
-
-    - name: Create an empty shell for new theme file
+    # Update terminal theming using oh-my-posh
+    # Leave the theme in brew share dir and just make an ref to that dir in the .config dir
+    - name: Ensure ~/[brew-prefix]/share/oh-my-posh/themes dir exists
       file:
-        path: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
-        state: touch
+        path: "{{ brew_prefix/share/oh-my-posh/themes }}"
+        state: directory
 
     # Can place my theme in a new dir in ~/.config/oh-my-posh and point the zshrc file to this
-    # but I left it in share folder to easily find all the other themes if I want to change
+    # Leave file in brew-share folder to easily find all the other themes if I want to change
     - name: Copy oh-my-posh zen theme and place in brew dir
       get_url:
         url: '{{ oh_my_posh_theme_git_url }}'
-        dest: '{{ brew_prefix | trim }}/share/oh-my-posh/themes/{{ oh_my_posh_zen_theme_filename }}'
+        dest: '{{ brew_prefix }}/share/oh-my-posh/themes/{{ oh_my_posh_theme_filename }}'
 
     - name: Ensure ~/.config/oh-my-posh directory exists
       file:
-        path: "{{ ansible_env.HOME }}/.config/oh-my-posh"
+        path: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
         state: directory
-        # mode: "0755"
-        
-    # - name: Ensure the Oh My Posh themes directory parent exists
-    #   file:
-    #     path: "{{ oh_my_posh_themes_local_dir | dirname }}"
-    #     state: directory
 
     - name: Create a symbolic link for oh_my_posh themes dir
       file:
         src: '{{ brew_prefix | trim }}/share/oh-my-posh/themes'
         dest: "{{ oh_my_posh_themes_local_dir }}"
         state: link
-
-    # - name: Update zsh to use oh-my-posh zen-mod theme
-    #   blockinfile:
-    #     insertbefore: BOF  # BOF: beginning of file / EOF: end of file
-    #     state: present
-    #     path: '{{ ansible_env.HOME }}/.zshrc'
-    #     # path: "{{ lookup('env', 'HOME') }}/.zshrc"
-    #     block: |
-    #       # Set oh-my-posh theme
-    #       BREW_PREFIX=$(brew --prefix)
-
-    #       if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-    #         eval "$(oh-my-posh init zsh --config $BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml)"
-    #       fi
-
-    # - name: Clone dotfiles repository
-    #   git:
-    #     repo: https://github.com/username/dotfiles.git
-    #     dest: ~/dotfiles
-
-    # - name: Symlink dotfiles
-    #   file:
-    #     src: ~/dotfiles/.zshrc
-    #     dest: ~/.zshrc
-    #     state: link

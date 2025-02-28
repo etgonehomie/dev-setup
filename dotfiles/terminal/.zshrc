@@ -1,8 +1,38 @@
 ####################################
+# homebrew command needed and order needed to prevent clashing
+####################################
+####################################
+# Set Homebrew prefix dynamically
+# OSArchitecture => Homebrew Prefix
+# macOS Apple Silicon => /opt/homebrew
+# macOS Intel => /usr/local
+# Linux Any => /home/linuxbrew/.linuxbrew
+# Windows Any => /home/linuxbrew/.linuxbrew
+# Check for Homebrew and set prefix dynamically
+if [[ -x /opt/homebrew/bin/brew ]]; then
+  BREW_PREFIX=/opt/homebrew
+elif [[ -x /usr/local/bin/brew ]]; then
+  BREW_PREFIX=/usr/local
+elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
+  BREW_PREFIX=/home/linuxbrew/.linuxbrew
+else
+  echo "Homebrew not found in common locations"
+  return 1
+fi
+
+# Evaluate Homebrew's shell environment with the correct prefix
+eval "$($BREW_PREFIX/bin/brew shellenv)"  
+
+# CLI Plugin Tools (order matters)
+source "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+
+####################################
 # Set config Variables
 ####################################
 
-BREW_PREFIX=$(brew --prefix)
+
 CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
 PERSONAL_DIR="~/git-projects/personal"
 WORK_DIR="~/git-projects/work"     
@@ -16,10 +46,6 @@ export EDITOR=nvim
 
 # Set Terminal Home Starting
 cd ~
-
-## This allows me to use homebrew
-eval "$(/opt/homebrew/bin/brew shellenv)"
-
 
 ####################################
 # Quick links to project dirs
@@ -52,13 +78,11 @@ if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
   eval "$(oh-my-posh init zsh --config $OH_MY_POSH_THEME_PATH)"
 fi
 
-# Enable CLI tools
-source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
-source "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-
+####################################
+# Terminal Config Maintenance
+####################################
 # Edit Config File Alias
-alias config="$EDITOR $CONFIG_FILE"
+alias config='$EDITOR $CONFIG_FILE'
 alias conf='config'
 alias con='config'
 alias z='config'
@@ -79,7 +103,11 @@ alias re='refresh_function'
 ## brew upgrade <-- updates packages that brew installed
 alias brew up='brew update && brew upgrade'
 
+
+####################################
 # CLI - Random Aliases
+####################################
+
 alias ..='cd ..'
 alias test='echo hello-world'
 alias update='sudo apt-get update && sudo apt-get upgrade -y && sudo snap refresh'

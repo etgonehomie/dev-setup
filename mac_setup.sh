@@ -57,6 +57,13 @@ install_ansible() {
     fi
 }
 
+# Step 1-4 Encapsulated all Ansible Pre-requisites
+get_ansible_prereqs() {
+    install_homebrew
+    update_homebrew
+    upgrade_homebrew
+    install_ansible
+}
 # Step 5: Download Ansible Playbook
 get_ansible_playbook() {
     echo "Downloading Ansible playbook from $PLAYBOOK_URL..."
@@ -89,13 +96,7 @@ main() {
 
     # Execute steps in synchronous order
     # any functions called within a function execute synchronously
-    
-    # Comment out for testing for now
-    # install_homebrew
-    # update_homebrew
-    # upgrade_homebrew
-    # install_ansible
-
+    # get_ansible_prereqs     # Comment out for testing for now
     get_ansible_playbook
     run_ansible_playbook
     log "All steps completed successfully!"
