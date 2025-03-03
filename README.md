@@ -1,6 +1,7 @@
 # TO-DO
 
 - [ ] ensure auto update of the config files
+- [ ] make this repo public but ensure no sensitive info is in there
 - [ ] add raycast config files to the ansible playbook
 - [ ] Learn how to use `defaults read` on mac to export my mac config files and be able to save it and port it on another mac
 - [ ] ensure all dot files are in the same folder for eaiser maintenance
