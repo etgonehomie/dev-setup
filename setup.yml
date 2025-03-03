@@ -16,6 +16,7 @@
     # Source paths of dotfile templates
     gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     gitconfig__global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     zshrc_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     zshenv_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml"
@@ -129,7 +130,7 @@
         dest: "{{ ansible_env.HOME }}"
 
     # Update global git file
-    - name: Ensure ~/.config/git dir exists to place all git dotfiles
+    - name: Create dir `~/.config/git` if DNE. Place all git dotfiles here
       file:
         path: "{{ git_global_local_dir }}"
         state: directory
@@ -150,22 +151,21 @@
         value: "{{ gitignore_global_path }}/.gitignore_global"
         scope: global
 
-    # TODO: Start from here
-    # Update terminal theming using oh-my-posh
-    # Leave the theme in brew share dir and just make an ref to that dir in the .config dir
-    - name: Ensure ~/[brew-prefix]/share/oh-my-posh/themes dir exists
+    # Update terminal theming using oh-my-posh    
+    - name: Create dir `~/[brew-prefix]/share/oh-my-posh/themes` if DNE. Place original oh-my-posh themes here
       file:
         path: "{{ brew_prefix/share/oh-my-posh/themes }}"
         state: directory
 
-    # Can place my theme in a new dir in ~/.config/oh-my-posh and point the zshrc file to this
-    # Leave file in brew-share folder to easily find all the other themes if I want to change
     - name: Copy oh-my-posh zen theme and place in brew dir
       get_url:
         url: '{{ oh_my_posh_theme_git_url }}'
         dest: '{{ brew_prefix }}/share/oh-my-posh/themes/{{ oh_my_posh_theme_filename }}'
 
-    - name: Ensure ~/.config/oh-my-posh directory exists
+    # Can place my theme in a new dir in ~/.config/oh-my-posh and point the zshrc file to this
+    # Leave the theme in brew dir and just store a reference to the themes in .config dir
+    # This allows easy search of all themes if I want to change
+    - name: Create dir `~/.config/oh-my-posh` if DNE. Place ref of oh-my-posh themes here
       file:
         path: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
         state: directory
@@ -175,3 +175,34 @@
         src: '{{ brew_prefix | trim }}/share/oh-my-posh/themes'
         dest: "{{ oh_my_posh_themes_local_dir }}"
         state: link
+    
+    - name: Download and store the encrypted raycast config file from GitHub
+      get_url:
+        url: "{{ raycast_config_url }}"
+        dest: "{{ ansible_env.HOME }}"
+    - name: Import Raycast configuration
+      vars:
+        rayconfig_file: "{{ ansible_env.HOME }}/raycast_config.rayconfig"  # Name for exported file
+      tasks:
+        - name: Import Raycast configuration
+          ansible.builtin.script: |
+            #!/usr/bin/osascript
+            tell application "Raycast"
+              activate
+              tell application "System Events"
+                keystroke "," using {command down}  # Open Preferences
+                delay 1
+                keystroke "Import Preferences & Data"  # Type command
+                delay 1
+                keystroke return  # Trigger import
+                delay 2
+                keystroke "/Users/{{ ansible_user_id }}/{{ rayconfig_file }}"  # Set import path
+                delay 1
+                keystroke return  # Import
+                keystroke "Password"  # Input password for encrypted file
+                delay 1
+                keystroke return  # Finish import
+              end tell
+            end tell
+          args:
+            executable: /usr/bin/osascript

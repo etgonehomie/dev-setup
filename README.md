@@ -1,12 +1,11 @@
 # TO-DO
-
-- [ ] ensure auto update of the config files
 - [ ] make this repo public but ensure no sensitive info is in there
-- [ ] add raycast config files to the ansible playbook
 - [ ] Learn how to use `defaults read` on mac to export my mac config files and be able to save it and port it on another mac
 - [ ] ensure all dot files are in the same folder for eaiser maintenance
 - [ ] automatic a bash script to make something that whenever .zshrc file is updated, it automatically replaces the cli.md file here
-- [ ] updated `ls` with `exa`. See this [tutorial](https://www.youtube.com/watch?v=M4UAePWHtbs). Add it to ansible to install and then upd aliases
+- [ ] ensure auto update of the config files
+- [X] add raycast config files to the ansible playbook
+- [X] updated `ls` with `exa`. See this [tutorial](https://www.youtube.com/watch?v=M4UAePWHtbs). Add it to ansible to install and then upd aliases
   - `exa` is no longer active so `eza` was forked see this [repo](https://github.com/eza-community/eza). Add this to ansible and then upd aliases
 - git config --global core.excludesfile ~/.gitignore_global
 - [ ] Look at various people's dotfiles to see which to copy 
