@@ -31,8 +31,6 @@ source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
 ####################################
 # Set config Variables
 ####################################
-
-
 CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
 PERSONAL_DIR="~/git-projects/personal"
 WORK_DIR="~/git-projects/work"     
@@ -41,7 +39,6 @@ OH_MY_POSH_THEME_PATH="$BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml"
 ####################################
 # Set System ENV Variables
 ####################################
-export GIT_CONFIG_GLOBAL=~/dotfiles/.gitconfig
 export EDITOR=nvim
 
 # Set Terminal Home Starting
@@ -50,16 +47,16 @@ cd ~
 ####################################
 # Quick links to project dirs
 ####################################
-alias home='cd ~'
+alias home="cd ~"
 alias setup="cd $PERSONAL_DIR/dev-setup"
 alias dev=setup
 alias tesla="cd $PERSONAL_DIR/tesla-tracker"
 alias tes=tesla
-alias auto='cd $PROJ_DIR/windsurf/auto-image'
-alias react='cd $PROJ_DIR/react-learning/auto-image'
-alias autoimage='react'
-alias auto-image='react'
-alias cc='cd $PROJ_DIR/cc-churning-app'
+alias auto="cd $PERSONAL_DIR/windsurf/auto-image"
+alias react="cd $PERSONAL_DIR/react-learning/auto-image"
+alias autoimage="react"
+alias auto-image="react"
+alias cc="cd $PERSONAL_DIR/cc-churning-app"
 alias churn=cc
 
 # Use specific SSH keys based on directory
