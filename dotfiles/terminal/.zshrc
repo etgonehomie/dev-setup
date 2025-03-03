@@ -132,12 +132,14 @@ alias vdif='vimdiff'
 alias vdiff='vimdiff'
 
 # List Aliases
-alias ls='ls --color=auto -a'
-alias lsl='ls -l'
-alias lsh='ls -h' 
-alias lsa='ls -a'
-alias list='ls -l -h -a'
-alias l='list'
+alias ls="$BREW_PREFIX/bin/eza --long --all --git --group-directories-first"
+alias l=ls
+# alias ls='ls --color=auto -a'
+# alias lsl='ls -l'
+# alias lsh='ls -h' 
+# alias lsa='ls -a'
+# alias list='ls -l -h -a'
+# alias l='list'
 
 # Grep (find) Aliases
 alias grep='grep --color=auto'

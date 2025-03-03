@@ -24,6 +24,8 @@
     tasks_brew_cli:
       - package: curl 
         description: "Allows download of external binaries"
+      - package: eza
+        description: "A better `ls` command that has colors" 
       - package: fzf 
         description: "Allows fuzzy search (and case insensitivity) in terminal"
       - package: bat
