@@ -206,3 +206,89 @@
             end tell
           args:
             executable: /usr/bin/osascript
+  
+  #TODO: Need to add this backup as a separate script 
+  # Store the output in a file that can be stored in git to be copied and imported
+- name: Backup safe macOS defaults including key bindings and hardware settings
+  vars:
+    backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+    safe_domains:  
+      # UI Settings
+      - "com.apple.dock"              # dock settings
+      - "com.apple.finder"            # finder preferences
+      - "com.apple.systemuiserver"    # menu bar settings
+      - "com.apple.menuextra.clock"   # menubar clock settings
+      - "com.apple.screensaver"       # screen saver settings
+      - "com.apple.terminal"          # terminal settings
+
+      # Input Devices
+      - "com.apple.keyboard"                  # keyboard settings
+      - "com.apple.HIToolbox"                 # system keyboard hotkeys
+      - "com.apple.symbolichotkeys"           # other keyboard hotkeys
+      - "com.apple.AppleMultitouchTrackpad"   # built-in trackpad settings
+      - "com.apple.driver.AppleHIDMouse"      # bluetooth mouse settings
+      - "com.apple.driver.AppleBluetoothMultitouch.trackpad" # bluetooth trackpad settings
+      
+      # Workflow tools
+      - "com.raycast.macos"   # raycast hotkeys
+      - "com.apple.spaces"    # mission control settings
+
+      # Display/Power settings
+      - "com.apple.PowerManagement" 
+      - "com.apple.CoreBrightness"    # Night shift schedule
+      - "com.apple.BezelServices"     # Display brightness settings
+      
+      # Other Settings
+      - "com.apple.desktopservices"       # desktop and finder behavior
+      - "com.apple.universalaccess"       # accessibility settings
+      - "com.apple.notificationcenterui"  # notification settings
+
+  tasks:
+    - name: Create backup directory
+      ansible.builtin.file:
+        path: "{{ backup_dir }}"
+        state: directory
+        mode: "0700"
+
+    - name: Export safe defaults
+      ansible.builtin.shell: "defaults read {{ item }} > {{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
+      loop: "{{ safe_domains }}"
+      args:
+        creates: "{{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
+      become: no
+
+    - name: Encrypt backups with Ansible Vault
+      ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item | replace('.', '_') }}.txt --vault-password-file ~/.vault_pass.txt"
+      loop: "{{ safe_domains }}"
+      become: no
+      when: ansible_vault_enabled | default(false)
+
+    # TODO: This is the actual import that is needed in this script
+    - name: Import macOS configs from backup directory
+      vars:
+        backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+      tasks:
+        - name: Find all .txt files in backup directory
+          ansible.builtin.find:
+            paths: "{{ backup_dir }}"
+            patterns: "*.txt"  # Match all .txt files
+            recurse: no  # Only top-level files
+          register: backup_files
+
+        - name: Convert and copy each .txt file to .plist in Preferences to replace existing
+          ansible.builtin.shell: |
+            plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
+          loop: "{{ backup_files.files }}"
+          register: convert_result
+          changed_when: convert_result.rc == 0  # Mark as changed if successful
+
+        - name: Restart affected apps to apply changes
+          ansible.builtin.shell: "killall {{ item }}"
+          loop:
+            - "Dock"
+            - "Finder"
+            - "Terminal"
+            - "Raycast"
+          become: no
+          ignore_errors: yes  # Ignore if app isn’t running
+
