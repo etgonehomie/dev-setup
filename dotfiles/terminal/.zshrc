@@ -1,3 +1,6 @@
+#!/bin/zsh
+# Ensure we use ZSH and not bash to evaluate
+
 ####################################
 # homebrew command needed and order needed to prevent clashing
 ####################################
@@ -9,6 +12,7 @@
 # Linux Any => /home/linuxbrew/.linuxbrew
 # Windows Any => /home/linuxbrew/.linuxbrew
 # Check for Homebrew and set prefix dynamically
+
 if [[ -x /opt/homebrew/bin/brew ]]; then
   BREW_PREFIX=/opt/homebrew
 elif [[ -x /usr/local/bin/brew ]]; then
@@ -34,7 +38,17 @@ source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
 CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
 PERSONAL_DIR="~/git-projects/personal"
 WORK_DIR="~/git-projects/work"     
-OH_MY_POSH_THEME_PATH="$BREW_PREFIX/share/oh-my-posh/themes/zen-mod.toml"
+OH_MY_POSH_THEME_PATH="$BREW_PREFIX/share/oh-my-posh/themes/zen.toml"
+
+########################################################################
+# Set terminal theme
+# Change this to be .config/oh-my-posh/[theme.toml/yaml/json] if desired
+# Info for how to use this theming: https://ohmyposh.dev/docs
+########################################################################
+# Set oh-my-posh theme
+if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
+  eval "$(oh-my-posh init zsh --config $OH_MY_POSH_THEME_PATH)"
+fi
 
 ####################################
 # Set System ENV Variables
@@ -66,15 +80,6 @@ elif [[ $(pwd) == $WORK_DIR/* ]]; then
   export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_work"
 fi
 
-########################################################################
-# Change this to be .config/oh-my-posh/[theme.toml/yaml/json] if desired
-# Info for how to use this theming: https://ohmyposh.dev/docs
-########################################################################
-# Set oh-my-posh theme
-if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-  eval "$(oh-my-posh init zsh --config $OH_MY_POSH_THEME_PATH)"
-fi
-
 ####################################
 # Terminal Config Maintenance
 ####################################
@@ -99,7 +104,6 @@ alias re='refresh_function'
 ## brew update <-- updates the brew package insataller
 ## brew upgrade <-- updates packages that brew installed
 alias brew up='brew update && brew upgrade'
-
 
 ####################################
 # CLI - Random Aliases
@@ -172,4 +176,4 @@ alias gpull='pull'
 # ssh-add ~/.ssh/homeserver
 
 # Ansible
-alias arun='ansible-playbook ~/homeserver/main.yml'
+alias arun='ansible-playbook ~/homeserver/main.yml'eval "$(/opt/homebrew/bin/brew shellenv)"
