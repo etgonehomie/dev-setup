@@ -80,7 +80,7 @@ update_homebrew_paths() {
     fi
 }
 
-# Step 2: Update Homebrew
+# Step 3: Update Homebrew
 update_homebrew() {
     log "Updating Homebrew..."
     BREW_PREFIX=$(get_brew_prefix)
@@ -88,7 +88,7 @@ update_homebrew() {
     log "Homebrew update completed successfully."
 }
 
-# Step 3: Upgrade Homebrew
+# Step 4: Upgrade Homebrew
 upgrade_homebrew() {
     log "Upgrading Homebrew packages..."
     BREW_PREFIX=$(get_brew_prefix)
@@ -96,7 +96,7 @@ upgrade_homebrew() {
     log "Homebrew upgrade completed successfully."
 }
 
-# Step 4: Install Ansible
+# Step 5: Install Ansible
 install_ansible() {
     if ! brew list ansible &> /dev/null; then
         log "Ansible not found. Installing..."
@@ -108,9 +108,10 @@ install_ansible() {
     fi
 }
 
-# Step 1-4 Encapsulated all Ansible Pre-requisites
+# Step 1-5 Encapsulated all Ansible Pre-requisites
 get_ansible_prereqs() {
     install_homebrew
+    update_homebrew_paths
     update_homebrew
     upgrade_homebrew
     install_ansible
