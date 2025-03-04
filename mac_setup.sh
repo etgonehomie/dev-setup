@@ -48,6 +48,38 @@ install_homebrew() {
     log "Homebrew installation completed successfully."
 }
 
+# Step 2: Update homebrew PATH vars
+update_homebrew_paths() {
+    BREW_SHELLENV="$HOME/bin/brew shellenv"
+    ZSHRC="$HOME/.zshrc"
+
+
+    # Append the eval command to .zprofile if it’s not already there
+    echo "Appending Homebrew shellenv to $ZPROFILE..."
+    if ! grep -q "eval \"\$($BREW_SHELLENV)\"" "$ZPROFILE"; then
+        echo "eval \"\$($BREW_SHELLENV)\"" >> "$ZPROFILE" || {
+            echo "Error: Failed to write to $ZPROFILE. Check permissions."
+            exit 1
+        }
+        echo "Successfully appended to $ZPROFILE."
+    else
+        echo "Homebrew shellenv already present in $ZPROFILE, skipping append."
+    fi
+
+    # Evaluate the Homebrew shell environment in the current session
+    echo "Evaluating Homebrew shellenv in current session..."
+    if [ -x "$BREW_SHELLENV" ]; then
+        eval "$($BREW_SHELLENV)" || {
+            echo "Error: Failed to evaluate $BREW_SHELLENV."
+            exit 1
+        }
+        echo "Homebrew shellenv evaluated successfully."
+    else
+        echo "Error: $BREW_SHELLENV not found or not executable."
+        exit 1
+    fi
+}
+
 # Step 2: Update Homebrew
 update_homebrew() {
     log "Updating Homebrew..."
