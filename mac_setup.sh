@@ -9,7 +9,7 @@ set -e
 
 # Set variables
 PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/ansible/setup.yml" # Replace with your playbook URL
-PLAYBOOK_LOCAL_FILE="$HOME/setup.yml"    
+PLAYBOOK_LOCAL_FILEPATH="$HOME/setup.yml"    
 
 # Function to log messages
 log() {
@@ -88,7 +88,7 @@ get_ansible_playbook() {
     echo "Downloading Ansible playbook from $PLAYBOOK_URL..."
     echo "remote playbook: $PLAYBOOK_URL"
     echo "local file: $PLAYBOOK_LOCAL_FILEPATH"
-    curl -fsSL -o "$HOME/$PLAYBOOK_LOCAL_FILEPATH" "$PLAYBOOK_URL"
+    curl -fsSL -o "$PLAYBOOK_LOCAL_FILEPATH" "$PLAYBOOK_URL"
     if [[ $? -ne 0 ]]; then
         echo "Failed to download the playbook. Exiting."
     exit 1
