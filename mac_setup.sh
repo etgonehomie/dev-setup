@@ -9,7 +9,7 @@ set -e
 
 # Set variables
 PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/ansible/setup.yml" # Replace with your playbook URL
-PLAYBOOK_LOCAL_FILE="setup.yml"    
+PLAYBOOK_LOCAL_FILE="$HOME/setup.yml"    
 
 # Function to log messages
 log() {
@@ -87,8 +87,8 @@ get_ansible_prereqs() {
 get_ansible_playbook() {
     echo "Downloading Ansible playbook from $PLAYBOOK_URL..."
     echo "remote playbook: $PLAYBOOK_URL"
-    echo "local file: $PLAYBOOK_LOCAL_FILE"
-    curl -fsSL -o "~/$PLAYBOOK_LOCAL_FILE" "$PLAYBOOK_URL"
+    echo "local file: $PLAYBOOK_LOCAL_FILEPATH"
+    curl -fsSL -o "$HOME/$PLAYBOOK_LOCAL_FILEPATH" "$PLAYBOOK_URL"
     if [[ $? -ne 0 ]]; then
         echo "Failed to download the playbook. Exiting."
     exit 1
@@ -99,7 +99,7 @@ get_ansible_playbook() {
 run_ansible_playbook() {
     echo "Running Ansible playbook..."
     BREW_PREFIX=$(get_brew_prefix)
-    "$BREW_PREFIX/bin/ansible-playbook" "~/$PLAYBOOK_LOCAL_FILE"
+    "$BREW_PREFIX/bin/ansible-playbook" "$PLAYBOOK_LOCAL_FILEPATH"
 
     # Check if the playbook ran successfully
     if [[ $? -eq 0 ]]; then
