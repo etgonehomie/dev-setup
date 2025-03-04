@@ -103,7 +103,7 @@
     - name: Detect Homebrew prefix dynamically
       ansible.builtin.shell: "brew --prefix"
       environment:
-        PATH: "{{ ansible_env.PATH }}:opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin"  # Add likely Homebrew paths
+        PATH: "{{ ansible_env.PATH }}:/opt/homebrew/bin:/usr/local/bin:/home/linuxbrew/.linuxbrew/bin"  # Add likely Homebrew paths
       register: brew_prefix_result
       changed_when: false  # Read-only check
       become: no
