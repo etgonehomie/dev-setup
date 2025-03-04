@@ -143,8 +143,7 @@ get_ansible_playbook() {
 # Run the playbook
 run_ansible_playbook() {
     log "Running Ansible playbook..."
-    BREW_PREFIX=$(get_brew_prefix)
-    "$BREW_PREFIX/bin/ansible-playbook" "$PLAYBOOK_LOCAL_FILEPATH"
+    ansible-playbook "$PLAYBOOK_LOCAL_FILEPATH"
 
     # Check if the playbook ran successfully
     if [[ $? -eq 0 ]]; then
