@@ -2,7 +2,7 @@
 # This process is to automate setting up environment in macOS or linux
 # execute it by using the command `sh [full-pathname]`
 
-!/bin/bash
+#!/bin/bash
 
 # Exit immediately if a command exits with a non-zero status
 set -e
@@ -27,7 +27,7 @@ install_homebrew() {
     fi
 
     # Install Homebrew
-    sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     
     log "Homebrew installation completed successfully."
 }
