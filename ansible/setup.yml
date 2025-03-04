@@ -16,7 +16,7 @@
     # Source paths of dotfile templates
     zshenv_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/terminal/.zshenv"
     zshrc_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/terminal/.zshrc"
-    gitconfig__global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitconfig"
+    gitconfig_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitconfig"
     gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitignore_global"
     raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
     oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/oh-my-posh/themes/zen.toml"
@@ -117,7 +117,7 @@
         path: "{{ brew_prefix }}/share"
         mode: "go-w"  # Removes write for group and others (e.g., 775 -> 755)
         recurse: yes  # Equivalent to -R
-      become: yes  # Equivalent to sudo
+      # become: yes  # Equivalent to sudo
 
     # Update terminal files
     - name: Download and store the .zshenv file from GitHub
@@ -149,13 +149,13 @@
     - name: Modify .gitconfig file to use the global .gitignore_global
       git_config:
         name: core.excludesfile
-        value: "{{ gitignore_global_path }}/.gitignore_global"
+        value: "{{ git_global_local_dir }}/.gitignore_global"
         scope: global
 
     # Update terminal theming using oh-my-posh    
     - name: Create dir `~/[brew-prefix]/share/oh-my-posh/themes` if DNE. Place original oh-my-posh themes here
       file:
-        path: "{{ brew_prefix/share/oh-my-posh/themes }}"
+        path: "{{ brew_prefix }}/share/oh-my-posh/themes"
         state: directory
 
     - name: Copy oh-my-posh zen theme and place in brew dir
@@ -166,14 +166,25 @@
     # Can place my theme in a new dir in ~/.config/oh-my-posh and point the zshrc file to this
     # Leave the theme in brew dir and just store a reference to the themes in .config dir
     # This allows easy search of all themes if I want to change
-    - name: Create dir `~/.config/oh-my-posh` if DNE. Place ref of oh-my-posh themes here
-      file:
-        path: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
-        state: directory
+    # - name: Create dir `~/.config/oh-my-posh` if DNE. Place ref of oh-my-posh themes here
+    #   file:
+    #     path: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
+    #     state: directory
 
-    - name: Create a symbolic link for oh_my_posh themes dir
+    - name: Check if oh_my_posh themes local dir exists
+      stat:
+        path: "{{ oh_my_posh_themes_local_dir }}"
+      register: themes_dir_stat
+
+    - name: Remove oh_my_posh themes local dir if it exists
       file:
-        src: '{{ brew_prefix | trim }}/share/oh-my-posh/themes'
+        path: "{{ oh_my_posh_themes_local_dir }}"
+        state: absent
+      when: themes_dir_stat.stat.exists and themes_dir_stat.stat.isdir
+
+    - name: Create a symbolic link for oh_my_posh themes dir (create the dir as well)
+      file:
+        src: '{{ brew_prefix }}/share/oh-my-posh/themes'
         dest: "{{ oh_my_posh_themes_local_dir }}"
         state: link
     
@@ -263,4 +274,3 @@
 #             - "Raycast"
 #           become: no
 #           ignore_errors: yes  # Ignore if app isn’t running
-
