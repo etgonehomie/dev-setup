@@ -95,7 +95,7 @@
           homebrew_cask:
             name: "{{ item.package }}"
             state: present
-            ignore_errors:
+          ignore_errors: true
           loop: "{{ tasks_cask_dev }}"
 
     # Setup homebrew to work with CLI plugins
