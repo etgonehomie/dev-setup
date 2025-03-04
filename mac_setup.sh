@@ -16,6 +16,22 @@ log() {
     echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
 }
 
+# Helper to get Homebrew install dir
+get_brew_prefix() {
+    local os=$(uname -s)
+    local arch=$(uname -m)
+
+    if [ "$os" = "Darwin" ]; then  # macOS
+        if [ "$arch" = "arm64" ]; then
+            echo "/opt/homebrew"   # Apple Silicon
+        else
+            echo "/usr/local"      # Intel macOS
+        fi
+    else
+        echo "/home/linuxbrew/.linuxbrew"  # Linux, WSL, or anything else
+    fi
+}
+
 # Step 1: Install Homebrew
 install_homebrew() {
     log "Starting Homebrew installation..."
@@ -35,14 +51,16 @@ install_homebrew() {
 # Step 2: Update Homebrew
 update_homebrew() {
     log "Updating Homebrew..."
-    brew update
+    BREW_PREFIX=$(get_brew_prefix)
+    "$BREW_PREFIX/bin/brew" update
     log "Homebrew update completed successfully."
 }
 
 # Step 3: Upgrade Homebrew
 upgrade_homebrew() {
     log "Upgrading Homebrew packages..."
-    brew upgrade
+    BREW_PREFIX=$(get_brew_prefix)
+    "$BREW_PREFIX/bin/brew" upgrade
     log "Homebrew upgrade completed successfully."
 }
 
@@ -50,7 +68,8 @@ upgrade_homebrew() {
 install_ansible() {
     if ! brew list ansible &> /dev/null; then
         log "Ansible not found. Installing..."
-        brew install ansible
+        BREW_PREFIX=$(get_brew_prefix)
+        "$BREW_PREFIX/bin/brew" install ansible
         log "Ansible installation completed successfully."
     else
         log "Ansible is already installed."
