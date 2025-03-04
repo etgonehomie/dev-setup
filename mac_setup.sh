@@ -88,7 +88,7 @@ get_ansible_playbook() {
     echo "Downloading Ansible playbook from $PLAYBOOK_URL..."
     echo "remote playbook: $PLAYBOOK_URL"
     echo "local file: $PLAYBOOK_LOCAL_FILE"
-    curl -fsSL -o "$PLAYBOOK_LOCAL_FILE" "$PLAYBOOK_URL"
+    curl -fsSL -o "~/$PLAYBOOK_LOCAL_FILE" "$PLAYBOOK_URL"
     if [[ $? -ne 0 ]]; then
         echo "Failed to download the playbook. Exiting."
     exit 1
@@ -99,7 +99,7 @@ get_ansible_playbook() {
 run_ansible_playbook() {
     echo "Running Ansible playbook..."
     BREW_PREFIX=$(get_brew_prefix)
-    "$BREW_PREFIX/bin/ansible-playbook $PLAYBOOK_LOCAL_FILE"
+    "$BREW_PREFIX/bin/ansible-playbook" "~/$PLAYBOOK_LOCAL_FILE"
 
     # Check if the playbook ran successfully
     if [[ $? -eq 0 ]]; then
