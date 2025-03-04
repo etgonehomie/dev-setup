@@ -96,7 +96,7 @@ main() {
 
     # Execute steps in synchronous order
     # any functions called within a function execute synchronously
-    # get_ansible_prereqs     # Comment out for testing for now
+    get_ansible_prereqs     # Comment out for testing for now
     get_ansible_playbook
     run_ansible_playbook
     log "All steps completed successfully!"
