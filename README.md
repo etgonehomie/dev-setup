@@ -34,5 +34,5 @@ curl -fsSL https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/ma
 ```
 OR locally
 ```
-./mac_setup.sh
+bash ~/mac_setup.sh
 ```
