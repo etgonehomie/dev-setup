@@ -14,13 +14,12 @@
     oh_my_posh_theme_filename: 'zen.toml'
 
     # Source paths of dotfile templates
-    gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
-    gitconfig__global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    zshenv_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/terminal/.zshenv"
+    zshrc_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/terminal/.zshrc"
+    gitconfig__global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitconfig"
+    gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitignore_global"
     raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
-    zshrc_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
-    zshenv_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
-    oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/zen-mod.toml"
-    
+    oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/oh-my-posh/themes/zen.toml"
     
     tasks_brew_cli:
       - package: curl 
@@ -176,90 +175,90 @@
         dest: "{{ oh_my_posh_themes_local_dir }}"
         state: link
     
-    - name: Download and store the encrypted raycast config file from GitHub
-      get_url:
-        url: "{{ raycast_config_url }}"
-        dest: "{{ ansible_env.HOME }}"
-    - name: Import Raycast configuration
-      vars:
-        rayconfig_file: "{{ ansible_env.HOME }}/raycast_config.rayconfig"  # Name for exported file
-      tasks:
-        - name: Import Raycast configuration
-          ansible.builtin.script: |
-            #!/usr/bin/osascript
-            tell application "Raycast"
-              activate
-              tell application "System Events"
-                keystroke "," using {command down}  # Open Preferences
-                delay 1
-                keystroke "Import Preferences & Data"  # Type command
-                delay 1
-                keystroke return  # Trigger import
-                delay 2
-                keystroke "/Users/{{ ansible_user_id }}/{{ rayconfig_file }}"  # Set import path
-                delay 1
-                keystroke return  # Import
-                keystroke "Password"  # Input password for encrypted file
-                delay 1
-                keystroke return  # Finish import
-              end tell
-            end tell
-          args:
-            executable: /usr/bin/osascript
+#     - name: Download and store the encrypted raycast config file from GitHub
+#       get_url:
+#         url: "{{ raycast_config_url }}"
+#         dest: "{{ ansible_env.HOME }}"
+#     - name: Import Raycast configuration
+#       vars:
+#         rayconfig_file: "{{ ansible_env.HOME }}/raycast_config.rayconfig"  # Name for exported file
+#       tasks:
+#         - name: Import Raycast configuration
+#           ansible.builtin.script: |
+#             #!/usr/bin/osascript
+#             tell application "Raycast"
+#               activate
+#               tell application "System Events"
+#                 keystroke "," using {command down}  # Open Preferences
+#                 delay 1
+#                 keystroke "Import Preferences & Data"  # Type command
+#                 delay 1
+#                 keystroke return  # Trigger import
+#                 delay 2
+#                 keystroke "/Users/{{ ansible_user_id }}/{{ rayconfig_file }}"  # Set import path
+#                 delay 1
+#                 keystroke return  # Import
+#                 keystroke "Password"  # Input password for encrypted file
+#                 delay 1
+#                 keystroke return  # Finish import
+#               end tell
+#             end tell
+#           args:
+#             executable: /usr/bin/osascript
   
-  #TODO: Need to add this backup as a separate script 
-  # Store the output in a file that can be stored in git to be copied and imported
-- name: Backup safe macOS defaults including key bindings and hardware settings
-  vars_files:
-    - vars.yml
-  vars:
-    backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
-  tasks:
-    - name: Create backup directory
-      ansible.builtin.file:
-        path: "{{ backup_dir }}"
-        state: directory
-        mode: "0700"
+#   #TODO: Need to add this backup as a separate script 
+#   # Store the output in a file that can be stored in git to be copied and imported
+# - name: Backup safe macOS defaults including key bindings and hardware settings
+#   vars_files:
+#     - vars.yml
+#   vars:
+#     backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+#   tasks:
+#     - name: Create backup directory
+#       ansible.builtin.file:
+#         path: "{{ backup_dir }}"
+#         state: directory
+#         mode: "0700"
 
-    - name: Export safe defaults
-      ansible.builtin.shell: "defaults read {{ item }} > {{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
-      loop: "{{ safe_domains }}"
-      args:
-        creates: "{{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
-      become: no
+#     - name: Export safe defaults
+#       ansible.builtin.shell: "defaults read {{ item }} > {{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
+#       loop: "{{ safe_domains }}"
+#       args:
+#         creates: "{{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
+#       become: no
 
-    - name: Encrypt backups with Ansible Vault
-      ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item | replace('.', '_') }}.txt --vault-password-file ~/.vault_pass.txt"
-      loop: "{{ safe_domains }}"
-      become: no
-      when: ansible_vault_enabled | default(false)
+#     - name: Encrypt backups with Ansible Vault
+#       ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item | replace('.', '_') }}.txt --vault-password-file ~/.vault_pass.txt"
+#       loop: "{{ safe_domains }}"
+#       become: no
+#       when: ansible_vault_enabled | default(false)
 
-    # TODO: This is the actual import that is needed in this script
-    - name: Import macOS configs from backup directory
-      vars:
-        backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
-      tasks:
-        - name: Find all .txt files in backup directory
-          ansible.builtin.find:
-            paths: "{{ backup_dir }}"
-            patterns: "*.txt"  # Match all .txt files
-            recurse: no  # Only top-level files
-          register: backup_files
+#     # TODO: This is the actual import that is needed in this script
+#     - name: Import macOS configs from backup directory
+#       vars:
+#         backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+#       tasks:
+#         - name: Find all .txt files in backup directory
+#           ansible.builtin.find:
+#             paths: "{{ backup_dir }}"
+#             patterns: "*.txt"  # Match all .txt files
+#             recurse: no  # Only top-level files
+#           register: backup_files
 
-        - name: Convert and copy each .txt file to .plist in Preferences to replace existing
-          ansible.builtin.shell: |
-            plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
-          loop: "{{ backup_files.files }}"
-          register: convert_result
-          changed_when: convert_result.rc == 0  # Mark as changed if successful
+#         - name: Convert and copy each .txt file to .plist in Preferences to replace existing
+#           ansible.builtin.shell: |
+#             plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
+#           loop: "{{ backup_files.files }}"
+#           register: convert_result
+#           changed_when: convert_result.rc == 0  # Mark as changed if successful
 
-        - name: Restart affected apps to apply changes
-          ansible.builtin.shell: "killall {{ item }}"
-          loop:
-            - "Dock"
-            - "Finder"
-            - "Terminal"
-            - "Raycast"
-          become: no
-          ignore_errors: yes  # Ignore if app isn’t running
+#         - name: Restart affected apps to apply changes
+#           ansible.builtin.shell: "killall {{ item }}"
+#           loop:
+#             - "Dock"
+#             - "Finder"
+#             - "Terminal"
+#             - "Raycast"
+#           become: no
+#           ignore_errors: yes  # Ignore if app isn’t running
 
