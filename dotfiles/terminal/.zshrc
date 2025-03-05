@@ -54,6 +54,7 @@ fi
 # Set System ENV Variables
 ####################################
 export EDITOR=nvim
+export GIT_CONFIG_GLOBAL=~/.config/git
 
 # Set Terminal Home Starting
 cd ~
