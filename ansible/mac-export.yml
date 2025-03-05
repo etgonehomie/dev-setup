@@ -18,12 +18,12 @@
         mode: "0700"
 
     - name: Export safe defaults
-      ansible.builtin.shell: "defaults read {{ item }} > {{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
+      ansible.builtin.shell: "defaults read {{ item.domain }} > {{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
       loop: "{{ safe_domains }}"
       args:
-        creates: "{{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
+        creates: "{{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
 
     - name: Encrypt backups with Ansible Vault
-      ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item | replace('.', '_') }}.txt --vault-password-file {{ proj_dir }}/{{ ansible_pw_file }}"
+      ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt --vault-password-file {{ proj_dir }}/{{ ansible_pw_file }}"
       loop: "{{ safe_domains }}"
       when: ansible_vault_enabled | default(false)
