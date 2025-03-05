@@ -3,9 +3,6 @@
   hosts: localhost
   gather_facts: yes  # Gather system facts (note: your comment says "don't", but 'yes' enables it)
 
-# Download all ansible playbooks
-# - ansible.builtin.import_playbook: playbook-imports.yml 
-
 # Detect Homebrew prefix to use for all future playbooks
 - ansible.builtin.import_playbook: var-brew-prefix.yml
 

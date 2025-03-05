@@ -6,9 +6,11 @@
 # Set variables
 GIT_REPO="https://github.com/etgonehomie/dev-setup.git"
 PLAYBOOK_DIR="ansible"
-PLAYBOOK_FILENAME="main.yml"
+# PLAYBOOK_FILENAME="main.yml"
+PLAYBOOK_FILENAME="raycast-setup.yml"
 PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" # Replace with your playbook URL
-PLAYBOOK_LOCAL_FILEPATH="$HOME/$PLAYBOOK_FILENAME"  
+PLAYBOOK_LOCAL_FILEPATH="$HOME/$PLAYBOOK_FILENAME"
+VAULT_PW_FILE=".env"  
 
 # Function to log messages
 log() {
@@ -156,7 +158,8 @@ run_local_playbook() {
 run_remote_playbook() {
     # Run ansible-pull from GitHub
     log "Executing Ansible playbook from $REPO_URL..."
-    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME"
+    # ansible-pull -U "$GIT_REPO" "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME"
+    ansible-pull -U "$GIT_REPO" -i localhost, "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILE"
 
     if [ $? -eq 0 ]; then
         log "Ansible playbook completed successfully."

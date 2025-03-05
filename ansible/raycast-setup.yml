@@ -1,36 +1,41 @@
----
 - name: Setup raycast for ease of navigation
   hosts: localhost
+  vars_files:
+    - vault.yml
   vars:
-    raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/.gitignore_global"
+    rayconfig_filename: "config.rayconfig"  
+    raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/{{ rayconfig_filename }}"
+    raycast_local_filepath: "{{ ansible_env.HOME }}/{{ rayconfig_filename }}"
+    raycast_password: "{{ lookup('.env', 'RAYCAST_CONFIG_PASSWORD') }}"  # Fetch env var
   tasks:
     - name: Download and store the encrypted raycast config file from GitHub
       get_url:
         url: "{{ raycast_config_url }}"
-        dest: "{{ ansible_env.HOME }}"
+        dest: "{{ raycast_local_filepath }}"
     - name: Import Raycast configuration
-      vars:
-        rayconfig_file: "{{ ansible_env.HOME }}/raycast_config.rayconfig"  # Name for exported file
-      tasks:
-        - name: Import Raycast configuration
-          ansible.builtin.script: |
-            #!/usr/bin/osascript
-            tell application "Raycast"
-              activate
-              tell application "System Events"
-                keystroke "," using {command down}  # Open Preferences
-                delay 1
-                keystroke "Import Preferences & Data"  # Type command
-                delay 1
-                keystroke return  # Trigger import
-                delay 2
-                keystroke "/Users/{{ ansible_user_id }}/{{ rayconfig_file }}"  # Set import path
-                delay 1
-                keystroke return  # Import
-                keystroke "Password"  # Input password for encrypted file
-                delay 1
-                keystroke return  # Finish import
-              end tell
-            end tell
-          args:
-            executable: /usr/bin/osascript
+      ansible.builtin.script: |
+        #!/usr/bin/osascript
+        tell application "Raycast"
+          activate
+          tell application "System Events"
+            keystroke "Import Settings"  # Type command
+            delay 1
+            keystroke return  # Select command
+            delay 1
+            keystroke return  # Trigger import
+            delay 1
+            keystroke "{{ rayconfig_file }}"  # Use variable directly
+            delay 1
+            keystroke return  # Import
+            delay 1
+            keystroke "{{ raycast_pw }}"  # Use vault var
+            delay 1
+            keystroke return  # Finish import
+          end tell
+        end tell
+      args:
+        executable: /usr/bin/osascript
+    - name: Remove the Raycast config file
+      ansible.builtin.file:
+      path: "{{ raycast_local_filepath }}"
+      state: absent
