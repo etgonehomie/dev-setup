@@ -17,14 +17,21 @@
         state: directory
         mode: "0700"
 
-    - name: Export safe defaults
+    - name: Export mac safe defaults
       ansible.builtin.shell: "defaults read {{ item.domain }} > {{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
       loop: "{{ safe_domains }}"
       args:
         creates: "{{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
-      # ignore_errors: true  # Add this to skip failures
 
-    - name: Encrypt backups with Ansible Vault
-      ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt --vault-password-file {{ proj_dir }}/{{ ansible_pw_file }}"
-      loop: "{{ safe_domains }}"
-      when: ansible_vault_enabled | default(false)
+    - name: Find all .txt files in mac-backup-config directory
+      ansible.builtin.find:
+        paths: "{{ backup_dir }}"
+        patterns: "*.txt"
+        recurse: no
+      register: txt_files
+
+    - name: Encrypt .txt files with Ansible Vault
+      ansible.builtin.command:
+        cmd: "ansible-vault encrypt {{ item.path }} --vault-password-file {{ ansible-vault-pw.env }}"
+      loop: "{{ txt_files.files }}"
+      when: "'ANSIBLE_VAULT' not in (lookup('file', item.path, errors='ignore') | default('', true))"
