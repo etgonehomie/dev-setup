@@ -3,6 +3,8 @@
 	name = etgonehomie
 [init]
 	defaultBranch = main
+[core]
+	excludesFile = ~/.config/git/.gitignore_global
 [push]
 	autoSetupRemote = true
 [pull]

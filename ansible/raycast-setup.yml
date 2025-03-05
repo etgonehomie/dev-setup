@@ -3,40 +3,36 @@
   vars_files:
     - vault.yml
   vars:
-    rayconfig_filename: "config.rayconfig"  
+    rayconfig_filename: "raycast_config.rayconfig"  
+    applescript_filename: "raycast_import.applescript"
+    
+    applescript_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/main/{{ applescript_filename }}.j2"
     raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/main/{{ rayconfig_filename }}"
+
     raycast_local_filepath: "{{ ansible_env.HOME }}/{{ rayconfig_filename }}"
+    applescript_local_filepath: "{{ ansible_env.HOME }}/{{ applescript_filename }}"
   tasks:
     - name: Download and store the encrypted raycast config file from GitHub
       get_url:
         url: "{{ raycast_config_url }}"
         dest: "{{ raycast_local_filepath }}"
-    - name: Import Raycast configuration
-      ansible.builtin.script: |
-        #!/usr/bin/osascript
-        tell application "Raycast"
-          activate
-          tell application "System Events"
-            keystroke space using {command down} # open up command pallete
-            delay 1
-            keystroke "Import Settings"  # Type command
-            delay 1
-            keystroke return  # Select command
-            delay 1
-            keystroke return  # Trigger import
-            delay 1
-            keystroke "{{ rayconfig_file }}"  # Use variable directly
-            delay 1
-            keystroke return  # Import
-            delay 1
-            keystroke "{{ raycast_pw }}"  # Use vault var
-            delay 1
-            keystroke return  # Finish import
-          end tell
-        end tell
-      args:
-        executable: /usr/bin/osascript
+
+    - name: Generate Raycast import script from template
+      ansible.builtin.template:
+        src: {{ applescript_url }}
+        dest: /tmp/{{ applescript_filename }}
+        mode: '0700'  # Executable permissions
+      register: script_file
+
+    - name: Run Raycast import script
+      ansible.builtin.command: /usr/bin/osascript {{ script_file.dest }}
+
     - name: Remove the Raycast config file
       ansible.builtin.file:
-      path: "{{ raycast_local_filepath }}"
-      state: absent
+        path: "{{ raycast_local_filepath }}"
+        state: absent
+
+    - name: Clean up temporary script
+      ansible.builtin.file:
+        path: "{{ script_file.dest }}"
+        state: absent

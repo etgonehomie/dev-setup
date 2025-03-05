@@ -26,11 +26,3 @@
       get_url:
         url: "{{ gitignore_global_git_url }}"
         dest: "{{ git_global_local_dir }}/.gitignore_global"
-
-    - name: Modify .gitconfig file to use the global .gitignore_global
-      git_config:
-        name: core.excludesfile
-        value: "{{ git_global_local_dir }}/.gitignore_global"
-        scope: global
-
-   
