@@ -3,6 +3,7 @@
   hosts: localhost
   vars:
     backup_dir: " {{ ansible_env.HOME }}/git-projects/personal/dev-setup/ansible/macos_config_backup"
+    ansible_pw_file: "ansible-vault-pw.env"
   tasks:
     - name: Find all .txt files in mac-backup-config directory
       ansible.builtin.find:
@@ -11,19 +12,27 @@
         recurse: no
       register: backup_files
 
-    - name: Convert and copy each .txt file to .plist in Preferences to replace existing
-      ansible.builtin.shell: |
-        plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
+    - name: Decrypt each file with Ansible Vault
+      ansible.builtin.command:
+        cmd: "ansible-vault decrypt {{ item.path }} --vault-password-file {{ vault_password_file }}"
       loop: "{{ backup_files.files }}"
-      register: convert_result
-      changed_when: convert_result.rc == 0  # Mark as changed if successful
+      when: "'ANSIBLE_VAULT' in (lookup('file', item.path, errors='ignore') | default('', true))"
+      register: decrypt_result
+      changed_when: decrypt_result.rc == 0
+      ignore_errors: true
 
-    - name: Restart affected apps to apply changes
-      ansible.builtin.shell: "killall {{ item }}"
-      loop:
-        - "Dock"
-        - "Finder"
-        - "Terminal"
-        - "Raycast"
-      become: no
-      ignore_errors: yes  # Ignore if app isn’t running
+    # - name: Convert and copy each .txt file to .plist in Preferences to replace existing
+    #   ansible.builtin.shell: |
+    #     plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
+    #   loop: "{{ backup_files.files }}"
+    #   register: convert_result
+    #   changed_when: convert_result.rc == 0  # Mark as changed if successful
+
+    # - name: Restart affected apps to apply changes
+    #   ansible.builtin.shell: "killall {{ item }}"
+    #   loop:
+    #     - "Dock"
+    #     - "Finder"
+    #     - "Terminal"
+    #     - "Raycast"
+    #   ignore_errors: yes  # Ignore if app isn’t running

@@ -30,19 +30,19 @@
         recurse: no
       register: txt_files
 
-    # - name: Encrypt .txt files with Ansible Vault
-    #   ansible.builtin.command:
-    #     cmd: "ansible-vault encrypt {{ item.path }} --vault-password-file {{ proj_dir}}/{{ ansible_pw_file }}"
-    #   loop: "{{ txt_files.files }}"
-    #   when: "'ANSIBLE_VAULT' not in (lookup('file', item.path, errors='ignore') | default('', true))"
+    - name: Encrypt .txt files with Ansible Vault
+      ansible.builtin.command:
+        cmd: "ansible-vault encrypt {{ item.path }} --vault-password-file {{ proj_dir}}/{{ ansible_pw_file }}"
+      loop: "{{ txt_files.files }}"
+      when: "'ANSIBLE_VAULT' not in (lookup('file', item.path, errors='ignore') | default('', true))"
 
-    # - name: MIGRATE {{ backup_dir }} --> {{ proj_dir }}/ansible
-    #   ansible.builtin.debug:
-    #     msg: "This is so that the dev setup script works"
+    - name: MIGRATE {{ backup_dir }} --> {{ proj_dir }}/ansible
+      ansible.builtin.debug:
+        msg: "This is so that the dev setup script works"
 
-    # - name: Move source directory to destination
-    #   ansible.builtin.shell: "mv {{ backup_dir }} {{ proj_dir }}/ansible"
-    #   args:
-    #     removes: "{{ backup_dir }}"  # Only run if source exists
-    #   register: move_result
-    #   changed_when: move_result.rc == 0  # Mark as changed if successful
+    - name: Move source directory to destination
+      ansible.builtin.shell: "mv {{ backup_dir }} {{ proj_dir }}/ansible"
+      args:
+        removes: "{{ backup_dir }}"
+      register: move_result
+      changed_when: move_result.rc == 0  # Mark as changed if successful
