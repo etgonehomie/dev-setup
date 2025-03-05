@@ -7,7 +7,7 @@
     - mac-setup-vars.yml
   vars:
     proj_dir: " {{ ansible_env.HOME }}/git-projects/personal/dev-setup"
-    backup_dir: "{{ proj_dir}}/ansible/macos_config_backup"
+    backup_dir: "{{ proj_dir }}/ansible/macos_config_backup"
     ansible_pw_file: "ansible-vault-pw.env"
   tasks:
   # Store the output in a file that can be stored in git to be copied and imported
