@@ -19,5 +19,5 @@
     # - name: Setup raycast for dev station
       # ansible.builtin.import_playbook: raycast-setup.yml
     
-    - name: Setup mac defaults for dev station 
-      ansible.builtin.import_playbook: mac-setup.yml
+    # - name: Setup mac defaults for dev station 
+    #   ansible.builtin.import_playbook: mac-setup.yml
