@@ -7,6 +7,8 @@
     - mac-setup-vars.yml
   vars:
     backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+    proj_dir: " {{ ansible_env.HOME }}/git-projects/personal/dev-setup"
+    ansible_pw_file: "ansible-vault-pw.env"
   tasks:
   # Store the output in a file that can be stored in git to be copied and imported
     - name: Create backup directory
@@ -20,10 +22,8 @@
       loop: "{{ safe_domains }}"
       args:
         creates: "{{ backup_dir }}/{{ item | replace('.', '_') }}.txt"
-      become: no
 
     - name: Encrypt backups with Ansible Vault
-      ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item | replace('.', '_') }}.txt --vault-password-file ~/.vault_pass.txt"
+      ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item | replace('.', '_') }}.txt --vault-password-file {{ proj_dir }}/{{ ansible_pw_file }}"
       loop: "{{ safe_domains }}"
-      become: no
       when: ansible_vault_enabled | default(false)
