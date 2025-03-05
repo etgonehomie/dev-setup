@@ -8,8 +8,7 @@
     oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/oh-my-posh/themes/zen.toml"
 
     # Destination system paths
-    dotfile_local_dir: "{{ ansible_env.HOME }}/.config"    
-    oh_my_posh_themes_local_dir: "{{ dotfile_local_dir }}/oh-my-posh/themes"
+    oh_my_posh_themes_local_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
     oh_my_posh_theme_filename: 'zen.toml'
 
   tasks:

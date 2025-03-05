@@ -7,8 +7,8 @@
     gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitignore_global"
 
     # Destination system paths
-    dotfile_local_dir: "{{ ansible_env.HOME }}/.config"
-    git_global_local_dir: "{{ dotfile_local_dir }}/git/.gitignore_global"
+    git_global_local_dir: "{{ ansible_env.HOME }}/.config/git"
+    # git_global_local_dir: "{{ dotfile_local_dir }}/git/.gitignore_global"
 
   tasks:
     # Update global git file
@@ -20,12 +20,12 @@
     - name: Download and create the global .gitconfig file from GitHub
       get_url:
         url: "{{ gitconfig_global_git_url }}"
-        dest: "{{ git_global_local_dir }}"
+        dest: "{{ git_global_local_dir }}/.gitconfig"
 
     - name: Download and create the global .gitignore file from GitHub
       get_url:
         url: "{{ gitignore_global_git_url }}"
-        dest: "{{ git_global_local_dir }}"
+        dest: "{{ git_global_local_dir }}/.gitignore_global"
 
     - name: Modify .gitconfig file to use the global .gitignore_global
       git_config:
