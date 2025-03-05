@@ -8,8 +8,9 @@
 set -e
 
 # Set variables
-PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/ansible/setup.yml" # Replace with your playbook URL
-PLAYBOOK_LOCAL_FILEPATH="$HOME/main.yml"    
+PLAYBOOK_FILENAME="main.yml"
+PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/ansible/$PLAYBOOK_FILENAME" # Replace with your playbook URL
+PLAYBOOK_LOCAL_FILEPATH="$HOME/$PLAYBOOK_FILENAME"  
 
 # Function to log messages
 log() {
