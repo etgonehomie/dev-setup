@@ -17,9 +17,14 @@
         url: "{{ raycast_config_url }}"
         dest: "{{ raycast_local_filepath }}"
 
+    - name: Download Applescript Raycast Input template from GitHub
+      get_url:
+        url: "{{ applescript_url }}"
+        dest: "/tmp/{{ applescript_filename }}.j2"
+
     - name: Generate Raycast import script from template
       ansible.builtin.template:
-        src: "{{ applescript_url }}"
+        src: "/tmp/{{ applescript_filename }}.j2"
         dest: "/tmp/{{ applescript_filename }}"
         mode: '0700'  # Executable permissions
       register: script_file
@@ -30,6 +35,11 @@
     - name: Remove the Raycast config file
       ansible.builtin.file:
         path: "{{ raycast_local_filepath }}"
+        state: absent
+
+    - name: Remove Jinja applescript
+      ansible.builtin.file:
+        path: "{{ script_file.dest }}.j2"
         state: absent
 
     - name: Clean up temporary script
