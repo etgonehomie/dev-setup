@@ -11,30 +11,32 @@
       get_url:
         url: "{{ raycast_config_url }}"
         dest: "{{ raycast_local_filepath }}"
-    # - name: Import Raycast configuration
-    #   ansible.builtin.script: |
-    #     #!/usr/bin/osascript
-    #     tell application "Raycast"
-    #       activate
-    #       tell application "System Events"
-    #         keystroke "Import Settings"  # Type command
-    #         delay 1
-    #         keystroke return  # Select command
-    #         delay 1
-    #         keystroke return  # Trigger import
-    #         delay 1
-    #         keystroke "{{ rayconfig_file }}"  # Use variable directly
-    #         delay 1
-    #         keystroke return  # Import
-    #         delay 1
-    #         keystroke "{{ raycast_pw }}"  # Use vault var
-    #         delay 1
-    #         keystroke return  # Finish import
-    #       end tell
-    #     end tell
-    #   args:
-    #     executable: /usr/bin/osascript
-    # - name: Remove the Raycast config file
-    #   ansible.builtin.file:
-    #   path: "{{ raycast_local_filepath }}"
-    #   state: absent
+    - name: Import Raycast configuration
+      ansible.builtin.script: |
+        #!/usr/bin/osascript
+        tell application "Raycast"
+          activate
+          tell application "System Events"
+            keystroke space using {command down} # open up command pallete
+            delay 1
+            keystroke "Import Settings"  # Type command
+            delay 1
+            keystroke return  # Select command
+            delay 1
+            keystroke return  # Trigger import
+            delay 1
+            keystroke "{{ rayconfig_file }}"  # Use variable directly
+            delay 1
+            keystroke return  # Import
+            delay 1
+            keystroke "{{ raycast_pw }}"  # Use vault var
+            delay 1
+            keystroke return  # Finish import
+          end tell
+        end tell
+      args:
+        executable: /usr/bin/osascript
+    - name: Remove the Raycast config file
+      ansible.builtin.file:
+      path: "{{ raycast_local_filepath }}"
+      state: absent
