@@ -1,12 +1,8 @@
-# Developer Setup Automation
-# This process is to automate setting up environment in macOS or linux
-# execute it by using the command `sh [full-pathname]`
-
 #!/bin/bash
 
-# Exit immediately if a command exits with a non-zero status
-set -e
-
+# Developer Setup Automation
+# This process is to automate setting up environment in macOS or linux
+# execute it by using the command `bash [full-pathname]`
 # Set variables
 PLAYBOOK_FILENAME="main.yml"
 PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/ansible/$PLAYBOOK_FILENAME" # Replace with your playbook URL
@@ -130,7 +126,7 @@ get_ansible_prereqs() {
     install_ansible
 }
 # Step 5: Download Ansible Playbook
-get_ansible_playbook() {
+get_playbook() {
     log "Downloading Ansible playbook from $PLAYBOOK_URL..."
     log "remote playbook: $PLAYBOOK_URL"
     log "local file: $PLAYBOOK_LOCAL_FILEPATH"
@@ -142,7 +138,7 @@ get_ansible_playbook() {
 }
 
 # Run the playbook
-run_ansible_playbook() {
+run_local_playbook() {
     log "Running Ansible playbook..."
     ansible-playbook "$PLAYBOOK_LOCAL_FILEPATH"
 
@@ -155,6 +151,19 @@ run_ansible_playbook() {
     fi    
 }
 
+run_remote_playbook() {
+    # Run ansible-pull from GitHub
+    log "Executing Ansible playbook from $REPO_URL..."
+    ansible-pull -U "$PLAYBOOK_URL"
+
+    if [ $? -eq 0 ]; then
+        log "Ansible playbook completed successfully."
+    else
+        log "Error: Ansible playbook failed."
+        exit 1
+    fi
+}
+
 # Main script execution
 main() {
     log "Setting up new dev workstation..."
@@ -162,8 +171,12 @@ main() {
     # Execute steps in synchronous order
     # any functions called within a function execute synchronously
     get_ansible_prereqs     # Comment out for testing for now
-    get_ansible_playbook
-    run_ansible_playbook
+    
+    # Choose whether to run via local or remote playbook
+    # get_playbook
+    # run_local_playbook
+
+    run_remote_playbook
     log "All steps completed successfully!"
 }
 
