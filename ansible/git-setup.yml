@@ -12,7 +12,7 @@
 
   tasks:
     # Update global git file
-    - name: Create dir `~/.config/git` if DNE. Place all git dotfiles here
+    - name: Ensure git config dir exists. Place all git dotfiles here
       file:
         path: "{{ git_global_local_dir }}"
         state: directory
