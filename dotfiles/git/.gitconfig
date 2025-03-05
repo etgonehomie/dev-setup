@@ -8,7 +8,7 @@
 [pull]
 	rebase = true
 [credential]
-  helper = osxkeychain
+	helper = osxkeychain
 [merge]
-  tool = vimdiff
-  conflictstyle = diff3
+	tool = vimdiff
+	conflictstyle = diff3
