@@ -6,7 +6,7 @@
     rayconfig_filename: "raycast_config.rayconfig"  
     applescript_filename: "raycast_import.applescript"
     
-    applescript_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/main/{{ applescript_filename }}.j2"
+    applescript_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/{{ applescript_filename }}.j2"
     raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/main/{{ rayconfig_filename }}"
 
     raycast_local_filepath: "{{ ansible_env.HOME }}/{{ rayconfig_filename }}"
