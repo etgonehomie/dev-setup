@@ -15,8 +15,6 @@ safe_domains:
     description: "Terminal settings: profile, font, colors, window size"
 
   # Input Devices
-  - domain: "com.apple.keyboard"
-    description: "Keyboard settings: repeat rate, delay, function key behavior"
   - domain: "com.apple.HIToolbox"
     description: "System keyboard shortcuts: Spotlight, input source switching"
   - domain: "com.apple.symbolichotkeys"
@@ -35,17 +33,7 @@ safe_domains:
     description: "Mission Control Spaces: arrangement, keyboard shortcuts"
 
   # Display/Power Settings
-  - domain: "com.apple.PowerManagement"
-    description: "Power/battery settings: sleep timers, wake-on-LAN"
-  - domain: "com.apple.CoreBrightness"
-    description: "Night Shift: schedule, color temperature settings"
   - domain: "com.apple.BezelServices"
     description: "Display/keyboard brightness: auto-brightness, levels"
-
-  # Other Settings
-  - domain: "com.apple.desktopservices"
-    description: "Desktop/Finder behavior: file placement, .DS_Store settings"
-  - domain: "com.apple.universalaccess"
-    description: "Accessibility: zoom, contrast, key bindings"
   - domain: "com.apple.notificationcenterui"
     description: "Notification Center: Do Not Disturb, notification style"

@@ -22,6 +22,7 @@
       loop: "{{ safe_domains }}"
       args:
         creates: "{{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
+      # ignore_errors: true  # Add this to skip failures
 
     - name: Encrypt backups with Ansible Vault
       ansible.builtin.shell: "ansible-vault encrypt {{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt --vault-password-file {{ proj_dir }}/{{ ansible_pw_file }}"
