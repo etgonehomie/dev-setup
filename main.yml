@@ -1,0 +1,21 @@
+---
+- name: Master playbook to set up development station
+  hosts: localhost
+  gather_facts: yes  # Gather system facts (note: your comment says "don't", but 'yes' enables it)
+
+# Download all ansible playbooks
+- ansible.builtin.import_playbook: playbook-imports.yml 
+
+# Detect Homebrew prefix to use for all future playbooks
+- ansible.builtin.import_playbook: var-brew-prefix.yml
+
+# Setup dev station using Homebrew
+- ansible.builtin.import_playbook: homebrew-setup.yml
+
+# Setup terminal and git for dev station
+- ansible.builtin.import_playbook: terminal-setup.yml
+- ansible.builtin.import_playbook: git-setup.yml
+
+# Setup terminal for dev station
+# - ansible.builtin.import_playbook: raycast-setup.yml
+# - ansible.builtin.import_playbook: mac-setup.yml
