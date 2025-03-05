@@ -19,8 +19,8 @@
 
     - name: Generate Raycast import script from template
       ansible.builtin.template:
-        src: {{ applescript_url }}
-        dest: /tmp/{{ applescript_filename }}
+        src: "{{ applescript_url }}"
+        dest: "/tmp/{{ applescript_filename }}"
         mode: '0700'  # Executable permissions
       register: script_file
 
