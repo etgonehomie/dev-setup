@@ -32,5 +32,3 @@
         name: core.excludesfile
         value: "{{ git_global_local_dir }}/.gitignore_global"
         scope: global
-
-   

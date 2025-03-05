@@ -7,10 +7,10 @@
 GIT_REPO="https://github.com/etgonehomie/dev-setup.git"
 PLAYBOOK_DIR="ansible"
 # PLAYBOOK_FILENAME="main.yml"
-PLAYBOOK_FILENAME="raycast-setup.yml"
+PLAYBOOK_FILENAME="mac-setup.yml"
 PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" # Replace with your playbook URL
 PLAYBOOK_LOCAL_FILEPATH="$HOME/$PLAYBOOK_FILENAME"
-VAULT_PW_FILE=".env"  
+VAULT_PW_FILEPATH="$HOME/git-projects/personal/dev-setup/.env"  
 
 # Function to log messages
 log() {
@@ -148,10 +148,10 @@ run_local_playbook() {
 
     # Check if the playbook ran successfully
     if [[ $? -eq 0 ]]; then
-      log "Playbook executed successfully!"
+        log "Playbook executed successfully!"
     else
-      log "An error occurred while running the playbook."
-      exit 1
+        log "An error occurred while running the playbook."
+        exit 1
     fi    
 }
 
@@ -159,7 +159,7 @@ run_remote_playbook() {
     # Run ansible-pull from GitHub
     log "Executing Ansible playbook from $REPO_URL..."
     # ansible-pull -U "$GIT_REPO" "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME"
-    ansible-pull -U "$GIT_REPO" -i localhost, "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILE"
+    ansible-pull -U "$GIT_REPO" -i localhost, "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILEPATH"
 
     if [ $? -eq 0 ]; then
         log "Ansible playbook completed successfully."
@@ -175,7 +175,7 @@ main() {
 
     # Execute steps in synchronous order
     # any functions called within a function execute synchronously
-    get_ansible_prereqs     # Comment out for testing for now
+    # get_ansible_prereqs     # Comment out for testing for now
     
     # Choose whether to run via local or remote playbook
     # get_playbook
