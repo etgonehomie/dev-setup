@@ -1,0 +1,34 @@
+---
+- name: Setup mac configuration settings
+  hosts: localhost
+  vars_files:
+    - mac-setup-vars.yml
+  tasks:
+    # TODO: This is the actual import that is needed in this script
+    - name: Import macOS configs from backup directory
+      vars:
+        backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+      tasks:
+        - name: Find all .txt files in backup directory
+          ansible.builtin.find:
+            paths: "{{ backup_dir }}"
+            patterns: "*.txt"  # Match all .txt files
+            recurse: no  # Only top-level files
+          register: backup_files
+
+        - name: Convert and copy each .txt file to .plist in Preferences to replace existing
+          ansible.builtin.shell: |
+            plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
+          loop: "{{ backup_files.files }}"
+          register: convert_result
+          changed_when: convert_result.rc == 0  # Mark as changed if successful
+
+        - name: Restart affected apps to apply changes
+          ansible.builtin.shell: "killall {{ item }}"
+          loop:
+            - "Dock"
+            - "Finder"
+            - "Terminal"
+            - "Raycast"
+          become: no
+          ignore_errors: yes  # Ignore if app isn’t running

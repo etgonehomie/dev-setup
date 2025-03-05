@@ -1,0 +1,23 @@
+---
+- name: Master playbook to set up development station
+  hosts: localhost
+  gather_facts: yes  # don't gather system facts
+  # become: true  # Run tasks with sudo
+  tasks:
+    - name: Detect Homebrew prefix to use for all future playbooks
+      ansible.builtin.import_playbook: var-brew-prefix.yml
+
+    - name: Setup dev station using Homebrew
+      ansible.builtin.import_playbook: homebrew-setup.yml
+      
+    - name: Setup terminal for dev station
+      ansible.builtin.import_playbook: terminal-setup.yml
+    
+    - name: Setup git for dev station 
+      ansible.builtin.import_playbook: git-setup.yml
+    
+    # - name: Setup raycast for dev station
+      # ansible.builtin.import_playbook: raycast-setup.yml
+    
+    - name: Setup mac defaults for dev station 
+      ansible.builtin.import_playbook: mac-setup.yml
