@@ -6,8 +6,8 @@
   vars_files:
     - mac-setup-vars.yml
   vars:
+    backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
     proj_dir: " {{ ansible_env.HOME }}/git-projects/personal/dev-setup"
-    backup_dir: "{{ proj_dir }}/ansible/macos_config_backup"
     ansible_pw_file: "ansible-vault-pw.env"
   tasks:
   # Store the output in a file that can be stored in git to be copied and imported
@@ -35,3 +35,7 @@
         cmd: "ansible-vault encrypt {{ item.path }} --vault-password-file {{ proj_dir}}/{{ ansible_pw_file }}"
       loop: "{{ txt_files.files }}"
       when: "'ANSIBLE_VAULT' not in (lookup('file', item.path, errors='ignore') | default('', true))"
+
+    - name: MIGRATE {{ backup_dir }} --> {{ proj_dir }}/ansible
+      ansible.builtin.debug:
+        msg: "This is so that the dev setup script works"
