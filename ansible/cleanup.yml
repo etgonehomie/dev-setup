@@ -1,0 +1,8 @@
+---
+- name: Cleanup the temp directory
+  hosts: localhost
+  tasks:
+  - name: Remove temporary repo directory at {{ temp_dir }}
+    ansible.builtin.file:
+      path: "{{ temp_dir }}"
+      state: absent

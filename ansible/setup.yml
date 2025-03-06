@@ -1,0 +1,9 @@
+---
+- name: Setup the data needed to setup dev environment 
+  hosts: localhost
+  tasks:
+    - name: Clone the GitHub repo locally
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ temp_dir }}"
+        version: main  # define branch

@@ -6,16 +6,9 @@
     repo_url: "https://github.com/etgonehomie/dev-setup.git"
     temp_dir: "/tmp/dev-setup"
     # local_backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
-  tasks:
-    - name: Clone the GitHub repo locally
-      ansible.builtin.git:
-        repo: "{{ repo_url }}"
-        dest: "{{ temp_dir }}"
-        version: main  # define branch
-      become: no
 
 # Run all the child playbooks
-
+- ansible.builtin.import_playbook: setup.yml
 # Detect Homebrew prefix to use for all future playbooks
 # - ansible.builtin.import_playbook: var-brew-prefix.yml
 
@@ -29,3 +22,6 @@
 # # Setup terminal for dev station
 # - ansible.builtin.import_playbook: raycast-setup.yml
 - ansible.builtin.import_playbook: mac-setup.yml
+- ansible.builtin.import_playbook: cleanup.yml
+
+
