@@ -1,3 +1,10 @@
 ---
-repo_url: "https://github.com/etgonehomie/dev-setup.git"
+# Git vars
+git_username: "etgonehomie"
+repo_name: "dev-setup"
+branch: "main"
+repo_url: "https://github.com/{{ git_username }}/{{ repo_name }}.git"
+raw_repo_url: "https://raw.githubusercontent.com/{{ git_username }}/{{ repo_name }}/refs/heads/{{ branch }}"
+
+# Ansible clone dir vars
 playbook_dir: "{{ lookup('env', 'ANSIBLE_PULL_CACHE') | default(ansible_playbook_dir) }}"

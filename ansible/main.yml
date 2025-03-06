@@ -3,9 +3,9 @@
   hosts: localhost
   gather_facts: yes
   tasks:
-    - name: Debug pull directory
+    - name: Show pull directory
       ansible.builtin.debug:
-        msg: "Using pull dir: {{ pull_dir }}"
+        msg: "Ansible successfully cloned repo into pull dir: {{ playbook_dir }}"
 
 # Run all the child playbooks
 # Detect Homebrew prefix to use for all future playbooks
@@ -13,7 +13,7 @@
 
 # # Setup terminal and git for dev station
 # - ansible.builtin.import_playbook: terminal-setup.yml
-# - ansible.builtin.import_playbook: git-setup.yml
+- ansible.builtin.import_playbook: git-setup.yml
 
 # # Setup dev station using Homebrew
 # - ansible.builtin.import_playbook: homebrew-setup.yml

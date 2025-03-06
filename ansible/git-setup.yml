@@ -3,26 +3,29 @@
   hosts: localhost
   vars:
     # Source paths of dotfile templates
-    gitconfig_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitconfig"
-    gitignore_global_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/git/.gitignore_global"
+    gitconfig_repo_url: "{{ playbook_dir }}/dotfiles/git/.gitconfig"
+    gitignore_repo_url: "{{ playbook_dir }}/dotfiles/git/.gitignore_global"
 
     # Destination system paths
-    git_global_local_dir: "{{ ansible_env.HOME }}/.config/git"
-    # git_global_local_dir: "{{ dotfile_local_dir }}/git/.gitignore_global"
+    git_local_dir: "{{ ansible_env.HOME }}/.config/git"
 
   tasks:
     # Update global git file
-    - name: Ensure git config dir exists. Place all git dotfiles here
+    - name: Ensure global git config dir exists at {{ git_local_dir }}
       file:
-        path: "{{ git_global_local_dir }}"
+        path: "{{ git_local_dir }}"
         state: directory
 
-    - name: Download and create the global .gitconfig file from GitHub
-      get_url:
-        url: "{{ gitconfig_global_git_url }}"
-        dest: "{{ git_global_local_dir }}/.gitconfig"
-
-    - name: Download and create the global .gitignore file from GitHub
-      get_url:
-        url: "{{ gitignore_global_git_url }}"
-        dest: "{{ git_global_local_dir }}/.gitignore_global"
+    - name: Copy .gitconfig from {{ playbook_dir }} to {{ git_local_di }}
+      ansible.builtin.copy:
+        src: "{{ gitconfig_repo_url }}"
+        dest: "{{ git_local_dir }}/.gitconfig"
+        remote_src: yes
+        force: yes
+    
+    - name: Copy .gitignore_global from {{ playbook_dir }} to {{ git_local_di }}
+      ansible.builtin.copy:
+        src: "{{ gitignore_repo_url }}"
+        dest: "{{ git_local_dir }}/.gitignore_global"
+        remote_src: yes
+        force: yes

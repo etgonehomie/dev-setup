@@ -1,53 +1,51 @@
 ---
 - name: Use Homebrew to Install CLI & Dev tools
   hosts: localhost
+  vars_files:
+    - vars.yml
   vars:
     # Source paths of dotfile templates
-    zshenv_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/terminal/.zshenv"
-    zshrc_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/terminal/.zshrc"
-    oh_my_posh_theme_git_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/dotfiles/oh-my-posh/themes/zen.toml"
+    zshenv_repo_url: "{{ playbook_dir }}/dotfiles/terminal/.zshenv"
+    zshrc_repo_url: "{{ playbook_dir }}/dotfiles/terminal/.zshrc"
+    theme_filename: 'zen.toml'
+    theme_repo_url: "{{ playbook_dir}}/dotfiles/oh-my-posh/themes/{{ theme_filename }}"
 
     # Destination system paths
-    oh_my_posh_themes_local_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
-    oh_my_posh_theme_filename: 'zen.toml'
+    themes_local_dir: "~/{{ brew-prefix }}/share/oh-my-posh/themes"
+    themes_symlink_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
 
   tasks:
     # Update terminal config files
-    - name: Download and store the .zshenv file from GitHub
-      get_url:
-        url: "{{ zshenv_git_url }}"
-        dest: "{{ ansible_env.HOME }}"
+    - name: Copy .zshenv from {{ playbook_dir }} to {{ ansible_env.HOME }}
+      ansible.builtin.copy:
+        src: "{{ zshenv_repo_url }}"
+        dest: "{{ ansible_env.HOME }}/.zshenv"
+        remote_src: yes
+        force: yes
 
-    - name: Download and store the .zshrc file from GitHub
-      get_url:
-        url: "{{ zshrc_git_url }}"
-        dest: "{{ ansible_env.HOME }}"
+    - name: Copy .zshrc from {{ playbook_dir }} to {{ ansible_env.HOME }}
+      ansible.builtin.copy:
+        src: "{{ zshrc_repo_url }}"
+        dest: "{{ ansible_env.HOME }}/.zshrc"
+        remote_src: yes
+        force: yes
   
     # Update terminal theming using oh-my-posh    
-    - name: Create dir `~/[brew-prefix]/share/oh-my-posh/themes` if DNE. Place original oh-my-posh themes here
+    - name: Ensure terminal themes dir exists at {{ themes_local_dir }}
       file:
-        path: "{{ brew_prefix }}/share/oh-my-posh/themes"
+        path: "{{ themes_local_dir }}"
         state: directory
 
-    - name: Copy oh-my-posh zen theme and place in brew dir
-      get_url:
-        url: '{{ oh_my_posh_theme_git_url }}'
-        dest: '{{ brew_prefix }}/share/oh-my-posh/themes/{{ oh_my_posh_theme_filename }}'
+    - name: Copy terminal theme from {{ playbook_dir }} to {{ themes_local_dir }}
+      ansible.builtin.copy:
+        src: "{{ theme_repo_url }}"
+        dest: "{{ themes_local_dir }}/{{ theme_filename }}"
+        remote_src: yes
+        force: yes
 
     # Create symlink to themes in .config file for easy reference
-    - name: Check if oh_my_posh themes local dir exists
-      stat:
-        path: "{{ oh_my_posh_themes_local_dir }}"
-      register: themes_dir_stat
-
-    - name: Remove oh_my_posh themes local dir if it exists
+    - name: Create a symbolic link for themes dir at {{ themes_symlink_dir }}
       file:
-        path: "{{ oh_my_posh_themes_local_dir }}"
-        state: absent
-      when: themes_dir_stat.stat.exists and themes_dir_stat.stat.isdir
-
-    - name: Create a symbolic link for oh_my_posh themes dir (create the dir as well)
-      file:
-        src: '{{ brew_prefix }}/share/oh-my-posh/themes'
-        dest: "{{ oh_my_posh_themes_local_dir }}"
+        src: "{{ themes_local_dir }}/{{ theme_filename }}"
+        dest: "{{ themes_symlink_dir }}/{{ theme_filename }}"
         state: link
