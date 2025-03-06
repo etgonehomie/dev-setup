@@ -5,11 +5,7 @@
 # execute it by using the command `bash [full-pathname]`
 # Set variables
 GIT_REPO="https://github.com/etgonehomie/dev-setup.git"
-PLAYBOOK_DIR="ansible"
-PLAYBOOK_FILENAME="main.yml"
-# PLAYBOOK_FILENAME="mac-export.yml"
-PLAYBOOK_URL="https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" # Replace with your playbook URL
-PLAYBOOK_LOCAL_FILEPATH="$HOME/$PLAYBOOK_FILENAME"
+PLAYBOOK_FILENAME="main.yml"    # Replace with your playbook URL
 VAULT_PW_FILEPATH="$HOME/git-projects/personal/dev-setup/ansible-vault-pw.env"  
 
 # Function to log messages
@@ -129,37 +125,11 @@ get_ansible_prereqs() {
     upgrade_homebrew
     install_ansible
 }
-# Step 5: Download Ansible Playbook
-get_playbook() {
-    log "Downloading Ansible playbook from $PLAYBOOK_URL..."
-    log "remote playbook: $PLAYBOOK_URL"
-    log "local file: $PLAYBOOK_LOCAL_FILEPATH"
-    curl -fsSL -o "$PLAYBOOK_LOCAL_FILEPATH" "$PLAYBOOK_URL"
-    if [[ $? -ne 0 ]]; then
-        log "Failed to download the playbook. Exiting."
-    exit 1
-    fi
-}
-
-# Run the playbook
-run_local_playbook() {
-    log "Running Ansible playbook..."
-    ansible-playbook "$PLAYBOOK_LOCAL_FILEPATH"
-
-    # Check if the playbook ran successfully
-    if [[ $? -eq 0 ]]; then
-        log "Playbook executed successfully!"
-    else
-        log "An error occurred while running the playbook."
-        exit 1
-    fi    
-}
 
 run_remote_playbook() {
     # Run ansible-pull from GitHub
     log "Executing Ansible playbook from $GIT_REPO..."
-    # ansible-pull -U "$GIT_REPO" "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME"
-    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILEPATH"
+    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILEPATH"
 
     if [ $? -eq 0 ]; then
         log "Ansible playbook completed successfully."
@@ -176,11 +146,6 @@ main() {
     # Execute steps in synchronous order
     # any functions called within a function execute synchronously
     # get_ansible_prereqs     # Comment out for testing for now
-    
-    # Choose whether to run via local or remote playbook
-    # get_playbook
-    # run_local_playbook
-
     run_remote_playbook
     log "All steps completed successfully!"
 }
