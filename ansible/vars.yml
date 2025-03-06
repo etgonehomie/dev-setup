@@ -8,4 +8,4 @@ raw_repo_url: "https://raw.githubusercontent.com/{{ git_username }}/{{ repo_name
 
 # Ansible clone dir vars
 playbook_dir: "{{ lookup('env', 'ANSIBLE_PULL_CACHE') | default(ansible_playbook_dir) }}"
-root_dir: "{{ playbook_dir }}"
+root_dir: "{{ playbook_dir | dirname }}"
