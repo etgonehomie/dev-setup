@@ -1,9 +1,4 @@
 ---
-# Global Vars
-vars:
-  repo_url: "https://github.com/etgonehomie/dev-setup.git"
-  temp_dir: "/tmp/dev-setup"
-
 - name: Master playbook to set up development station
   hosts: localhost
   gather_facts: yes
@@ -11,9 +6,12 @@ vars:
     # local_backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
 
 # Run all the child playbooks
+
+# Setup local machine for dev setup
 - ansible.builtin.import_playbook: setup.yml
+
 # Detect Homebrew prefix to use for all future playbooks
-# - ansible.builtin.import_playbook: var-brew-prefix.yml
+- ansible.builtin.import_playbook: define-brew-prefix.yml
 
 # # Setup terminal and git for dev station
 # - ansible.builtin.import_playbook: terminal-setup.yml
