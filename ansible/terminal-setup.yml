@@ -11,7 +11,7 @@
     theme_repo_url: "{{ root_dir}}/dotfiles/oh-my-posh/themes/{{ theme_filename }}"
 
     # Destination system paths
-    themes_local_dir: "~/{{ brew-prefix }}/share/oh-my-posh/themes"
+    themes_local_dir: "~/{{ brew_prefix }}/share/oh-my-posh/themes"
     themes_symlink_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
 
   tasks:
