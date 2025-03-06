@@ -1,48 +1,20 @@
 - name: Setup raycast for ease of navigation
   hosts: localhost
   vars_files:
-    - vault.yml
+    - ansible/vars.yml
+    - ansible/vault.yml
   vars:
-    rayconfig_filename: "raycast_config.rayconfig"  
-    applescript_filename: "raycast_import.applescript"
-    
-    applescript_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/{{ applescript_filename }}.j2"
-    raycast_config_url: "https://raw.githubusercontent.com/etgonehomie/dev-setup/main/{{ rayconfig_filename }}"
+    raycast_config_url: "{{ playbook_dir }}/raycast_config.rayconfig"
+    applescript_url: "{{ playbook_dir }}/raycast_import.applescript"
+    applescript_jinja_url: "{{ applescript_url }}.j2"
 
-    raycast_local_filepath: "{{ ansible_env.HOME }}/{{ rayconfig_filename }}"
-    applescript_local_filepath: "{{ ansible_env.HOME }}/{{ applescript_filename }}"
   tasks:
-    - name: Download and store the encrypted raycast config file from GitHub
-      get_url:
-        url: "{{ raycast_config_url }}"
-        dest: "{{ raycast_local_filepath }}"
-
-    - name: Download Applescript Raycast Input template from GitHub
-      get_url:
-        url: "{{ applescript_url }}"
-        dest: "/tmp/{{ applescript_filename }}.j2"
-
-    - name: Generate Raycast import script from template
+    - name: Generate Raycast import script from jinja template {{ applescript_jinja_url }}
       ansible.builtin.template:
-        src: "/tmp/{{ applescript_filename }}.j2"
-        dest: "/tmp/{{ applescript_filename }}"
+        src: " {{ applescript_jinja_url }}"
+        dest: "{{ applescript_url }}"
         mode: '0700'  # Executable permissions
       register: script_file
 
-    - name: Run Raycast import script
+    - name: Run Raycast import applescript using config {{ raycast_config_url }}
       ansible.builtin.command: /usr/bin/osascript {{ script_file.dest }}
-
-    - name: Remove the Raycast config file
-      ansible.builtin.file:
-        path: "{{ raycast_local_filepath }}"
-        state: absent
-
-    - name: Remove Jinja applescript
-      ansible.builtin.file:
-        path: "{{ script_file.dest }}.j2"
-        state: absent
-
-    - name: Clean up temporary script
-      ansible.builtin.file:
-        path: "{{ script_file.dest }}"
-        state: absent

@@ -1,6 +1,8 @@
 ---
 - name: Use Homebrew to Install CLI & Dev tools
   hosts: localhost
+  vars_files:
+    - ansible/vars.yml
   vars:
     # Source paths of dotfile templates
     gitconfig_repo_url: "{{ playbook_dir }}/dotfiles/git/.gitconfig"
