@@ -1,11 +1,11 @@
 - name: Setup raycast for ease of navigation
   hosts: localhost
-  vars_files:
-    - ansible/vars.yml
-    - ansible/vault.yml
+  vars_files:     # relative path to current playbook
+    - vars.yml
+    - vault.yml
   vars:
-    raycast_config_url: "{{ playbook_dir }}/raycast_config.rayconfig"
-    applescript_url: "{{ playbook_dir }}/raycast_import.applescript"
+    raycast_config_url: "{{ root_dir }}/raycast_config.rayconfig"
+    applescript_url: "{{ root_dir }}/raycast_import.applescript"
     applescript_jinja_url: "{{ applescript_url }}.j2"
 
   tasks:

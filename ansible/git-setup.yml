@@ -2,11 +2,11 @@
 - name: Use Homebrew to Install CLI & Dev tools
   hosts: localhost
   vars_files:
-    - ansible/vars.yml
+    - vars.yml    # relative path to current playbook
   vars:
     # Source paths of dotfile templates
-    gitconfig_repo_url: "{{ playbook_dir }}/dotfiles/git/.gitconfig"
-    gitignore_repo_url: "{{ playbook_dir }}/dotfiles/git/.gitignore_global"
+    gitconfig_repo_url: "{{ root_dir }}/dotfiles/git/.gitconfig"
+    gitignore_repo_url: "{{ root_dir }}/dotfiles/git/.gitignore_global"
 
     # Destination system paths
     git_local_dir: "{{ ansible_env.HOME }}/.config/git"
@@ -18,14 +18,14 @@
         path: "{{ git_local_dir }}"
         state: directory
 
-    - name: Copy .gitconfig from {{ playbook_dir }} to {{ git_local_di }}
+    - name: Copy .gitconfig from {{ root_dir }} to {{ git_local_dir }}
       ansible.builtin.copy:
         src: "{{ gitconfig_repo_url }}"
         dest: "{{ git_local_dir }}/.gitconfig"
         remote_src: yes
         force: yes
     
-    - name: Copy .gitignore_global from {{ playbook_dir }} to {{ git_local_di }}
+    - name: Copy .gitignore_global from {{ root_dir }} to {{ git_local_dir }}
       ansible.builtin.copy:
         src: "{{ gitignore_repo_url }}"
         dest: "{{ git_local_dir }}/.gitignore_global"
