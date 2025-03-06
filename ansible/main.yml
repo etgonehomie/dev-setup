@@ -1,10 +1,13 @@
 ---
+# Global Vars
+vars:
+  repo_url: "https://github.com/etgonehomie/dev-setup.git"
+  temp_dir: "/tmp/dev-setup"
+
 - name: Master playbook to set up development station
   hosts: localhost
   gather_facts: yes
-  vars:
-    repo_url: "https://github.com/etgonehomie/dev-setup.git"
-    temp_dir: "/tmp/dev-setup"
+
     # local_backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
 
 # Run all the child playbooks
@@ -23,5 +26,3 @@
 # - ansible.builtin.import_playbook: raycast-setup.yml
 # - ansible.builtin.import_playbook: mac-setup.yml
 - ansible.builtin.import_playbook: cleanup.yml
-
-
