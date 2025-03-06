@@ -2,7 +2,7 @@
 - name: Use Homebrew to Install CLI & Dev tools
   hosts: localhost
   vars_files:
-    - ansible/vars.yml
+    - vars.yml
   vars:
     # Source paths of dotfile templates
     zshenv_repo_url: "{{ root_dir }}/dotfiles/terminal/.zshenv"
