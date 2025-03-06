@@ -2,7 +2,8 @@
 - name: Setup mac configuration settings
   hosts: localhost
   vars:
-    backup_dir: " {{ ansible_env.HOME }}/git-projects/personal/dev-setup/ansible/macos_config_backup"
+    proj_dir: "{{ ansible_env.HOME }}/git-projects/personal/dev-setup"
+    backup_dir: "{{ proj_dir }}/ansible/macos_config_backup"
     ansible_pw_file: "ansible-vault-pw.env"
   tasks:
     - name: Find all .txt files in mac-backup-config directory
@@ -11,10 +12,15 @@
         patterns: "*.txt"
         recurse: no
       register: backup_files
+    
+    - name: Debug file contents check
+      ansible.builtin.debug:
+        msg: "File: {{ item.path }}, Is Vault-Encrypted: {{ 'ANSIBLE_VAULT' in (lookup('file', item.path, errors='ignore') | default('', true)) }}"
+      loop: "{{ backup_files.files }}"
 
     - name: Decrypt each file with Ansible Vault
       ansible.builtin.command:
-        cmd: "ansible-vault decrypt {{ item.path }} --vault-password-file {{ vault_password_file }}"
+        cmd: "ansible-vault decrypt {{ item.path }} --vault-password-file {{ proj_dir }}/{{ ansible_pw_file }}"
       loop: "{{ backup_files.files }}"
       when: "'ANSIBLE_VAULT' in (lookup('file', item.path, errors='ignore') | default('', true))"
       register: decrypt_result
