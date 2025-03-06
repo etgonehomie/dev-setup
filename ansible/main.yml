@@ -1,18 +1,31 @@
 ---
 - name: Master playbook to set up development station
   hosts: localhost
-  gather_facts: yes  # Gather system facts (note: your comment says "don't", but 'yes' enables it)
+  gather_facts: yes
+  vars:
+    repo_url: "https://github.com/etgonehomie/dev-setup.git"
+    temp_dir: "/tmp/dev-setup"
+    # local_backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+  tasks:
+    - name: Clone the GitHub repo locally
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ temp_dir }}"
+        version: main  # define branch
+      become: no
+
+# Run all the child playbooks
 
 # Detect Homebrew prefix to use for all future playbooks
-- ansible.builtin.import_playbook: var-brew-prefix.yml
+# - ansible.builtin.import_playbook: var-brew-prefix.yml
 
-# Setup terminal and git for dev station
-- ansible.builtin.import_playbook: terminal-setup.yml
-- ansible.builtin.import_playbook: git-setup.yml
+# # Setup terminal and git for dev station
+# - ansible.builtin.import_playbook: terminal-setup.yml
+# - ansible.builtin.import_playbook: git-setup.yml
 
-# Setup dev station using Homebrew
-- ansible.builtin.import_playbook: homebrew-setup.yml
+# # Setup dev station using Homebrew
+# - ansible.builtin.import_playbook: homebrew-setup.yml
 
-# Setup terminal for dev station
-- ansible.builtin.import_playbook: raycast-setup.yml
-# - ansible.builtin.import_playbook: mac-setup.yml
+# # Setup terminal for dev station
+# - ansible.builtin.import_playbook: raycast-setup.yml
+- ansible.builtin.import_playbook: mac-setup.yml
