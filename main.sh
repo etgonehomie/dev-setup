@@ -6,7 +6,8 @@
 # Set variables
 GIT_REPO="https://github.com/etgonehomie/dev-setup.git"
 PLAYBOOK_FILENAME="main.yml"    # Replace with your playbook URL
-VAULT_PW_FILEPATH="$HOME/git-projects/personal/dev-setup/ansible-vault-pw.env"  
+PASSWORD_FILE="ansible/vault_password.env"
+VAULT_PW_FILEPATH="$HOME/git-projects/personal/dev-setup/$PASSWORD_FILE"  
 
 # Function to log messages
 log() {

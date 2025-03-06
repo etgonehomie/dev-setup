@@ -5,7 +5,6 @@
     - vars.yml    # relative path to current playbook
   vars:
     mac_config_dir: "{{ root_dir }}/ansible/macos_config_backup"
-    ansible_pw_file: "{{ root_dir }}/ansible-vault-pw.env"
   tasks:
     - name: Find all .txt files in mac-backup-config directory
       ansible.builtin.find:
@@ -20,8 +19,9 @@
       loop: "{{ config_files.files }}"
 
     - name: Decrypt each file with Ansible Vault
+      # Use decrypted ansible vault password
       ansible.builtin.command:
-        cmd: "ansible-vault decrypt {{ item.path }} --vault-password-file {{ ansible_pw_file }}"
+        cmd: "ansible-vault decrypt {{ item.path }} --ask-vault-pass {{ mas_os_config_password }}"
       loop: "{{ config_files.files }}"
       # when: "'ANSIBLE_VAULT' in (lookup('file', item.path, errors='ignore') | default('', true))"
       register: decrypt_result
