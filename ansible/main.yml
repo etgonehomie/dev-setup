@@ -2,14 +2,12 @@
 - name: Master playbook to set up development station
   hosts: localhost
   gather_facts: yes
-
-    # local_backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
+  tasks:
+    - name: Debug pull directory
+      ansible.builtin.debug:
+        msg: "Using pull dir: {{ pull_dir }}"
 
 # Run all the child playbooks
-
-# Setup local machine for dev setup
-- ansible.builtin.import_playbook: setup.yml
-
 # Detect Homebrew prefix to use for all future playbooks
 - ansible.builtin.import_playbook: define-brew-prefix.yml
 
@@ -23,4 +21,3 @@
 # # Setup terminal for dev station
 # - ansible.builtin.import_playbook: raycast-setup.yml
 # - ansible.builtin.import_playbook: mac-setup.yml
-- ansible.builtin.import_playbook: cleanup.yml

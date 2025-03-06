@@ -159,7 +159,7 @@ run_remote_playbook() {
     # Run ansible-pull from GitHub
     log "Executing Ansible playbook from $GIT_REPO..."
     # ansible-pull -U "$GIT_REPO" "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME"
-    ansible-pull -U "$GIT_REPO" -i localhost, "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILEPATH"
+    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_DIR/$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILEPATH"
 
     if [ $? -eq 0 ]; then
         log "Ansible playbook completed successfully."

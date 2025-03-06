@@ -1,0 +1,3 @@
+---
+repo_url: "https://github.com/etgonehomie/dev-setup.git"
+playbook_dir: "{{ lookup('env', 'ANSIBLE_PULL_CACHE') | default(ansible_playbook_dir) }}"
