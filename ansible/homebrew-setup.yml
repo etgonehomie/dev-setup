@@ -6,7 +6,7 @@
   tasks:
     - name: Install Homebrew ZSH Tools via Loop
       block:
-        - name: Install {{ item.package }} - {{ item.description }}
+        - name: Install Homebrew ZSH Tools via Loop
           homebrew:
             name: "{{ item.package }}"
             state: present
@@ -14,7 +14,7 @@
 
     - name: Install Homebrew Dev Tools via Loop
       block:
-        - name: Install {{ item.package }} - {{ item.description }}
+        - name: Install Homebrew Dev Tools via Loop
           homebrew:
             name: "{{ item.package }}"
             state: present
@@ -22,7 +22,7 @@
 
     - name: Install Homebrew Cask Dev Apps via Loop
       block:
-        - name: Install {{ item.package }} - {{ item.description }}
+        - name: Install Homebrew Cask Dev Apps via Loop
           homebrew_cask:
             name: "{{ item.package }}"
             state: present
@@ -31,7 +31,7 @@
 
     - name: Install Homebrew Cask Browsers via Loop
       block:
-        - name: Install {{ item.package }} - {{ item.description }}
+        - name: Install Homebrew Cask Browsers via Loop
           homebrew_cask:
             name: "{{ item.package }}"
             state: present

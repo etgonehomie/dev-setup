@@ -9,15 +9,15 @@
 
 # Run all the child playbooks
 # Detect Homebrew prefix to use for all future playbooks
-- ansible.builtin.import_playbook: ansible/define-brew-prefix.yml
+# - ansible.builtin.import_playbook: ansible/define-brew-prefix.yml
 
 # # Setup terminal and git for dev station
-- ansible.builtin.import_playbook: ansible/terminal-setup.yml
-- ansible.builtin.import_playbook: ansible/git-setup.yml
+# - ansible.builtin.import_playbook: ansible/terminal-setup.yml
+# - ansible.builtin.import_playbook: ansible/git-setup.yml
 
 # # Setup dev station using Homebrew
-- ansible.builtin.import_playbook: ansible/homebrew-setup.yml
+# - ansible.builtin.import_playbook: ansible/homebrew-setup.yml
 
 # # Setup terminal for dev station
 # - ansible.builtin.import_playbook: ansible/raycast-setup.yml
-# - ansible.builtin.import_playbook: ansible/mac-setup.yml
+- ansible.builtin.import_playbook: ansible/mac-setup.yml
