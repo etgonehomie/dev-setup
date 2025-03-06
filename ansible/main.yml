@@ -8,7 +8,7 @@
     # local_backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
 
 # Run all the child playbooks
-- ansible.builtin.import_playbook: setup.yml
+- ansible.builtin.import_playbook: ansible/setup.yml
 # Detect Homebrew prefix to use for all future playbooks
 # - ansible.builtin.import_playbook: var-brew-prefix.yml
 
@@ -21,7 +21,7 @@
 
 # # Setup terminal for dev station
 # - ansible.builtin.import_playbook: raycast-setup.yml
-- ansible.builtin.import_playbook: mac-setup.yml
-- ansible.builtin.import_playbook: cleanup.yml
+# - ansible.builtin.import_playbook: ansible/mac-setup.yml
+- ansible.builtin.import_playbook: ansible/cleanup.yml
 
 
