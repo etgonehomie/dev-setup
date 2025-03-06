@@ -23,7 +23,7 @@
       ansible.builtin.command:
         cmd: "ansible-vault decrypt {{ item.path }} --vault-password-file {{ ansible_pw_file }}"
       loop: "{{ config_files.files }}"
-      when: "'ANSIBLE_VAULT' in (lookup('file', item.path, errors='ignore') | default('', true))"
+      # when: "'ANSIBLE_VAULT' in (lookup('file', item.path, errors='ignore') | default('', true))"
       register: decrypt_result
       changed_when: decrypt_result.rc == 0
       ignore_errors: true
