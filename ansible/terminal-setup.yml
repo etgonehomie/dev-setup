@@ -5,10 +5,10 @@
     - ansible/vars.yml
   vars:
     # Source paths of dotfile templates
-    zshenv_repo_url: "{{ playbook_dir }}/dotfiles/terminal/.zshenv"
-    zshrc_repo_url: "{{ playbook_dir }}/dotfiles/terminal/.zshrc"
+    zshenv_repo_url: "{{ root_dir }}/dotfiles/terminal/.zshenv"
+    zshrc_repo_url: "{{ root_dir }}/dotfiles/terminal/.zshrc"
     theme_filename: 'zen.toml'
-    theme_repo_url: "{{ playbook_dir}}/dotfiles/oh-my-posh/themes/{{ theme_filename }}"
+    theme_repo_url: "{{ root_dir}}/dotfiles/oh-my-posh/themes/{{ theme_filename }}"
 
     # Destination system paths
     themes_local_dir: "~/{{ brew-prefix }}/share/oh-my-posh/themes"
@@ -16,14 +16,14 @@
 
   tasks:
     # Update terminal config files
-    - name: Copy .zshenv from {{ playbook_dir }} to {{ ansible_env.HOME }}
+    - name: Copy .zshenv from {{ root_dir }} to {{ ansible_env.HOME }}
       ansible.builtin.copy:
         src: "{{ zshenv_repo_url }}"
         dest: "{{ ansible_env.HOME }}/.zshenv"
         remote_src: yes
         force: yes
 
-    - name: Copy .zshrc from {{ playbook_dir }} to {{ ansible_env.HOME }}
+    - name: Copy .zshrc from {{ root_dir }} to {{ ansible_env.HOME }}
       ansible.builtin.copy:
         src: "{{ zshrc_repo_url }}"
         dest: "{{ ansible_env.HOME }}/.zshrc"
@@ -36,7 +36,7 @@
         path: "{{ themes_local_dir }}"
         state: directory
 
-    - name: Copy terminal theme from {{ playbook_dir }} to {{ themes_local_dir }}
+    - name: Copy terminal theme from {{ root_dir }} to {{ themes_local_dir }}
       ansible.builtin.copy:
         src: "{{ theme_repo_url }}"
         dest: "{{ themes_local_dir }}/{{ theme_filename }}"
