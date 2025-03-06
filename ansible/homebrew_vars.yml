@@ -1,0 +1,56 @@
+---
+# Homebrew CLI extensions
+cli_extensions:
+  - package: curl 
+    description: "Allows download of external binaries"
+  - package: eza
+    description: "A better `ls` command that has colors" 
+  - package: fzf 
+    description: "Allows fuzzy search (and case insensitivity) in terminal"
+  - package: bat
+    description: "View file content with syntax highlighting (cat replacement)"
+  - package: zsh-autosuggestions
+    description: "CLI history suggestions"
+  - package: zsh-autocomplete
+    description: "CLI command autocomplete"
+  - package: zsh-fast-syntax-highlighting
+    description: "Syntax highlighting for CLI commands"
+  - package: neovim
+    description: "Terminal text editor (vim replacement)"
+  - package: oh-my-posh 
+    description: "Prompt theme engine for any shell"
+  - package: font-hack-nerd-font 
+    description: "Font needed for oh-my-posh to work"
+
+# Install Homebrew native Dev tools
+native_brew_apps:
+  - package: iterm2
+    description: "Terminal GUI replacement"
+  - package: git
+    description: "Source code management"
+  - package: python
+    description: "Data Engineer/Science projects"
+  - package: node
+    description: "JS development"
+  - package: docker
+    description: "Containerize depoloyments"
+
+# Install Homebrew Cask Dev tools
+cask_dev_apps:
+  - package: visual-studio-code
+    description: "VS Code: IDE"
+  - package: raycast
+    description: 'Raycast: Mac Finder Replacement'
+  - package: postman
+    description: "Postman: API Tester"
+  - package: sublime-text
+    description: "Sublime: Easy text file editor"
+
+# Install Homebrew Cask Browsers
+browser_apps:
+  - package: google-chrome
+    description: "Chrome Browser"
+  - package: firefox
+    description: "Firefox Browser"
+  - package: vivaldi
+    description: "Vivaldi Browser"
