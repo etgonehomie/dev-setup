@@ -46,6 +46,6 @@
     # Create symlink to themes in .config file for easy reference
     - name: Create a symbolic link for themes dir at {{ themes_symlink_dir }}
       file:
-        src: "{{ themes_local_dir }}/{{ theme_filename }}"
-        dest: "{{ themes_symlink_dir }}/{{ theme_filename }}"
+        src: "{{ themes_local_dir }}"
+        dest: "{{ themes_symlink_dir }}"
         state: link
