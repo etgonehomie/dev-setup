@@ -8,3 +8,4 @@
       ansible.builtin.file:
         path: "{{ root_dir }}"
         state: absent
+      ignore_errors: yes

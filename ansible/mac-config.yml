@@ -5,10 +5,12 @@
     - vars.yml    # relative path to current playbook
   vars:
     mac_config_dir: "{{ root_dir }}/ansible/macos_config_backup"
-    apps_to_restart:
+    apps_to_kill:
       - "Dock"
       - "Finder"
       - "Terminal"
+      - "Raycast"
+    apps_to_restart:
       - "Raycast"
   tasks:
     - name: Find all .plist files in mac-backup-config directory
@@ -26,7 +28,12 @@
         force: yes
       loop: "{{ config_files.files }}"
 
-    - name: Restart affected apps to apply changes
+    - name: Kill affected apps to apply changes
       ansible.builtin.shell: "killall {{ item }}"
+      loop: "{{ apps_to_kill }}"
+      ignore_errors: yes  # Ignore if app isn’t running
+
+    - name: Restart affected apps to apply changes
+      ansible.builtin.shell: open -a {{ item }}        
       loop: "{{ apps_to_restart }}"
       ignore_errors: yes  # Ignore if app isn’t running
