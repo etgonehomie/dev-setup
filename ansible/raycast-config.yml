@@ -16,9 +16,13 @@
         mode: '0700'  # Executable permissions
       register: script_file
 
+    - name: Debug file location
+      ansible.builtin.debug:
+        var: raycast_config_url
+
     - name: Debug verification
       ansible.builtin.debug:
-        var: "{{ script_file }}"
+        var: script_file
 
     # - name: Run Raycast import applescript using config {{ raycast_config_url }}
     #   ansible.builtin.command: /usr/bin/osascript {{ script_file.dest }}
