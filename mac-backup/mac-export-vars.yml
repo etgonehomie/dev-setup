@@ -1,5 +1,5 @@
 ---
-safe_domains:
+mac_safe_domains:
   # UI Settings
   - domain: "com.apple.dock"
     description: "Dock settings: pinned apps, position, size, auto-hide"

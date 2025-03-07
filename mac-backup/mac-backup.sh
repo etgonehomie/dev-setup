@@ -1,15 +1,13 @@
 #!/bin/bash
 
 # Extract Safe MacOS Config Domains
-# This process is a helpful function to get the info needed
+# This process is a helper function to get the info needed
 # to automate setting up environment in macOS
 # execute it by using the command `bash [full-pathname]`
 
 # Set variables
 GIT_REPO="https://github.com/etgonehomie/dev-setup.git"
 PLAYBOOK_FILENAME="mac-backup/mac-export.yml"
-PASSWORD_FILE="password_mac_export.env"
-VAULT_PW_FILEPATH="$HOME/git-projects/personal/dev-setup/$PASSWORD_FILE"  
 
 # Function to log messages
 log() {
@@ -19,11 +17,7 @@ log() {
 run_remote_playbook() {
     # Run ansible-pull from GitHub
     log "Executing Ansible playbook from $GIT_REPO..."
-
-    # Encrypt files using the given password file
-    # Don't change as this same one is used to decrypt in the mac-setup.yml
-    # which is stored in vault.yml
-    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILEPATH"
+    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_FILENAME"
 
     if [ $? -eq 0 ]; then
         log "Ansible playbook completed successfully."
@@ -38,6 +32,8 @@ main() {
     log "Setting up new dev workstation..."
     run_remote_playbook
     log "All steps completed successfully!"
+    log "Place this dir in a directory that the setup.yml can read"
+    log "Default location is https://github.com/etgonehomie/dev-setup/tree/main/ansible"
 }
 
 # Run the main function

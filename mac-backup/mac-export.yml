@@ -1,48 +1,21 @@
 ---
 # Use this script to download safe mac config domains
-# to use in the mac-setup.yml playbook
+# to use in the main.yml playbook
 - name: Backup safe macOS defaults including key bindings and hardware settings
   hosts: localhost
   vars_files:
     - mac-export-vars.yml
   vars:
     backup_dir: "{{ ansible_env.HOME }}/macos_config_backup"
-    proj_dir: " {{ ansible_env.HOME }}/git-projects/personal/dev-setup"
-    ansible_pw_file: "ansible-vault-pw.env"
   tasks:
-  # Store the output in a file that can be stored in git to be copied and imported
     - name: Create backup directory
       ansible.builtin.file:
         path: "{{ backup_dir }}"
         state: directory
         mode: "0700"
 
-    - name: Export mac safe defaults
+    - name: Export mac safe defaults to {{ backup_dir }}
       ansible.builtin.shell: "defaults read {{ item.domain }} > {{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
-      loop: "{{ safe_domains }}"
+      loop: "{{ mac_safe_domains }}"
       args:
         creates: "{{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
-
-    - name: Find all .txt files in mac-backup-config directory
-      ansible.builtin.find:
-        paths: "{{ backup_dir }}"
-        patterns: "*.txt"
-        recurse: no
-      register: txt_files
-
-    - name: Encrypt .txt files with Ansible Vault
-      ansible.builtin.command:
-        cmd: "ansible-vault encrypt {{ item.path }} --vault-password-file {{ proj_dir}}/{{ ansible_pw_file }}"
-      loop: "{{ txt_files.files }}"
-      when: "'ANSIBLE_VAULT' not in (lookup('file', item.path, errors='ignore') | default('', true))"
-
-    - name: MIGRATE {{ backup_dir }} --> {{ proj_dir }}/ansible
-      ansible.builtin.debug:
-        msg: "This is so that the dev setup script works"
-
-    - name: Move source directory to destination
-      ansible.builtin.shell: "mv {{ backup_dir }} {{ proj_dir }}/ansible"
-      args:
-        removes: "{{ backup_dir }}"
-      register: move_result
-      changed_when: move_result.rc == 0  # Mark as changed if successful
