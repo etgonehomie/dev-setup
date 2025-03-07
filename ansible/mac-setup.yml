@@ -13,21 +13,21 @@
         recurse: no
       register: config_files
 
-    - name: Debug mac config dir
-      ansible.builtin.debug:
-        var: mac_config_dir 
+    # - name: Debug mac config dir
+    #   ansible.builtin.debug:
+    #     var: mac_config_dir 
     
-    - name: Debug found files
-      ansible.builtin.debug:
-        var: config_files
+    # - name: Debug found files
+    #   ansible.builtin.debug:
+    #     var: config_files
 
-    # - name: Move .plist files to /Users/john/test
-    #   ansible.builtin.copy:
-    #     src: "{{ item.path }}"
-    #     dest: "{{ ansible_env.HOME }}/test/{{ item.path | basename }}"
-    #     remote_src: yes
-    #     force: yes
-    #   loop: "{{ config_files.files }}"
+    - name: Copy .plist files to {{ ansible_env.HOME }}/test
+      ansible.builtin.copy:
+        src: "{{ item.path }}"
+        dest: "{{ ansible_env.HOME }}/test/{{ item.path | basename }}"
+        remote_src: yes
+        force: yes
+      loop: "{{ config_files.files }}"
     
     # # plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
     # - name: Convert and copy each .txt file to .plist in Preferences to replace existing
