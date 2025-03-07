@@ -1,0 +1,32 @@
+#!/usr/bin/osascript
+tell application "Raycast"
+  activate
+  tell application "System Events"
+    keystroke space using {command down}  -- Open command palette
+    delay 1
+    keystroke "Import Settings"  -- Type command
+    delay 1
+    keystroke return  -- Select command
+    delay 1
+    keystroke return  -- Trigger import
+    delay 1
+    keystroke "g" using {command down, shift down}  -- Open command palette  
+    delay 1
+    keystroke "{{ raycast_config_url }}"  -- Ansible variable
+    delay 2
+    keystroke return  -- select the file
+    delay 2
+    keystroke return  -- Click the open button
+    delay 1
+    keystroke "{{ raycast_password }}"  -- Vault variable
+    delay 1
+    keystroke return  -- Finish import
+    delay 1
+    keystroke return  -- Confirm import
+    delay 3
+    -- Press Escape 3 times to fully exit out of Raycast
+    key code 53
+    key code 53
+    key code 53
+  end tell
+end tell
