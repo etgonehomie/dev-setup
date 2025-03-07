@@ -5,6 +5,11 @@
     - vars.yml    # relative path to current playbook
   vars:
     mac_config_dir: "{{ root_dir }}/ansible/macos_config_backup"
+    apps_to_restart:
+      - "Dock"
+      - "Finder"
+      - "Terminal"
+      - "Raycast"
   tasks:
     - name: Find all .plist files in mac-backup-config directory
       ansible.builtin.find:
@@ -13,14 +18,6 @@
         recurse: no
       register: config_files
 
-    # - name: Debug mac config dir
-    #   ansible.builtin.debug:
-    #     var: mac_config_dir 
-    
-    # - name: Debug found files
-    #   ansible.builtin.debug:
-    #     var: config_files
-
     - name: Copy .plist files to {{ ansible_env.HOME }}/test
       ansible.builtin.copy:
         src: "{{ item.path }}"
@@ -28,22 +25,8 @@
         remote_src: yes
         force: yes
       loop: "{{ config_files.files }}"
-    
-    # # plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
-    # - name: Convert and copy each .txt file to .plist in Preferences to replace existing
-    #   ansible.builtin.shell: |
-    #     plutil \
-    #       -convert xml1 \
-    #       -o "{{ ansible_env.HOME }}/test/{{ item.path }}
-    #       "{{ item.path }}"
-    #   register: convert_result
-    #   changed_when: convert_result.rc == 0  # Mark as changed if successful
 
-    # - name: Restart affected apps to apply changes
-    #   ansible.builtin.shell: "killall {{ item }}"
-    #   loop:
-    #     - "Dock"
-    #     - "Finder"
-    #     - "Terminal"
-    #     - "Raycast"
-    #   ignore_errors: yes  # Ignore if app isn’t running
+    - name: Restart affected apps to apply changes
+      ansible.builtin.shell: "killall {{ item }}"
+      loop: "{{ apps_to_restart }}"
+      ignore_errors: yes  # Ignore if app isn’t running
