@@ -1,7 +1,10 @@
 ---
 - name: Clean-up the cloned dir in .ansible/pull
+  hosts: localhost
   vars_files:
     - vars.yml  #  relative path to current playbook
-  ansible.builtin.file:
-    path: "{{ root_dir }}"
-    state: absent
+  tasks: 
+    - name: Clean-up the cloned dir at {{ root_dir }}
+      ansible.builtin.file:
+        path: "{{ root_dir }}"
+        state: absent
