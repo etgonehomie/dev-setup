@@ -9,20 +9,19 @@
     - name: Find all .txt files in mac-backup-config directory
       ansible.builtin.find:
         paths: "{{ mac_config_dir }}"
-        patterns: "*.txt"
+        patterns: "*.plist"
         recurse: no
       register: config_files
     
-    # plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
-    - name: Convert and copy each .txt file to .plist in Preferences to replace existing
-      ansible.builtin.shell: |
-        plutil \
-          -convert xml1 \
-          -o "{{ ansible_env.HOME }}/test/{{ item.path | basename | \
-          replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" \
-          "{{ item.path }}"
-      register: convert_result
-      changed_when: convert_result.rc == 0  # Mark as changed if successful
+    # # plutil -convert xml1 -o "{{ ansible_env.HOME }}/Library/Preferences/{{ item.path | basename | replace('_', '.') | regex_replace('\\.txt$', '.plist') }}" "{{ item.path }}"
+    # - name: Convert and copy each .txt file to .plist in Preferences to replace existing
+    #   ansible.builtin.shell: |
+    #     plutil \
+    #       -convert xml1 \
+    #       -o "{{ ansible_env.HOME }}/test/{{ item.path }}
+    #       "{{ item.path }}"
+    #   register: convert_result
+    #   changed_when: convert_result.rc == 0  # Mark as changed if successful
 
     # - name: Restart affected apps to apply changes
     #   ansible.builtin.shell: "killall {{ item }}"

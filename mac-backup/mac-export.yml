@@ -15,7 +15,7 @@
         mode: "0700"
 
     - name: Export mac safe defaults to {{ backup_dir }}
-      ansible.builtin.shell: "defaults read {{ item.domain }} > {{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
+      ansible.builtin.shell: "defaults read {{ item.domain }} > {{ backup_dir }}/{{ item.domain }}.plist"
       loop: "{{ mac_safe_domains }}"
       args:
-        creates: "{{ backup_dir }}/{{ item.domain | replace('.', '_') }}.txt"
+        creates: "{{ backup_dir }}/{{ item.domain }}.plist"
