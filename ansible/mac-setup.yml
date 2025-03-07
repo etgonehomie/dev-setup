@@ -16,7 +16,6 @@
     - name: Debug found files
       ansible.builtin.debug:
         var: config_files
-      after: "Find all .plist files in mac-backup-config directory"
 
     # - name: Move .plist files to /Users/john/test
     #   ansible.builtin.copy:
