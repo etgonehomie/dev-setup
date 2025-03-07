@@ -11,7 +11,7 @@
   tasks:
     - name: Generate Raycast import script from jinja template {{ applescript_jinja_url }}
       ansible.builtin.template:
-        src: " {{ applescript_jinja_url }}"
+        src: "{{ applescript_jinja_url }}"
         dest: "{{ applescript_url }}"
         mode: '0700'  # Executable permissions
       register: script_file
