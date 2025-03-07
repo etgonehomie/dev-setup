@@ -13,11 +13,13 @@
         recurse: no
       register: config_files
 
+    - name: Debug mac config dir
+      ansible.builtin.debug:
+        var: mac_config_dir 
+    
     - name: Debug found files
       ansible.builtin.debug:
-        vars:
-          - mac_config_dir 
-          - config_files
+        var: config_files
 
     # - name: Move .plist files to /Users/john/test
     #   ansible.builtin.copy:
