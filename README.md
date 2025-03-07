@@ -18,10 +18,11 @@
 ## Main Development Station Automation
 1. Run the main script `main.sh`. You can do this by either...
   1. **Via Local**: Clone the repo and run script using:
-    ```
-    bash ~/main.sh
-    ```
-	2. **Via Remote**: Curl command:
-  ```
-  curl -fsSL https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/main.sh | bash
-  ```
+```
+bash ~/main.sh
+```
+	
+  2. **Via Remote**: Curl command:
+```
+curl -fsSL https://raw.githubusercontent.com/etgonehomie/dev-setup/refs/heads/main/main.sh | bash
+```
