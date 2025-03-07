@@ -2,10 +2,10 @@
   hosts: localhost
   vars_files:     # relative path to current playbook
     - vars.yml
-    - vault.yml
+    - vault_password.yml
   vars:
-    raycast_config_url: "{{ root_dir }}/raycast_config.rayconfig"
-    applescript_url: "{{ root_dir }}/raycast_import.applescript"
+    raycast_config_url: "{{ playbook_dir }}/raycast_config.rayconfig"
+    applescript_url: "{{ playbook_dir }}/raycast_import.applescript"
     applescript_jinja_url: "{{ applescript_url }}.j2"
 
   tasks:
@@ -16,5 +16,9 @@
         mode: '0700'  # Executable permissions
       register: script_file
 
-    - name: Run Raycast import applescript using config {{ raycast_config_url }}
-      ansible.builtin.command: /usr/bin/osascript {{ script_file.dest }}
+    - name: Debug verification
+      ansible.builtin.debug:
+        var: "{{ script_file }}"
+
+    # - name: Run Raycast import applescript using config {{ raycast_config_url }}
+    #   ansible.builtin.command: /usr/bin/osascript {{ script_file.dest }}
