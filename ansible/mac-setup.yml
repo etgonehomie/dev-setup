@@ -6,7 +6,7 @@
   vars:
     mac_config_dir: "{{ root_dir }}/ansible/macos_config_backup"
   tasks:
-    - name: Find all .txt files in mac-backup-config directory
+    - name: Find all .plist files in mac-backup-config directory
       ansible.builtin.find:
         paths: "{{ mac_config_dir }}"
         patterns: "*.plist"
