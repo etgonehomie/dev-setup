@@ -1,0 +1,47 @@
+{
+    AppleCurrentKeyboardLayoutInputSourceID = "com.apple.keylayout.US";
+    AppleDictationAutoEnable = 1;
+    AppleEnabledInputSources =     (
+                {
+            InputSourceKind = "Keyboard Layout";
+            "KeyboardLayout ID" = 0;
+            "KeyboardLayout Name" = "U.S.";
+        },
+                {
+            "Bundle ID" = "com.apple.CharacterPaletteIM";
+            InputSourceKind = "Non Keyboard Input Method";
+        },
+                {
+            "Bundle ID" = "com.apple.PressAndHold";
+            InputSourceKind = "Non Keyboard Input Method";
+        },
+                {
+            "Bundle ID" = "com.apple.inputmethod.ironwood";
+            InputSourceKind = "Non Keyboard Input Method";
+        },
+                {
+            "Bundle ID" = "com.apple.inputmethod.EmojiFunctionRowItem";
+            InputSourceKind = "Non Keyboard Input Method";
+        }
+    );
+    AppleSavedCurrentInputSource =     {
+        InputSourceKind = "Keyboard Layout";
+        "KeyboardLayout ID" = 0;
+        "KeyboardLayout Name" = "U.S.";
+    };
+    AppleSelectedInputSources =     (
+                {
+            InputSourceKind = "Keyboard Layout";
+            "KeyboardLayout ID" = 0;
+            "KeyboardLayout Name" = "U.S.";
+        },
+                {
+            "Bundle ID" = "com.apple.PressAndHold";
+            InputSourceKind = "Non Keyboard Input Method";
+        },
+                {
+            "Bundle ID" = "com.apple.inputmethod.EmojiFunctionRowItem";
+            InputSourceKind = "Non Keyboard Input Method";
+        }
+    );
+}

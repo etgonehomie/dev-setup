@@ -1,0 +1,6 @@
+{
+    IsAnalog = 0;
+    ShowAMPM = 0;
+    ShowDate = 1;
+    ShowDayOfWeek = 1;
+}

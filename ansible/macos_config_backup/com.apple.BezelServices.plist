@@ -1,0 +1,43 @@
+{
+    BatteryHistory =     {
+        "68-fe-f7-5e-ae-64" = 100;
+    };
+    ChargingEvents =     {
+        "68-fe-f7-5e-ae-64 Bluetooth" =         {
+            deltaPercentage = 0;
+            duration = "0.817117625";
+            end = "2025-02-24T18:50:47Z";
+            endPercentage = 100;
+            fullCharge = 0;
+            previousEventInterval = "-1";
+            productID = 615;
+            start = "2025-02-24T18:50:46Z";
+            startDecile = 10;
+            startPercentage = 100;
+            transport = Bluetooth;
+            vendorID = 76;
+        };
+        "68-fe-f7-5e-ae-64 USB" =         {
+            deltaPercentage = 0;
+            duration = "95.590002416";
+            end = "2025-02-24T18:47:25Z";
+            endPercentage = 100;
+            fullCharge = 0;
+            previousEventInterval = "-1";
+            productID = 615;
+            start = "2025-02-24T18:45:49Z";
+            startDecile = 10;
+            startPercentage = 100;
+            transport = USB;
+            vendorID = 1452;
+        };
+    };
+    TransportElapsedSeconds =     {
+        "68-fe-f7-5e-ae-64" =         {
+            SecondsBluetooth = "52838.10031123301";
+            SecondsUSB = "95.59552725";
+        };
+    };
+    afActionHistory =     {
+    };
+}

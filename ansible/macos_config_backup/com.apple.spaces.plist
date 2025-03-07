@@ -1,0 +1,298 @@
+{
+    SpacesDisplayConfiguration =     {
+        "Management Data" =         {
+            Age = "49467.09895112499";
+            "Management Mode" = 1;
+            Monitors =             (
+                                {
+                    "Current Space" =                     {
+                        ManagedSpaceID = 9;
+                        id64 = 9;
+                        type = 0;
+                        uuid = "4CDECDCE-82CD-4D13-9C00-665FAA84DC06";
+                    };
+                    "Display Identifier" = Main;
+                    Spaces =                     (
+                                                {
+                            ManagedSpaceID = 17;
+                            TileLayoutManager =                             {
+                                Age = "44999.078090625";
+                                ConfigAge = "38342.89031804167";
+                                "Inter-Tile Spacing" =                                 {
+                                    Height = 12;
+                                    Width = 12;
+                                };
+                                "Layout Rect" =                                 {
+                                    Height = 900;
+                                    Width = 1440;
+                                    X = 0;
+                                    Y = 0;
+                                };
+                                "Max Tile Config" =                                 {
+                                    Height = 1;
+                                    Width = 2;
+                                };
+                                PreferredLayout =                                 (
+                                                                        {
+                                        DisplaySize =                                         {
+                                            Height = 900;
+                                            Width = 1440;
+                                        };
+                                        FirstTileSize =                                         {
+                                            Height = 900;
+                                            Width = 1440;
+                                        };
+                                    },
+                                                                        {
+                                        DisplaySize =                                         {
+                                            Height = 1080;
+                                            Width = 1920;
+                                        };
+                                        FirstTileSize =                                         {
+                                            Height = 1080;
+                                            Width = 1920;
+                                        };
+                                    }
+                                );
+                                ReservedArea =                                 {
+                                    Bottom = 0;
+                                    Left = 0;
+                                    Right = 0;
+                                    Top = 0;
+                                };
+                                TileSpaces =                                 (
+                                                                        {
+                                        ManagedSpaceID = 17;
+                                        SizeConstraints =                                         {
+                                            Max =                                             {
+                                                Height = 100000;
+                                                Width = 100000;
+                                            };
+                                            Min =                                             {
+                                                Height = 270;
+                                                Width = 400;
+                                            };
+                                            Preferred =                                             {
+                                                Height = 768;
+                                                Width = 1024;
+                                            };
+                                        };
+                                        TileLimitedClipping = 1;
+                                        TileRect =                                         {
+                                            Height = 900;
+                                            Width = 1440;
+                                            X = 0;
+                                            Y = 0;
+                                        };
+                                        TileType = Primary;
+                                        TileWindowID = 68582;
+                                        appName = Code;
+                                        "com.apple.appkit.disablemcexit" = 0;
+                                        fromSpace = "4CDECDCE-82CD-4D13-9C00-665FAA84DC06";
+                                        "fs_wid" = 68582;
+                                        id64 = 19;
+                                        name = "mac-setup.yml \\U2014 dev-setup";
+                                        pid = 17882;
+                                        type = 5;
+                                        uuid = "89F35926-B17D-45EA-9E2E-B6C8A5F82907";
+                                    }
+                                );
+                            };
+                            WallSpace =                             {
+                                ManagedSpaceID = 17;
+                                id64 = 18;
+                                type = 6;
+                                uuid = "4954A03B-6141-4F80-A1D6-05670E00BAFF";
+                            };
+                            id64 = 17;
+                            pid = 17882;
+                            type = 4;
+                            uuid = "47E51581-D7DF-499B-A884-351A02F1D96A";
+                        },
+                                                {
+                            ManagedSpaceID = 9;
+                            id64 = 9;
+                            type = 0;
+                            uuid = "4CDECDCE-82CD-4D13-9C00-665FAA84DC06";
+                        },
+                                                {
+                            ManagedSpaceID = 339;
+                            TileLayoutManager =                             {
+                                Age = "13392.68364133331";
+                                ConfigAge = "13392.68014883331";
+                                "Inter-Tile Spacing" =                                 {
+                                    Height = 12;
+                                    Width = 12;
+                                };
+                                "Layout Rect" =                                 {
+                                    Height = 900;
+                                    Width = 1440;
+                                    X = 0;
+                                    Y = 0;
+                                };
+                                "Max Tile Config" =                                 {
+                                    Height = 1;
+                                    Width = 2;
+                                };
+                                PreferredLayout =                                 (
+                                                                        {
+                                        DisplaySize =                                         {
+                                            Height = 900;
+                                            Width = 1440;
+                                        };
+                                        FirstTileSize =                                         {
+                                            Height = 900;
+                                            Width = 1440;
+                                        };
+                                    },
+                                                                        {
+                                        DisplaySize =                                         {
+                                            Height = 1080;
+                                            Width = 1920;
+                                        };
+                                        FirstTileSize =                                         {
+                                            Height = 1080;
+                                            Width = 1920;
+                                        };
+                                    }
+                                );
+                                ReservedArea =                                 {
+                                    Bottom = 0;
+                                    Left = 0;
+                                    Right = 0;
+                                    Top = 0;
+                                };
+                                TileSpaces =                                 (
+                                                                        {
+                                        ManagedSpaceID = 339;
+                                        SizeConstraints =                                         {
+                                            Max =                                             {
+                                                Height = 100000;
+                                                Width = 100000;
+                                            };
+                                            Min =                                             {
+                                                Height = 100;
+                                                Width = 100;
+                                            };
+                                            Preferred =                                             {
+                                                Height = 859;
+                                                Width = 1425;
+                                            };
+                                        };
+                                        TileLimitedClipping = 1;
+                                        TileRect =                                         {
+                                            Height = 900;
+                                            Width = 1440;
+                                            X = 0;
+                                            Y = 0;
+                                        };
+                                        TileType = Primary;
+                                        TileWindowID = 78823;
+                                        appName = Vivaldi;
+                                        "com.apple.appkit.disablemcexit" = 0;
+                                        fromSpace = "7ABF2BC3-3CC2-4AE1-87DC-51E511A0D2A7";
+                                        "fs_wid" = 78823;
+                                        id64 = 341;
+                                        name = "Ansible Dev Setup - Grok - Vivaldi";
+                                        pid = 18902;
+                                        type = 5;
+                                        uuid = "FBC120D5-A0AA-4C08-8B20-609763625329";
+                                    }
+                                );
+                            };
+                            WallSpace =                             {
+                                ManagedSpaceID = 339;
+                                id64 = 340;
+                                type = 6;
+                                uuid = "F0C9A7BF-2D43-49D8-8392-E885A257F875";
+                            };
+                            "fs_wid" = 78823;
+                            id64 = 339;
+                            pid = 18902;
+                            type = 4;
+                            uuid = "B1B32F63-BA22-4CA9-BADB-33624E6AF178";
+                        },
+                                                {
+                            ManagedSpaceID = 11;
+                            id64 = 11;
+                            type = 0;
+                            uuid = "646ED12B-A874-4B55-8A4A-24B50ACD5277";
+                        }
+                    );
+                },
+                                {
+                    "Collapsed Space" =                     {
+                        ManagedSpaceID = 346;
+                        id64 = 346;
+                        type = 0;
+                        uuid = "7ABF2BC3-3CC2-4AE1-87DC-51E511A0D2A7";
+                    };
+                    "Display Identifier" = "81675BCE-48B1-7F65-0857-D6964E3302DB";
+                }
+            );
+            Primary =             {
+                CreatedCount = 12;
+                DeletedCount = 11;
+                LifetimeEntryCount = 11;
+                LifetimeMax = "31503.01416924997";
+                LifetimeMin = "3.175336249987595";
+                LifetimeSum = "34729.28765800002";
+                PersistedCount = 3;
+            };
+            Secondary =             {
+                CreatedCount = 9;
+                DeletedCount = 7;
+                LifetimeEntryCount = 7;
+                LifetimeMax = "0.6167680000071414";
+                LifetimeMin = "0.557030166615732";
+                LifetimeSum = "4.114223541691899";
+                PersistedCount = 0;
+            };
+        };
+        "Space Properties" =         (
+                        {
+                name = "4CDECDCE-82CD-4D13-9C00-665FAA84DC06";
+                windows =                 (
+                    84031,
+                    84022,
+                    82905,
+                    78983,
+                    68555,
+                    83697,
+                    68581,
+                    78499,
+                    68560,
+                    68559,
+                    68538,
+                    68577
+                );
+            },
+                        {
+                name = "646ED12B-A874-4B55-8A4A-24B50ACD5277";
+                windows =                 (
+                    68560,
+                    68559,
+                    68538
+                );
+            },
+                        {
+                name = "47E51581-D7DF-499B-A884-351A02F1D96A";
+                windows =                 (
+                    68560,
+                    68559,
+                    68598,
+                    68582
+                );
+            },
+                        {
+                name = "B1B32F63-BA22-4CA9-BADB-33624E6AF178";
+                windows =                 (
+                    68560,
+                    68559,
+                    78854,
+                    78823
+                );
+            }
+        );
+    };
+}

@@ -1,0 +1,95 @@
+{
+    NSNavPanelExpandedSizeForOpenMode = "{800, 454}";
+    NSOSPLastRootDirectory = {length = 704, bytes = 0x626f6f6b c0020000 00000410 30000000 ... 60010000 00000000 };
+    "NSWindow Frame GoToSheet" = "702 162 460 364 0 0 1440 875 ";
+    "NSWindow Frame NSNavPanelAutosaveName" = "532 103 800 454 0 0 1440 875 ";
+    "NSWindow Frame NSSpellCheckerSubstitutionsPanel2" = "470 327 425 137 0 0 1440 875 ";
+    "amplitudePulseAnalyticsTracker_nextHeartbeatDate" = "2025-03-07 08:00:00 +0000";
+    "calculator_currenciesRefresh" = {length = 37, bytes = 0x7b227375 63636565 64656422 3a7b225f ... 30353632 37367d7d };
+    "commandScheduler_commandRuns" =     {
+    };
+    commandsPreferencesExpandedItemIds =     (
+        "builtin_package_clipboardHistory",
+        "builtin_package_navigation",
+        quicklinks,
+        applications,
+        "builtin_package_windowManagement",
+        "builtin_package_calculator"
+    );
+    commandsPreferencesLastSelectedFilterTab = quicklinks;
+    "database_lastValidAppVersion" = "1.93.2";
+    "database_lastValidOSVersion" = "15.3.1";
+    "fallbackSearches_didMigrateScriptCommands" = 1;
+    "fileSearch_fileSearchScope" = kMDQueryScopeComputer;
+    "floatingNotes_didCreateOnboardingNote" = 1;
+    "floatingNotes_didMigrateFloatingNotesHotkeysAndAliases" = 1;
+    "floatingNotes_didMigrateFloatingNotesRecords" = 1;
+    hasQueuedStatusBarHint = 0;
+    hasShownStatusBarHintAfterOnboarding = 1;
+    keepWindowVisibleOnResignKey = 0;
+    mainWindowCaptureCopyToClipboard = 1;
+    mainWindowCaptureOpenQuickAccessOverlay = 0;
+    mainWindowCaptureShowInFinder = 0;
+    mainWindowPositionCache =     {
+        "1(0.0, 0.0, 1440.0, 900.0)" = "{557, 567}";
+        "2(-1920.0, 0.0, 1920.0, 1080.0)" = "{-1335, 916}";
+        "2(-233.0, 900.0, 1920.0, 1080.0)" = "{352, 1816}";
+        "2(1440.0, -180.0, 1920.0, 1080.0)" = "{2025, 736}";
+        "2(1440.0, 35.0, 1920.0, 1080.0)" = "{2025, 951}";
+    };
+    "mainWindow_isMonitoringGlobalHotkeys" = 1;
+    navigationCommandStyleIdentifierKey = macos;
+    onboardingCompleted = 1;
+    "onboarding_completedTaskIdentifiers" =     (
+        startWalkthrough,
+        windowManagement,
+        setHotkeyAndAlias,
+        installFirstExtension,
+        calculator
+    );
+    "onboarding_raycastShortcuts" =     (
+        Esc,
+        "\\U2318,"
+    );
+    "onboarding_setupAlias" = 1;
+    "onboarding_setupHotkey" = 1;
+    "onboarding_showTasksProgress" = 1;
+    "permissions.folders.read:/Users/erictom/Desktop" = 1;
+    "permissions.folders.read:/Users/erictom/Documents" = 1;
+    "permissions.folders.read:/Users/erictom/Downloads" = 1;
+    "permissions.folders.read:cloudStorage" = 1;
+    "permissions.folders.read:removableVolumes" = 1;
+    popToRootTimeout = 90;
+    "quicklinks_enableAutoFillLink" = 0;
+    "quicklinks_enableQuickSearch" = 0;
+    "raycast-preferences-restorableData" = {length = 81, bytes = 0x7b227479 70654e61 6d65223a 224f7267 ... 2e373939 3237397d };
+    "raycast-updates-lastAppUpdateCheckDate" = "1741299239.669511";
+    "raycast-updates-lastTargetCommitishInstalled" = a59f17b2b0728ef68c670064ae11cce6c7224021;
+    "raycast-updates-versionOfLastSeenReleaseNotes" = "1.93.1";
+    "raycast-updates-whatsNewItemDisplayDate" = "1741290564.707154";
+    raycastAPIOptions = 0;
+    raycastAlternativeEscape = 0;
+    raycastAnonymousId = "63FE7BD7-9F96-4F30-BC0D-E60755A45574";
+    raycastCurrentThemeId = "bundled-raycast-dark";
+    raycastCurrentThemeIdDarkAppearance = "bundled-raycast-dark";
+    raycastFirstKnownAppVersion = {length = 8, bytes = 0x22312e38392e3022};
+    raycastGlobalHotkey = "Command-49";
+    raycastInstallationDate = "2025-02-01 21:00:36 +0000";
+    raycastLoginItemAutoInstalled = "2025-02-01 21:00:41 +0000";
+    raycastPreferredWindowMode = compact;
+    raycastShouldFollowSystemAppearance = 0;
+    raycastWindowEscapeKeyBehavior = 0;
+    raycastWindowPresentationMode = 0;
+    showFavoritesInCompactMode = 1;
+    showGettingStartedLink = 1;
+    "siriShortcuts_siriShortcutsPermissionState" = granted;
+    "store_everInstalled" =     (
+        "c0c9423a-7014-481e-8bb9-44c4c6df53be",
+        "c5ce763c-8582-4da2-badb-10b63d514297"
+    );
+    "store_migratedHackerNews" = 1;
+    "store_migratedNative" = 1;
+    "store_migratedReminders" = 1;
+    "subscriptions_active" = 0;
+    useHyperKeyIcon = 0;
+}
