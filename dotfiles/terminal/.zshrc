@@ -56,6 +56,12 @@ fi
 export EDITOR=nvim
 export GIT_CONFIG_GLOBAL=~/.config/git/.gitconfig
 
+# These are for odbc db connection for installing via homebrew on mac
+# use `odbcinst -j` to see if the system exported variables correctly
+export ODBCINI="$BREW_PREFIX/etc/odbc.ini"
+export ODBCINSTINI="$BREW_PREFIX/etc/odbcinst.ini" 
+export ODBCSYSINI="$BREW_PREFIX/etc"
+
 # Set Terminal Home Starting
 cd ~
 
@@ -160,7 +166,7 @@ alias deact='deactivate'
 
 # Git Aliases
 alias ga='git add'
-alias gaa='git add .'
+alias gaa='git add . && git status'
 alias gb='git branch'
 alias gch='git checkout -b'
 alias gcm='git commit -m'
