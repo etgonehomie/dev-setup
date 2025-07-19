@@ -29,17 +29,31 @@ final_space = true
   newline = true
 
   # Shows full path on transient line
+  # [[blocks.segments]]
+  #   template = '{{ .Path }} '
+  #   foreground = 'blue'
+  #   background = 'transparent'
+  #   type = 'path'
+  #   style = 'plain'
+
+  #   [blocks.segments.properties]
+  #     cache_duration = 'none'
+  #     style = 'full'
+  
+  # Shows environment
   [[blocks.segments]]
-    template = '{{ .Path }} '
-    foreground = 'blue'
-    background = 'transparent'
-    type = 'path'
-    style = 'plain'
+    background = "#29315A"
+    foreground = "#E4F34A"
+    leading_diamond = " \ue0b6"
+    style = "diamond"
+    template = "\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}(.venv){{ end }}{{ .Full }}{{ end }}"
+    # template = "\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}({{ .Venv }}) {{ end }}{{ .Full }}{{ end }}"
+    trailing_diamond = "\ue0b4"
+    type = "python"
 
     [blocks.segments.properties]
-      cache_duration = 'none'
-      style = 'full'
-      
+      fetch_version = false
+
   # Shows current user on transient line in bubble format    
   [[blocks.segments]]
     background = "#29315A"
@@ -70,18 +84,18 @@ final_space = true
   alignment = "right"
   type = "prompt"
 
-  # # Shows current directoy in bubble
-  # [[blocks.segments]]
-  #   background = "#29315A"
-  #   foreground = "#3EC669"
-  #   leading_diamond = "\ue0b6"
-  #   style = "diamond"
-  #   template = " {{ .Path }}"
-  #   trailing_diamond = "\ue0b4"
-  #   type = "path"
+  # Shows current directoy in bubble
+  [[blocks.segments]]
+    background = "#29315A"
+    foreground = "#3EC669"
+    leading_diamond = "\ue0b6"
+    style = "diamond"
+    template = " {{ .Path }}"
+    trailing_diamond = "\ue0b4"
+    type = "path"
 
-  #   [blocks.segments.properties]
-  #     style = "folder"
+    [blocks.segments.properties]
+      style = "folder"
 
   # Shows Git status and changes color depending on status
   [[blocks.segments]]
@@ -106,18 +120,6 @@ final_space = true
       fetch_upstream_icon = true
 
   # Show languages used in current dir 
-  [[blocks.segments]]
-    background = "#29315A"
-    foreground = "#E4F34A"
-    leading_diamond = " \ue0b6"
-    style = "diamond"
-    template = "\ue235 {{ if .Error }}{{ .Error }}{{ else }}{{ if .Venv }}{{ .Venv }} {{ end }}{{ .Full }}{{ end }}"
-    trailing_diamond = "\ue0b4"
-    type = "python"
-
-    [blocks.segments.properties]
-      fetch_version = false
-
   [[blocks.segments]]
     background = "#29315A"
     foreground = "#7FD5EA"
