@@ -38,6 +38,25 @@
           ignore_errors: true
           loop: "{{ browser_apps }}"
 
+    - name: Install Homebrew Cask Productivity Apps via Loop
+      block:
+        - name: Check if app is already installed
+          stat:
+            path: "/Applications/{{ item.app_name }}.app"
+          register: app_check
+          loop: "{{ productivity_apps }}"
+          loop_control:
+            label: "{{ item.package }}"
+
+        - name: Install missing productivity apps
+          homebrew_cask:
+            name: "{{ item.item.package }}"
+            state: present
+          loop: "{{ app_check.results }}"
+          when: not item.stat.exists
+          loop_control:
+            label: "{{ item.item.package }}"
+
     # This removes error in CLI for Homebrew having too much access
     - name: Remove group/other write perms from dynamic zsh dir
       ansible.builtin.file:

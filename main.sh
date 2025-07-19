@@ -6,8 +6,6 @@
 # Set variables
 GIT_REPO="https://github.com/etgonehomie/dev-setup.git"
 PLAYBOOK_FILENAME="main.yml"    # Replace with your playbook URL
-PASSWORD_FILE="ansible/vault_password.env"
-VAULT_PW_FILEPATH="$HOME/git-projects/personal/dev-setup/$PASSWORD_FILE"  
 
 # Function to log messages
 log() {
@@ -130,7 +128,7 @@ get_ansible_prereqs() {
 run_remote_playbook() {
     # Run ansible-pull from GitHub
     log "Executing Ansible playbook from $GIT_REPO..."
-    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_FILENAME" --vault-password-file "$VAULT_PW_FILEPATH"
+    ansible-pull -U "$GIT_REPO" "$PLAYBOOK_FILENAME"
 
     if [ $? -eq 0 ]; then
         log "Ansible playbook completed successfully."

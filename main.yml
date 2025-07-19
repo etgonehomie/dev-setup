@@ -19,6 +19,6 @@
 - ansible.builtin.import_playbook: ansible/homebrew-config.yml
 
 # Setup terminal for dev station
-- ansible.builtin.import_playbook: ansible/raycast-config.yml
-- ansible.builtin.import_playbook: ansible/mac-config.yml
+# - ansible.builtin.import_playbook: ansible/raycast-config.yml
+# - ansible.builtin.import_playbook: ansible/mac-config.yml
 - ansible.builtin.import_playbook: ansible/cleanup.yml

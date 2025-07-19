@@ -46,6 +46,18 @@ cask_dev_apps:
   - package: sublime-text
     description: "Sublime: Easy text file editor"
 
+# Install Homebrew Cask Productivity Apps
+productivity_apps:
+  - package: discord
+    description: "Discord: Chat app"
+    app_name: Discord
+  - package: chatgpt
+    description: "ChatGPT: AI assistant"
+    app_name: ChatGPT
+  - package: obsidian
+    description: "Obsidian: Note-taking app"
+    app_name: Obsidian
+
 # Install Homebrew Cask Browsers
 browser_apps:
   - package: google-chrome
