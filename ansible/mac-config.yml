@@ -1,39 +1,56 @@
 ---
-- name: Setup mac configuration settings
+- name: Use Homebrew to Install CLI & Dev tools
   hosts: localhost
   vars_files:
     - vars.yml    # relative path to current playbook
   vars:
-    mac_config_dir: "{{ root_dir }}/ansible/macos_config_backup"
-    apps_to_kill:
-      - "Dock"
-      - "Finder"
-      - "Terminal"
-      - "Raycast"
-    apps_to_restart:
-      - "Raycast"
-  tasks:
-    - name: Find all .plist files in mac-backup-config directory
-      ansible.builtin.find:
-        paths: "{{ mac_config_dir }}"
-        patterns: "*.plist"
-        recurse: no
-      register: config_files
+    # Source paths of dotfile templates
+    zshenv_repo_url: "{{ root_dir }}/dotfiles/terminal/.zshenv"
+    zshrc_repo_url: "{{ root_dir }}/dotfiles/terminal/.zshrc"
+    theme_filename: 'zen.toml'
+    theme_repo_url: "{{ root_dir}}/dotfiles/oh-my-posh/themes/{{ theme_filename }}"
 
-    - name: Copy .plist files to {{ ansible_facts['env']['HOME'] }}/test
+    # Destination system paths
+    themes_local_dir: "{{ brew_prefix }}/share/oh-my-posh/themes"
+    themes_symlink_dir: "{{ ansible_facts['env']['HOME'] }}/.config/oh-my-posh/themes"
+
+  tasks:
+    # Update terminal config files
+    - name: Copy .zshenv from {{ root_dir }} to {{ ansible_facts['env']['HOME'] }}
       ansible.builtin.copy:
-        src: "{{ item.path }}"
-        dest: "{{ ansible_facts['env']['HOME'] }}/test/{{ item.path | basename }}"
+        src: "{{ zshenv_repo_url }}"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.zshenv"
         remote_src: yes
         force: yes
-      loop: "{{ config_files.files }}"
 
-    - name: Kill affected apps to apply changes
-      ansible.builtin.shell: "killall {{ item }}"
-      loop: "{{ apps_to_kill }}"
-      ignore_errors: yes  # Ignore if app isn’t running
+    - name: Copy .zshrc from {{ root_dir }} to {{ ansible_facts['env']['HOME'] }}
+      ansible.builtin.copy:
+        src: "{{ zshrc_repo_url }}"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
+        remote_src: yes
+        force: yes
+  
+    # Update terminal theming using oh-my-posh    
+    - name: Ensure terminal themes dir exists at {{ themes_local_dir }}
+      file:
+        path: "{{ themes_local_dir }}"
+        state: directory
 
-    - name: Restart affected apps to apply changes
-      ansible.builtin.shell: open -a {{ item }}        
-      loop: "{{ apps_to_restart }}"
-      ignore_errors: yes  # Ignore if app isn’t running
+    - name: Copy terminal theme from {{ root_dir }} to {{ themes_local_dir }}
+      ansible.builtin.copy:
+        src: "{{ theme_repo_url }}"
+        dest: "{{ themes_local_dir }}/{{ theme_filename }}"
+        remote_src: yes
+        force: yes
+
+    # Create symlink to themes in .config file for easy reference
+    - name: Ensure parent dir exists for symlink at {{ themes_symlink_dir }}
+      file:
+        path: "{{ themes_symlink_dir | dirname }}"
+        state: directory
+
+    - name: Create a symbolic link for themes dir at {{ themes_symlink_dir }}
+      file:
+        src: "{{ themes_local_dir }}"
+        dest: "{{ themes_symlink_dir }}"
+        state: link
