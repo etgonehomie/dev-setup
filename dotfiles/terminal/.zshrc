@@ -28,9 +28,12 @@ fi
 eval "$($BREW_PREFIX/bin/brew shellenv)"  
 
 # CLI Plugin Tools (order matters)
-source "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+[[ -f "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] && \
+  source "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+[[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
+  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+[[ -f "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]] && \
+  source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
 
 ####################################
 # Set config Variables
