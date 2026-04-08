@@ -11,7 +11,7 @@
             name: "{{ item.package }}"
             state: present
             install_options: overwrite
-          loop: "{{ cli_extensions }}"
+          loop: "{{ cli_extensions | default([]) }}"
 
     - name: Install Homebrew Dev Tools via Loop
       block:
@@ -20,7 +20,7 @@
             name: "{{ item.package }}"
             state: present
             install_options: overwrite
-          loop: "{{ native_brew_apps }}"
+          loop: "{{ native_brew_apps | default([]) }}"
 
     - name: Install Homebrew Cask Dev Apps via Loop
       block:
@@ -29,7 +29,7 @@
             name: "{{ item.package }}"
             state: present
           ignore_errors: true
-          loop: "{{ cask_dev_apps }}"
+          loop: "{{ cask_dev_apps | default([]) }}"
 
     - name: Install Homebrew Cask Browsers via Loop
       block:
@@ -38,7 +38,7 @@
             name: "{{ item.package }}"
             state: present
           ignore_errors: true
-          loop: "{{ browser_apps }}"
+          loop: "{{ browser_apps | default([]) }}"
 
     - name: Install Homebrew Cask Productivity Apps via Loop
       block:
@@ -46,7 +46,7 @@
           stat:
             path: "/Applications/{{ item.app_name }}.app"
           register: app_check
-          loop: "{{ productivity_apps }}"
+          loop: "{{ productivity_apps | default([]) }}"
           loop_control:
             label: "{{ item.package }}"
 
