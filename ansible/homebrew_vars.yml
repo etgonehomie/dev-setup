@@ -19,8 +19,6 @@ cli_extensions:
     description: "Terminal text editor (vim replacement)"
   - package: oh-my-posh 
     description: "Prompt theme engine for any shell"
-  - package: font-hack-nerd-font 
-    description: "Font needed for oh-my-posh to work"
 
 # Install Homebrew native Dev tools
 native_brew_apps:
@@ -37,6 +35,8 @@ native_brew_apps:
 
 # Install Homebrew Cask Dev tools
 cask_dev_apps:
+  - package: font-hack-nerd-font
+    description: "Font needed for oh-my-posh to work"
   - package: visual-studio-code
     description: "VS Code: IDE"
   - package: raycast
