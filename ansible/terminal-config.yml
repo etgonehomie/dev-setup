@@ -12,21 +12,21 @@
 
     # Destination system paths
     themes_local_dir: "{{ brew_prefix }}/share/oh-my-posh/themes"
-    themes_symlink_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
+    themes_symlink_dir: "{{ ansible_facts['env']['HOME'] }}/.config/oh-my-posh/themes"
 
   tasks:
     # Update terminal config files
-    - name: Copy .zshenv from {{ root_dir }} to {{ ansible_env.HOME }}
+    - name: Copy .zshenv from {{ root_dir }} to {{ ansible_facts['env']['HOME'] }}
       ansible.builtin.copy:
         src: "{{ zshenv_repo_url }}"
-        dest: "{{ ansible_env.HOME }}/.zshenv"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.zshenv"
         remote_src: yes
         force: yes
 
-    - name: Copy .zshrc from {{ root_dir }} to {{ ansible_env.HOME }}
+    - name: Copy .zshrc from {{ root_dir }} to {{ ansible_facts['env']['HOME'] }}
       ansible.builtin.copy:
         src: "{{ zshrc_repo_url }}"
-        dest: "{{ ansible_env.HOME }}/.zshrc"
+        dest: "{{ ansible_facts['env']['HOME'] }}/.zshrc"
         remote_src: yes
         force: yes
   
