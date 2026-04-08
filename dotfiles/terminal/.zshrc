@@ -1,5 +1,6 @@
 #!/bin/zsh
 # Ensure we use ZSH and not bash to evaluate
+[[ -n "$ZSH_VERSION" ]] || return
 
 ####################################
 # homebrew command needed and order needed to prevent clashing
