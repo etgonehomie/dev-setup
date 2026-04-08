@@ -85,10 +85,8 @@ update_homebrew_paths() {
         exit 1
     fi
 
-    # Refresh the current shell by sourcing .zshrc
-    log "Refreshing terminal to apply changes..."
-    source "$ZSHRC"
-    log "Terminal refreshed. Homebrew prefix: $(brew --prefix)"
+    # Homebrew shellenv is now active; new zsh terminals will pick up .zshrc automatically
+    log "Homebrew shellenv evaluated. Open a new terminal to apply .zshrc changes."
 }
 
 # Step 3: Update Homebrew
