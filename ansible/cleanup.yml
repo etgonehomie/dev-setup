@@ -5,7 +5,5 @@
     - vars.yml  #  relative path to current playbook
   tasks: 
     - name: Clean-up the cloned dir at {{ root_dir }}
-      ansible.builtin.file:
-        path: "{{ root_dir }}"
-        state: absent
+      ansible.builtin.shell: "rm -rf {{ root_dir }}"
       ignore_errors: yes
