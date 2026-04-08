@@ -28,41 +28,41 @@ native_brew_apps:
     description: "Source code management"
   - package: python
     description: "Data Engineer/Science projects"
-  - package: node
-    description: "JS development"
-  - package: docker
-    description: "Containerize depoloyments"
+  # - package: node
+  #   description: "JS development"
+  # - package: docker
+  #   description: "Containerize depoloyments"
 
 # Install Homebrew Cask Dev tools
 cask_dev_apps:
   - package: font-hack-nerd-font
     description: "Font needed for oh-my-posh to work"
-  - package: visual-studio-code
-    description: "VS Code: IDE"
-  - package: raycast
-    description: 'Raycast: Mac Finder Replacement'
-  - package: postman
-    description: "Postman: API Tester"
-  - package: sublime-text
-    description: "Sublime: Easy text file editor"
+  # - package: visual-studio-code
+  #   description: "VS Code: IDE"
+  # - package: raycast
+  #   description: 'Raycast: Mac Finder Replacement'
+  # - package: postman
+  #   description: "Postman: API Tester"
+  # - package: sublime-text
+  #   description: "Sublime: Easy text file editor"
 
 # Install Homebrew Cask Productivity Apps
 productivity_apps:
-  - package: discord
-    description: "Discord: Chat app"
-    app_name: Discord
-  - package: chatgpt
-    description: "ChatGPT: AI assistant"
-    app_name: ChatGPT
-  - package: obsidian
-    description: "Obsidian: Note-taking app"
-    app_name: Obsidian
+  # - package: discord
+  #   description: "Discord: Chat app"
+  #   app_name: Discord
+  # - package: chatgpt
+  #   description: "ChatGPT: AI assistant"
+  #   app_name: ChatGPT
+  # - package: obsidian
+  #   description: "Obsidian: Note-taking app"
+  #   app_name: Obsidian
 
 # Install Homebrew Cask Browsers
 browser_apps:
-  - package: google-chrome
-    description: "Chrome Browser"
-  - package: firefox
-    description: "Firefox Browser"
-  - package: vivaldi
-    description: "Vivaldi Browser"
+  # - package: google-chrome
+  #   description: "Chrome Browser"
+  # - package: firefox
+  #   description: "Firefox Browser"
+  # - package: vivaldi
+  #   description: "Vivaldi Browser"
