@@ -9,7 +9,7 @@
     gitignore_repo_url: "{{ root_dir }}/dotfiles/git/.gitignore_global"
 
     # Destination system paths
-    git_local_dir: "{{ ansible_env.HOME }}/.config/git"
+    git_local_dir: "{{ ansible_facts['env']['HOME'] }}/.config/git"
 
   tasks:
     # Update global git file
