@@ -11,7 +11,7 @@
     theme_repo_url: "{{ root_dir}}/dotfiles/oh-my-posh/themes/{{ theme_filename }}"
 
     # Destination system paths
-    themes_local_dir: "~/{{ brew_prefix }}/share/oh-my-posh/themes"
+    themes_local_dir: "{{ brew_prefix }}/share/oh-my-posh/themes"
     themes_symlink_dir: "{{ ansible_env.HOME }}/.config/oh-my-posh/themes"
 
   tasks:
@@ -44,6 +44,11 @@
         force: yes
 
     # Create symlink to themes in .config file for easy reference
+    - name: Ensure parent dir exists for symlink at {{ themes_symlink_dir }}
+      file:
+        path: "{{ themes_symlink_dir | dirname }}"
+        state: directory
+
     - name: Create a symbolic link for themes dir at {{ themes_symlink_dir }}
       file:
         src: "{{ themes_local_dir }}"
