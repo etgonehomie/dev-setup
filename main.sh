@@ -17,9 +17,12 @@ DO_UPGRADE=false
 DO_CLEANUP=false
 RESUME=false
 APPLY_RAYCAST_CONFIG=false
+IMPORT_MAC_SETTINGS=false
 DOTFILES_OVERWRITE_MODE="prompt"
 GROUPS_CSV=""
 PACKAGES_CSV=""
+MAC_SETTINGS_FILE="${HOME}/.config/dev-setup/mac-settings-export/exported-settings.sh"
+PROFILE_EXPLICIT=false
 
 declare -a SELECTED_GROUPS=()
 declare -a SELECTED_PACKAGE_IDS=()
@@ -40,6 +43,8 @@ Options:
   --groups <csv>           Category list (e.g., core,dev,productivity)
   --packages <csv>         Package IDs override (e.g., git,raycast,ollama)
   --raycast-config         Apply Raycast config import step
+  --import-mac-settings    Apply exported macOS settings onto this Mac
+  --mac-settings-file <p>  Path to exported-settings.sh (default: ~/.config/dev-setup/mac-settings-export/exported-settings.sh)
   --upgrade                Run brew upgrade before provisioning
   --cleanup                Cleanup ansible-pull cache after success
   --dry-run                Preview actions without mutating system
@@ -184,7 +189,7 @@ package_installed() {
 record_preinstalled() {
   PREINSTALLED_IDS=()
   local package_id
-  for package_id in "${SELECTED_PACKAGE_IDS[@]}"; do
+  for package_id in "${SELECTED_PACKAGE_IDS[@]:-}"; do
     if package_installed "${package_id}"; then
       PREINSTALLED_IDS+=("${package_id}")
     fi
@@ -193,7 +198,7 @@ record_preinstalled() {
 
 is_preinstalled() {
   local package_id="$1"
-  array_contains "${package_id}" "${PREINSTALLED_IDS[@]}"
+  array_contains "${package_id}" "${PREINSTALLED_IDS[@]:-}"
 }
 
 is_mac() { [[ "$(uname -s)" == "Darwin" ]]; }
@@ -257,6 +262,9 @@ update_homebrew_paths() {
   [[ -f "${zprofile}" ]] || touch "${zprofile}"
   if ! grep -q "eval \"\$(${brew_path} shellenv)\"" "${zprofile}" 2>/dev/null; then
     echo "eval \"\$(${brew_path} shellenv)\"" >> "${zprofile}"
+  fi
+  if has_command brew; then
+    return 0
   fi
   if [[ -x "${brew_path}" ]]; then
     eval "$("${brew_path}" shellenv)"
@@ -329,7 +337,7 @@ run_wizard() {
   done < <(category_order)
   [[ ${#SELECTED_GROUPS[@]} -eq 0 ]] && { log "No categories selected."; exit 0; }
 
-  for group in "${SELECTED_GROUPS[@]}"; do
+  for group in "${SELECTED_GROUPS[@]:-}"; do
     select_packages_for_group "${group}"
   done
 
@@ -345,8 +353,8 @@ run_wizard() {
     DOTFILES_OVERWRITE_MODE="never"
   fi
 
-  log "Groups: $(join_by_comma "${SELECTED_GROUPS[@]}")"
-  log "Packages: $(join_by_comma "${SELECTED_PACKAGE_IDS[@]}")"
+  log "Groups: $(join_by_comma "${SELECTED_GROUPS[@]:-}")"
+  log "Packages: $(join_by_comma "${SELECTED_PACKAGE_IDS[@]:-}")"
   confirm "Proceed with this plan?" || exit 1
   save_profile "${PROFILE_PATH}"
 }
@@ -355,8 +363,8 @@ save_profile() {
   local profile_path="$1"
   mkdir -p "$(dirname "${profile_path}")"
   cat > "${profile_path}" <<EOF
-groups: $(join_by_comma "${SELECTED_GROUPS[@]}")
-packages: $(join_by_comma "${SELECTED_PACKAGE_IDS[@]}")
+groups: $(join_by_comma "${SELECTED_GROUPS[@]:-}")
+packages: $(join_by_comma "${SELECTED_PACKAGE_IDS[@]:-}")
 apply_raycast_config: ${APPLY_RAYCAST_CONFIG}
 dotfiles_overwrite_mode: ${DOTFILES_OVERWRITE_MODE}
 EOF
@@ -386,7 +394,7 @@ resolve_selection_from_flags() {
 
   if [[ ${#SELECTED_GROUPS[@]} -gt 0 && ${#SELECTED_PACKAGE_IDS[@]} -eq 0 ]]; then
     local group item items
-    for group in "${SELECTED_GROUPS[@]}"; do
+    for group in "${SELECTED_GROUPS[@]:-}"; do
       items="$(category_items "${group}")"
       for item in ${items}; do
         if append_unique "${item}" "${SELECTED_PACKAGE_IDS[@]:-}"; then
@@ -397,6 +405,9 @@ resolve_selection_from_flags() {
   fi
 
   if [[ ${#SELECTED_GROUPS[@]} -eq 0 && ${#SELECTED_PACKAGE_IDS[@]} -eq 0 ]]; then
+    if import_only_requested; then
+      return 0
+    fi
     if [[ -t 0 && "${AUTO_CONFIRM}" != "true" ]]; then
       WIZARD_MODE=true
     else
@@ -411,10 +422,12 @@ parse_args() {
     case "$1" in
       --wizard) WIZARD_MODE=true; shift ;;
       --yes) AUTO_CONFIRM=true; shift ;;
-      --profile) PROFILE_PATH="$2"; shift 2 ;;
+      --profile) PROFILE_PATH="$2"; PROFILE_EXPLICIT=true; shift 2 ;;
       --groups) GROUPS_CSV="$2"; shift 2 ;;
       --packages) PACKAGES_CSV="$2"; shift 2 ;;
       --raycast-config) APPLY_RAYCAST_CONFIG=true; shift ;;
+      --import-mac-settings) IMPORT_MAC_SETTINGS=true; shift ;;
+      --mac-settings-file) MAC_SETTINGS_FILE="$2"; shift 2 ;;
       --upgrade) DO_UPGRADE=true; shift ;;
       --cleanup) DO_CLEANUP=true; shift ;;
       --dry-run) DRY_RUN=true; shift ;;
@@ -425,12 +438,36 @@ parse_args() {
   done
 }
 
+import_only_requested() {
+  [[ "${IMPORT_MAC_SETTINGS}" == "true" ]] \
+    && [[ "${WIZARD_MODE}" != "true" ]] \
+    && [[ -z "${GROUPS_CSV}" ]] \
+    && [[ -z "${PACKAGES_CSV}" ]] \
+    && [[ "${PROFILE_EXPLICIT}" != "true" ]]
+}
+
+apply_mac_settings_import() {
+  if [[ "${IMPORT_MAC_SETTINGS}" != "true" ]]; then
+    return 0
+  fi
+
+  if [[ "${DRY_RUN}" == "true" ]]; then
+    log "Dry-run: would import macOS settings from ${MAC_SETTINGS_FILE}."
+    return 0
+  fi
+
+  local import_script
+  import_script="${SCRIPT_DIR}/mac-settings/import.sh"
+  [[ -x "${import_script}" ]] || { log "Error: import helper not executable at ${import_script}"; exit 1; }
+  bash "${import_script}" --source "${MAC_SETTINGS_FILE}"
+}
+
 build_ansible_vars_file() {
   local file_path="$1"
   local formulae=()
   local casks=()
   local package_id kind
-  for package_id in "${SELECTED_PACKAGE_IDS[@]}"; do
+  for package_id in "${SELECTED_PACKAGE_IDS[@]:-}"; do
     kind="$(package_kind "${package_id}")"
     [[ -z "${kind}" ]] && continue
     if [[ "${kind}" == "formula" ]]; then
@@ -440,9 +477,9 @@ build_ansible_vars_file() {
     fi
   done
   cat > "${file_path}" <<EOF
-selected_groups_csv: "$(join_by_comma "${SELECTED_GROUPS[@]}")"
-selected_formulae_csv: "$(join_by_comma "${formulae[@]}")"
-selected_casks_csv: "$(join_by_comma "${casks[@]}")"
+selected_groups_csv: "$(join_by_comma "${SELECTED_GROUPS[@]:-}")"
+selected_formulae_csv: "$(join_by_comma "${formulae[@]:-}")"
+selected_casks_csv: "$(join_by_comma "${casks[@]:-}")"
 apply_raycast_config: ${APPLY_RAYCAST_CONFIG}
 dotfiles_overwrite_mode: "${DOTFILES_OVERWRITE_MODE}"
 cleanup_cache: ${DO_CLEANUP}
@@ -465,14 +502,14 @@ write_report() {
   : > "${REPORT_FILE}"
   {
     echo "Dev Setup Report ($(date '+%Y-%m-%d %H:%M:%S'))"
-    echo "Groups: $(join_by_comma "${SELECTED_GROUPS[@]}")"
-    echo "Packages: $(join_by_comma "${SELECTED_PACKAGE_IDS[@]}")"
+    echo "Groups: $(join_by_comma "${SELECTED_GROUPS[@]:-}")"
+    echo "Packages: $(join_by_comma "${SELECTED_PACKAGE_IDS[@]:-}")"
     echo
     echo "Results:"
   } >> "${REPORT_FILE}"
 
   local package_id
-  for package_id in "${SELECTED_PACKAGE_IDS[@]}"; do
+  for package_id in "${SELECTED_PACKAGE_IDS[@]:-}"; do
     if is_preinstalled "${package_id}"; then
       echo "  - ${package_id}: already_present" >> "${REPORT_FILE}"
     elif package_installed "${package_id}"; then
@@ -504,10 +541,22 @@ main() {
   ensure_state_dirs
 
   if should_skip_step "preflight"; then log "Resume: skipping preflight."; else preflight_checks; write_checkpoint "preflight"; fi
+  if should_skip_step "mac_import"; then
+    log "Resume: skipping mac settings import."
+  else
+    apply_mac_settings_import
+    write_checkpoint "mac_import"
+  fi
+
+  if import_only_requested; then
+    log "Mac settings import complete."
+    return 0
+  fi
+
   if should_skip_step "prereqs"; then log "Resume: skipping prereqs."; else run_prerequisites; write_checkpoint "prereqs"; fi
   ensure_catalog_prereqs
 
-  if [[ -f "${PROFILE_PATH}" && "${WIZARD_MODE}" != "true" && -z "${GROUPS_CSV}" && -z "${PACKAGES_CSV}" ]]; then
+  if [[ -f "${PROFILE_PATH}" && "${WIZARD_MODE}" != "true" && -z "${GROUPS_CSV}" && -z "${PACKAGES_CSV}" && ! import_only_requested ]]; then
     load_profile "${PROFILE_PATH}"
   fi
 
