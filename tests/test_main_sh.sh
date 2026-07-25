@@ -148,20 +148,17 @@ else
   fail "unexpected main call order: ${CALL_ORDER[*]}"
 fi
 
-echo "[10] parse_args supports mac settings import flags"
+echo "[10] parse_args rejects deprecated mac settings import flags"
 source main.sh
-IMPORT_MAC_SETTINGS=false
-MAC_SETTINGS_FILE="${HOME}/.config/dev-setup/mac-settings-export/exported-settings.sh"
-parse_args --import-mac-settings --mac-settings-file "${HOME}/custom-export.sh"
-if [[ "${IMPORT_MAC_SETTINGS}" == "true" && "${MAC_SETTINGS_FILE}" == "${HOME}/custom-export.sh" ]]; then
-  pass "mac settings import flags parsed correctly"
+if ( parse_args --import-mac-settings >/dev/null 2>&1 ); then
+  fail "deprecated --import-mac-settings should fail"
 else
-  fail "mac settings import flags parsing failed"
+  pass "deprecated --import-mac-settings is rejected"
 fi
 
-echo "[11] import-only mode skips provisioning flow"
+echo "[11] main flow no longer calls mac settings import step"
 CALL_ORDER=()
-parse_args() { IMPORT_MAC_SETTINGS=true; }
+parse_args() { :; }
 ensure_state_dirs() { :; }
 preflight_checks() { CALL_ORDER+=("preflight"); }
 should_skip_step() { return 1; }
@@ -177,12 +174,11 @@ ensure_rosetta_if_needed() { :; }
 record_preinstalled() { :; }
 run_ansible_pull() { CALL_ORDER+=("ansible"); }
 write_report() { :; }
-import_only_requested() { return 0; }
 main
-if [[ "${CALL_ORDER[*]}" == "preflight import" ]]; then
-  pass "import-only mode exits before provisioning steps"
+if [[ " ${CALL_ORDER[*]} " != *" import "* ]]; then
+  pass "main flow skips mac settings import"
 else
-  fail "unexpected call order for import-only mode: ${CALL_ORDER[*]}"
+  fail "main should not call mac settings import: ${CALL_ORDER[*]}"
 fi
 
 print_results_and_exit
