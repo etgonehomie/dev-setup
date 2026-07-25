@@ -1,0 +1,10 @@
+{
+  "Profiles": [
+    {
+      "Name": "Dev Setup",
+      "Guid": "B1CD20E9-C2BC-4FA5-8B96-7B66BA639F1E",
+      "Normal Font": "HackNerdFontMono-Regular 14",
+      "Use Non-ASCII Font": false
+    }
+  ]
+}
