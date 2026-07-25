@@ -7,6 +7,8 @@ STATE_DIR="${HOME}/.local/state/dev-setup"
 STATE_FILE="${STATE_DIR}/checkpoint.env"
 REPORT_FILE="${STATE_DIR}/last-report.txt"
 PROFILE_PATH="${HOME}/.config/dev-setup/profile.yml"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+CATALOG_FILE="${SCRIPT_DIR}/ansible/homebrew_vars.yml"
 
 WIZARD_MODE=false
 AUTO_CONFIRM=false
@@ -22,8 +24,6 @@ PACKAGES_CSV=""
 declare -a SELECTED_GROUPS=()
 declare -a SELECTED_PACKAGE_IDS=()
 declare -a PREINSTALLED_IDS=()
-
-CATEGORY_ORDER=("core" "dev" "browsers" "productivity" "local-ai" "security" "data" "media-creator")
 
 log() {
   echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*"
@@ -49,77 +49,38 @@ EOF
 }
 
 category_label() {
-  case "$1" in
-    core) echo "Core CLI" ;;
-    dev) echo "Developer Tools" ;;
-    browsers) echo "Browsers" ;;
-    productivity) echo "Productivity" ;;
-    local-ai) echo "Local AI" ;;
-    security) echo "Security" ;;
-    data) echo "Data" ;;
-    media-creator) echo "Media / Creator" ;;
-    *) echo "$1" ;;
-  esac
+  local category="$1"
+  yq -r ".package_catalog.\"${category}\".label // \"${category}\"" "${CATALOG_FILE}"
 }
 
 category_items() {
-  case "$1" in
-    core) echo "curl eza fzf bat zsh-autosuggestions zsh-autocomplete zsh-fast-syntax-highlighting neovim oh-my-posh git python" ;;
-    dev) echo "iterm2 font-hack-nerd-font docker postman" ;;
-    browsers) echo "google-chrome firefox vivaldi" ;;
-    productivity) echo "raycast discord chatgpt obsidian" ;;
-    local-ai) echo "ollama" ;;
-    security) echo "tailscale 1password" ;;
-    data) echo "tableplus dbeaver-community" ;;
-    media-creator) echo "shottr 4k-video-downloader-plus" ;;
-    *) echo "" ;;
-  esac
+  local category="$1"
+  yq -r ".package_catalog.\"${category}\".packages[].id" "${CATALOG_FILE}" 2>/dev/null | tr '\n' ' '
 }
 
 package_kind() {
-  case "$1" in
-    curl|eza|fzf|bat|zsh-autosuggestions|zsh-autocomplete|zsh-fast-syntax-highlighting|neovim|oh-my-posh|git|python|ollama)
-      echo "formula"
-      ;;
-    iterm2|font-hack-nerd-font|docker|postman|google-chrome|firefox|vivaldi|raycast|discord|chatgpt|obsidian|tailscale|1password|tableplus|dbeaver-community|shottr|4k-video-downloader-plus)
-      echo "cask"
-      ;;
-    *)
-      echo ""
-      ;;
-  esac
+  local package_id="$1"
+  yq -r ".package_catalog[]?.packages[]? | select(.id == \"${package_id}\") | .type" "${CATALOG_FILE}" | head -1
 }
 
 package_desc() {
-  case "$1" in
-    curl) echo "Download tooling" ;;
-    eza) echo "Modern ls replacement" ;;
-    fzf) echo "Fuzzy finder" ;;
-    bat) echo "cat with syntax highlighting" ;;
-    zsh-autosuggestions) echo "Shell suggestions" ;;
-    zsh-autocomplete) echo "Shell autocomplete" ;;
-    zsh-fast-syntax-highlighting) echo "Shell syntax highlighting" ;;
-    neovim) echo "Editor" ;;
-    oh-my-posh) echo "Prompt theming" ;;
-    git) echo "Source control" ;;
-    python) echo "Python runtime" ;;
-    ollama) echo "Local LLM runtime" ;;
-    iterm2) echo "Terminal app" ;;
-    font-hack-nerd-font) echo "Nerd font" ;;
-    docker) echo "Container runtime" ;;
-    postman) echo "API client" ;;
-    google-chrome|firefox|vivaldi) echo "Browser" ;;
-    raycast) echo "Launcher and workflow app" ;;
-    discord) echo "Messaging" ;;
-    chatgpt) echo "Desktop AI app" ;;
-    obsidian) echo "Notes" ;;
-    tailscale) echo "Mesh VPN" ;;
-    1password) echo "Password manager" ;;
-    tableplus|dbeaver-community) echo "Database client" ;;
-    shottr) echo "Screenshot utility" ;;
-    4k-video-downloader-plus) echo "Media downloader" ;;
-    *) echo "" ;;
-  esac
+  local package_id="$1"
+  yq -r ".package_catalog[]?.packages[]? | select(.id == \"${package_id}\") | .desc" "${CATALOG_FILE}" | head -1
+}
+
+category_order() {
+  yq -r '.category_order[]' "${CATALOG_FILE}"
+}
+
+ensure_catalog_prereqs() {
+  if [[ ! -f "${CATALOG_FILE}" ]]; then
+    log "Error: package catalog not found at ${CATALOG_FILE}"
+    exit 1
+  fi
+  if ! has_command yq; then
+    log "Error: yq is required to parse ${CATALOG_FILE}."
+    exit 1
+  fi
 }
 
 has_command() {
@@ -314,6 +275,9 @@ ensure_wizard_ui_deps() {
   if ! brew list fzf >/dev/null 2>&1; then
     brew install fzf || log "Warning: fzf install failed; using plain prompts."
   fi
+  if ! brew list yq >/dev/null 2>&1; then
+    brew install yq || { log "Error: yq install failed."; exit 1; }
+  fi
 }
 
 select_packages_for_group() {
@@ -350,11 +314,12 @@ run_wizard() {
   SELECTED_GROUPS=()
   SELECTED_PACKAGE_IDS=()
   local group
-  for group in "${CATEGORY_ORDER[@]}"; do
+  while IFS= read -r group; do
+    [[ -z "${group}" ]] && continue
     if confirm "Enable $(category_label "${group}") (${group})?"; then
       SELECTED_GROUPS+=("${group}")
     fi
-  done
+  done < <(category_order)
   [[ ${#SELECTED_GROUPS[@]} -eq 0 ]] && { log "No categories selected."; exit 0; }
 
   for group in "${SELECTED_GROUPS[@]}"; do
@@ -530,6 +495,7 @@ run_prerequisites() {
 main() {
   parse_args "$@"
   ensure_state_dirs
+  ensure_catalog_prereqs
 
   if should_skip_step "preflight"; then log "Resume: skipping preflight."; else preflight_checks; write_checkpoint "preflight"; fi
   if should_skip_step "prereqs"; then log "Resume: skipping prereqs."; else run_prerequisites; write_checkpoint "prereqs"; fi
