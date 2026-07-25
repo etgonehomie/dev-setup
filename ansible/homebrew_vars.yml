@@ -1,68 +1,189 @@
 ---
-# Homebrew CLI extensions
-cli_extensions:
-  - package: curl 
-    description: "Allows download of external binaries"
-  - package: eza
-    description: "A better `ls` command that has colors" 
-  - package: fzf 
-    description: "Allows fuzzy search (and case insensitivity) in terminal"
-  - package: bat
-    description: "View file content with syntax highlighting (cat replacement)"
-  - package: zsh-autosuggestions
-    description: "CLI history suggestions"
-  - package: zsh-autocomplete
-    description: "CLI command autocomplete"
-  - package: zsh-fast-syntax-highlighting
-    description: "Syntax highlighting for CLI commands"
-  - package: neovim
-    description: "Terminal text editor (vim replacement)"
-  - package: oh-my-posh 
-    description: "Prompt theme engine for any shell"
+# Reference catalog for package IDs used by main.sh wizard/profile mode.
+# Installs are driven by selected_formulae_csv and selected_casks_csv variables.
+category_order:
+  - core
+  - cli-essentials
+  - dev
+  - containers-infra
+  - browsers
+  - productivity
+  - terminal-qol
+  - local-ai
+  - security
+  - data
+  - media-creator
 
-# Install Homebrew native Dev tools
-native_brew_apps:
-  - package: iterm2
-    description: "Terminal GUI replacement"
-  - package: git
-    description: "Source code management"
-  - package: python
-    description: "Data Engineer/Science projects"
-  # - package: node
-  #   description: "JS development"
-  # - package: docker
-  #   description: "Containerize depoloyments"
+package_catalog:
+  core:
+    label: Core CLI
+    packages:
+      - id: curl
+        type: formula
+        desc: Download and transfer tool
+      - id: eza
+        type: formula
+        desc: Modern ls replacement
+      - id: fzf
+        type: formula
+        desc: Fuzzy finder for terminal
+      - id: bat
+        type: formula
+        desc: cat with syntax highlighting
+      - id: zsh-autosuggestions
+        type: formula
+        desc: Command suggestions from history
+      - id: zsh-autocomplete
+        type: formula
+        desc: Real-time completion menus
+      - id: zsh-fast-syntax-highlighting
+        type: formula
+        desc: Fast shell syntax highlighting
+      - id: neovim
+        type: formula
+        desc: Terminal text editor
+      - id: oh-my-posh
+        type: formula
+        desc: Prompt theming engine
+      - id: git
+        type: formula
+        desc: Source control CLI
+      - id: python
+        type: formula
+        desc: Python runtime and tooling
 
-# Install Homebrew Cask Dev tools
-cask_dev_apps:
-  - package: font-hack-nerd-font
-    description: "Font needed for oh-my-posh to work"
-  # - package: visual-studio-code
-  #   description: "VS Code: IDE"
-  # - package: raycast
-  #   description: 'Raycast: Mac Finder Replacement'
-  # - package: postman
-  #   description: "Postman: API Tester"
-  # - package: sublime-text
-  #   description: "Sublime: Easy text file editor"
+  cli-essentials:
+    label: CLI Essentials
+    packages:
+      - id: gh
+        type: formula
+        desc: GitHub CLI for PR and issue workflows
+      - id: ripgrep
+        type: formula
+        desc: Fast recursive code search
+      - id: fd
+        type: formula
+        desc: Fast file and directory finder
+      - id: jq
+        type: formula
+        desc: JSON processor for scripts
+      - id: yq
+        type: formula
+        desc: YAML processor for scripts
+      - id: zoxide
+        type: formula
+        desc: Smart cd based on usage history
 
-# Install Homebrew Cask Productivity Apps
-productivity_apps:
-  # - package: discord
-  #   description: "Discord: Chat app"
-  #   app_name: Discord
-  # - package: chatgpt
-  #   description: "ChatGPT: AI assistant"
-  #   app_name: ChatGPT
-  # - package: obsidian
-  #   description: "Obsidian: Note-taking app"
-  #   app_name: Obsidian
+  dev:
+    label: Developer Tools
+    packages:
+      - id: iterm2
+        type: cask
+        desc: macOS terminal emulator
+      - id: font-hack-nerd-font
+        type: cask
+        desc: Nerd Font for terminal icons
+      - id: docker
+        type: cask
+        desc: Container tooling desktop app
+      - id: postman
+        type: cask
+        desc: API client and collection runner
 
-# Install Homebrew Cask Browsers
-browser_apps:
-  # - package: google-chrome
-  #   description: "Chrome Browser"
-  # - package: firefox
-  #   description: "Firefox Browser"
-  # - package: vivaldi
-  #   description: "Vivaldi Browser"
+  containers-infra:
+    label: Containers and Infra
+    packages:
+      - id: colima
+        type: formula
+        desc: Lightweight container runtime on macOS
+      - id: kubectl
+        type: formula
+        desc: Kubernetes cluster CLI
+      - id: k9s
+        type: formula
+        desc: Terminal UI for Kubernetes
+      - id: helm
+        type: formula
+        desc: Kubernetes package manager
+
+  browsers:
+    label: Browsers
+    packages:
+      - id: google-chrome
+        type: cask
+        desc: Chromium-based browser by Google
+      - id: firefox
+        type: cask
+        desc: Mozilla web browser
+      - id: brave-browser
+        type: cask
+        desc: Privacy-focused Chromium browser
+
+  productivity:
+    label: Productivity
+    packages:
+      - id: raycast
+        type: cask
+        desc: Launcher and workflow app
+      - id: discord
+        type: cask
+        desc: Team and community messaging
+      - id: chatgpt
+        type: cask
+        desc: ChatGPT desktop application
+      - id: obsidian
+        type: cask
+        desc: Markdown knowledge base app
+
+  terminal-qol:
+    label: Terminal Quality of Life
+    packages:
+      - id: tmux
+        type: formula
+        desc: Terminal multiplexer
+      - id: direnv
+        type: formula
+        desc: Per-directory environment loader
+      - id: atuin
+        type: formula
+        desc: Searchable shell history replacement
+
+  local-ai:
+    label: Local AI
+    packages:
+      - id: ollama
+        type: formula
+        desc: Local LLM runtime
+      - id: fluidvoice
+        type: formula
+        desc: Local voice tooling runtime
+
+  security:
+    label: Security
+    packages:
+      - id: tailscale
+        type: cask
+        desc: Mesh VPN client
+      - id: bitwarden
+        type: cask
+        desc: Password manager desktop app
+
+  data:
+    label: Data
+    packages:
+      - id: tableplus
+        type: cask
+        desc: SQL client for multiple databases
+      - id: dbeaver-community
+        type: cask
+        desc: Open-source universal DB client
+
+  media-creator:
+    label: Media and Creator
+    packages:
+      - id: shottr
+        type: cask
+        desc: Screenshot and annotation utility
+      - id: 4k-video-downloader-plus
+        type: cask
+        desc: Video and playlist downloader
