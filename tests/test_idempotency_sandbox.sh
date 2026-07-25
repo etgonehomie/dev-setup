@@ -31,6 +31,17 @@ cat > "${MOCK_BIN}/sudo" <<'EOF'
 exit 0
 EOF
 
+cat > "${MOCK_BIN}/uname" <<'EOF'
+#!/bin/bash
+if [[ "${1:-}" == "-s" ]]; then
+  echo "Darwin"
+elif [[ "${1:-}" == "-m" ]]; then
+  echo "x86_64"
+else
+  echo "Darwin"
+fi
+EOF
+
 cat > "${MOCK_BIN}/yq" <<'EOF'
 #!/bin/bash
 query="$2"
@@ -135,11 +146,17 @@ if [[ "${check_mode}" != "true" && -n "${extra_file}" && -f "${extra_file}" ]]; 
 fi
 EOF
 
-chmod +x "${MOCK_BIN}/curl" "${MOCK_BIN}/sudo" "${MOCK_BIN}/yq" "${MOCK_BIN}/brew" "${MOCK_BIN}/ansible-pull"
+chmod +x "${MOCK_BIN}/curl" "${MOCK_BIN}/sudo" "${MOCK_BIN}/uname" "${MOCK_BIN}/yq" "${MOCK_BIN}/brew" "${MOCK_BIN}/ansible-pull"
 
 export HOME="${SANDBOX_HOME}"
 export PATH="${MOCK_BIN}:$PATH"
 export MOCK_STATE_DIR="${MOCK_STATE}"
+cat > "${MOCK_STATE}/formulae.txt" <<'EOF'
+ansible
+gum
+fzf
+yq
+EOF
 
 echo "[1] first non-dry run installs selected packages in sandbox"
 bash ./main.sh --packages git,raycast --yes
@@ -155,7 +172,7 @@ assert_grep "raycast marked already_present on second run" 'raycast: already_pre
 echo "[3] shell profile update is not duplicated"
 ZPROFILE_PATH="${HOME}/.zprofile"
 assert_true "sandbox zprofile created in non-dry mode" test -f "${ZPROFILE_PATH}"
-SHELLENV_LINE='eval "$(/opt/homebrew/bin/brew shellenv)"'
+SHELLENV_LINE='eval "$(/usr/local/bin/brew shellenv)"'
 count="$(grep -cF "${SHELLENV_LINE}" "${ZPROFILE_PATH}" || true)"
 if [[ "${count}" -eq 1 ]]; then
   pass "homebrew shellenv line appears once"
