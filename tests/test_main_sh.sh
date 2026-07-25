@@ -87,4 +87,102 @@ assert_grep "casks csv persisted" 'selected_casks_csv: "raycast"' "${VARS_FILE}"
 assert_grep "raycast mode persisted" 'apply_raycast_config: true' "${VARS_FILE}"
 rm -f "${VARS_FILE}"
 
+echo "[7] catalog prereq check does not require yq before prereqs"
+HAS_COMMAND_ORIG="$(declare -f has_command)"
+has_command() { return 1; }
+if ensure_catalog_prereqs; then
+  pass "ensure_catalog_prereqs only validates catalog presence"
+else
+  fail "ensure_catalog_prereqs should not fail when yq is missing"
+fi
+if ( ensure_catalog_parser ); then
+  fail "ensure_catalog_parser should fail when yq is missing"
+else
+  pass "ensure_catalog_parser fails without yq"
+fi
+eval "${HAS_COMMAND_ORIG}"
+
+echo "[8] dry-run homebrew path update is non-mutating; normal mode is idempotent"
+DRY_RUN=true
+rm -f "${HOME}/.zprofile"
+update_homebrew_paths
+if [[ -f "${HOME}/.zprofile" ]]; then
+  fail "dry-run should not create ~/.zprofile"
+else
+  pass "dry-run does not modify ~/.zprofile"
+fi
+
+DRY_RUN=false
+update_homebrew_paths
+update_homebrew_paths
+if [[ -f "${HOME}/.zprofile" ]]; then
+  pass "normal mode creates ~/.zprofile when needed"
+else
+  fail "normal mode should create ~/.zprofile"
+fi
+line_count="$(grep -c 'shellenv' "${HOME}/.zprofile" || true)"
+if [[ "${line_count}" -eq 1 ]]; then
+  pass "update_homebrew_paths is idempotent"
+else
+  fail "expected one shellenv line, found ${line_count}"
+fi
+
+echo "[9] catalog checks run after prereqs in main flow"
+CALL_ORDER=()
+parse_args() { :; }
+ensure_state_dirs() { :; }
+preflight_checks() { CALL_ORDER+=("preflight"); }
+run_prerequisites() { CALL_ORDER+=("prereqs"); }
+ensure_catalog_prereqs() { CALL_ORDER+=("catalog"); }
+should_skip_step() { return 1; }
+write_checkpoint() { :; }
+resolve_selection_from_flags() { SELECTED_GROUPS=(); SELECTED_PACKAGE_IDS=("git"); }
+ensure_rosetta_if_needed() { :; }
+record_preinstalled() { :; }
+run_ansible_pull() { :; }
+write_report() { :; }
+main
+if [[ "${CALL_ORDER[*]}" == "preflight prereqs catalog" ]]; then
+  pass "main runs catalog checks after prerequisites"
+else
+  fail "unexpected main call order: ${CALL_ORDER[*]}"
+fi
+
+echo "[10] parse_args supports mac settings import flags"
+source main.sh
+IMPORT_MAC_SETTINGS=false
+MAC_SETTINGS_FILE="${HOME}/.config/dev-setup/mac-settings-export/exported-settings.sh"
+parse_args --import-mac-settings --mac-settings-file "${HOME}/custom-export.sh"
+if [[ "${IMPORT_MAC_SETTINGS}" == "true" && "${MAC_SETTINGS_FILE}" == "${HOME}/custom-export.sh" ]]; then
+  pass "mac settings import flags parsed correctly"
+else
+  fail "mac settings import flags parsing failed"
+fi
+
+echo "[11] import-only mode skips provisioning flow"
+CALL_ORDER=()
+parse_args() { IMPORT_MAC_SETTINGS=true; }
+ensure_state_dirs() { :; }
+preflight_checks() { CALL_ORDER+=("preflight"); }
+should_skip_step() { return 1; }
+write_checkpoint() { :; }
+apply_mac_settings_import() { CALL_ORDER+=("import"); }
+run_prerequisites() { CALL_ORDER+=("prereqs"); }
+ensure_catalog_prereqs() { CALL_ORDER+=("catalog"); }
+load_profile() { :; }
+ensure_catalog_parser() { CALL_ORDER+=("parser"); }
+resolve_selection_from_flags() { :; }
+run_wizard() { :; }
+ensure_rosetta_if_needed() { :; }
+record_preinstalled() { :; }
+run_ansible_pull() { CALL_ORDER+=("ansible"); }
+write_report() { :; }
+import_only_requested() { return 0; }
+main
+if [[ "${CALL_ORDER[*]}" == "preflight import" ]]; then
+  pass "import-only mode exits before provisioning steps"
+else
+  fail "unexpected call order for import-only mode: ${CALL_ORDER[*]}"
+fi
+
 print_results_and_exit
