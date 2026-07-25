@@ -1,12 +1,12 @@
 - name: Setup raycast for ease of navigation
   hosts: localhost
-  vars_files:     # relative path to current playbook
+  vars_files:
     - vars.yml
-    - vault_password.yml
   vars:
-    raycast_config_url: "{{ playbook_dir }}/raycast_config.rayconfig"
-    applescript_url: "{{ playbook_dir }}/raycast_import.applescript"
+    raycast_config_url: "{{ playbook_dir }}/ansible/raycast_config.rayconfig"
+    applescript_url: "{{ playbook_dir }}/ansible/raycast_import.applescript"
     applescript_jinja_url: "{{ applescript_url }}.j2"
+    raycast_password: "{{ lookup('env', 'RAYCAST_PASSWORD') | default('', true) }}"
 
   tasks:
     - name: Generate Raycast import script from jinja template {{ applescript_jinja_url }}
@@ -15,6 +15,17 @@
         dest: "{{ applescript_url }}"
         mode: '0700'  # Executable permissions
       register: script_file
+      when: apply_raycast_config | default(false) | bool
 
     - name: Run Raycast import applescript using config {{ raycast_config_url }}
       ansible.builtin.command: /usr/bin/osascript {{ script_file.dest }}
+      when:
+        - apply_raycast_config | default(false) | bool
+        - raycast_password | length > 0
+
+    - name: Raycast import skipped because RAYCAST_PASSWORD is unset
+      ansible.builtin.debug:
+        msg: "Raycast config import requested but skipped. Set RAYCAST_PASSWORD and rerun with --raycast-config."
+      when:
+        - apply_raycast_config | default(false) | bool
+        - raycast_password | length == 0
