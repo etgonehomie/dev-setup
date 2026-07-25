@@ -1,70 +1,45 @@
 ---
-- name: Use Homebrew to Install CLI & Dev tools
+- name: Install selected Homebrew packages
   hosts: localhost
-  vars_files:
-    - homebrew_vars.yml   # relative path to current playbook
+  vars:
+    selected_formulae: "{{ (selected_formulae_csv | default('') | split(',')) | map('trim') | reject('equalto', '') | list }}"
+    selected_casks: "{{ (selected_casks_csv | default('') | split(',')) | map('trim') | reject('equalto', '') | list }}"
   tasks:
-    - name: Install Homebrew ZSH Tools via Loop
-      block:
-        - name: Install Homebrew ZSH Tools via Loop
-          homebrew:
-            name: "{{ item.package }}"
-            state: present
-            install_options: overwrite
-          loop: "{{ cli_extensions | default([], true) }}"
+    - name: Ensure Homebrew cask fonts tap is available when needed
+      homebrew_tap:
+        name: homebrew/cask-fonts
+        state: present
+      when: "'font-hack-nerd-font' in selected_casks"
 
-    - name: Install Homebrew Dev Tools via Loop
-      block:
-        - name: Install Homebrew Dev Tools via Loop
-          homebrew:
-            name: "{{ item.package }}"
-            state: present
-            install_options: overwrite
-          loop: "{{ native_brew_apps | default([], true) }}"
+    - name: Install selected Homebrew formulae
+      homebrew:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ selected_formulae }}"
 
-    - name: Install Homebrew Cask Dev Apps via Loop
-      block:
-       - name: Ensure Homebrew cask fonts tap is available
-          homebrew_tap:
-            name: homebrew/cask-fonts
-            state: present
-        - name: Install Homebrew Cask Dev Apps via Loop
-          homebrew_cask:
-            name: "{{ item.package }}"
-            state: present
-          loop: "{{ cask_dev_apps | default([], true) }}"
+    - name: Install selected Homebrew casks
+      homebrew_cask:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ selected_casks }}"
+      ignore_errors: true
+      register: selected_casks_result
 
-    - name: Install Homebrew Cask Browsers via Loop
-      block:
-        - name: Install Homebrew Cask Browsers via Loop
-          homebrew_cask:
-            name: "{{ item.package }}"
-            state: present
-          ignore_errors: true
-          loop: "{{ browser_apps | default([], true) }}"
-
-    - name: Install Homebrew Cask Productivity Apps via Loop
-      block:
-        - name: Check if app is already installed
-          stat:
-            path: "/Applications/{{ item.app_name }}.app"
-          register: app_check
-          loop: "{{ productivity_apps | default([], true) }}"
-          loop_control:
-            label: "{{ item.package }}"
-
-        - name: Install missing productivity apps
-          homebrew_cask:
-            name: "{{ item.item.package }}"
-            state: present
-          loop: "{{ app_check.results }}"
-          when: not item.stat.exists
-          loop_control:
-            label: "{{ item.item.package }}"
-
-    # This removes error in CLI for Homebrew having too much access
     - name: Remove group/other write perms from dynamic zsh dir
       ansible.builtin.file:
         path: "{{ brew_prefix }}/share"
-        mode: "go-w"  # Removes write for group and others (e.g., 775 -> 755)
-        recurse: yes  # Equivalent to -R
+        mode: "go-w"
+        recurse: true
+
+    - name: Show optional cask failures summary
+      ansible.builtin.debug:
+        msg: >-
+          Optional cask install failures:
+          {{ selected_casks_result.results
+             | rejectattr('failed', 'undefined')
+             | selectattr('failed')
+             | map(attribute='item')
+             | list }}
+      when:
+        - selected_casks_result is defined
+        - selected_casks_result.results is defined
