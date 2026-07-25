@@ -77,6 +77,9 @@ ensure_catalog_prereqs() {
     log "Error: package catalog not found at ${CATALOG_FILE}"
     exit 1
   fi
+}
+
+ensure_catalog_parser() {
   if ! has_command yq; then
     log "Error: yq is required to parse ${CATALOG_FILE}."
     exit 1
@@ -243,6 +246,10 @@ install_homebrew() {
 }
 
 update_homebrew_paths() {
+  if [[ "${DRY_RUN}" == "true" ]]; then
+    log "Dry-run: skipping Homebrew shell profile updates."
+    return 0
+  fi
   local brew_prefix brew_path zprofile
   brew_prefix="$(get_brew_prefix)"
   brew_path="${brew_prefix}/bin/brew"
@@ -495,15 +502,16 @@ run_prerequisites() {
 main() {
   parse_args "$@"
   ensure_state_dirs
-  ensure_catalog_prereqs
 
   if should_skip_step "preflight"; then log "Resume: skipping preflight."; else preflight_checks; write_checkpoint "preflight"; fi
   if should_skip_step "prereqs"; then log "Resume: skipping prereqs."; else run_prerequisites; write_checkpoint "prereqs"; fi
+  ensure_catalog_prereqs
 
   if [[ -f "${PROFILE_PATH}" && "${WIZARD_MODE}" != "true" && -z "${GROUPS_CSV}" && -z "${PACKAGES_CSV}" ]]; then
     load_profile "${PROFILE_PATH}"
   fi
 
+  ensure_catalog_parser
   resolve_selection_from_flags
   if should_skip_step "selection"; then
     log "Resume: using prior selection state."
