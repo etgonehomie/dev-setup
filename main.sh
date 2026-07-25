@@ -17,11 +17,9 @@ DO_UPGRADE=false
 DO_CLEANUP=false
 RESUME=false
 APPLY_RAYCAST_CONFIG=false
-IMPORT_MAC_SETTINGS=false
 DOTFILES_OVERWRITE_MODE="prompt"
 GROUPS_CSV=""
 PACKAGES_CSV=""
-MAC_SETTINGS_FILE="${HOME}/.config/dev-setup/mac-settings-export/exported-settings.sh"
 PROFILE_EXPLICIT=false
 
 declare -a SELECTED_GROUPS=()
@@ -43,8 +41,6 @@ Options:
   --groups <csv>           Category list (e.g., core,dev,productivity)
   --packages <csv>         Package IDs override (e.g., git,raycast,ollama)
   --raycast-config         Apply Raycast config import step
-  --import-mac-settings    Apply exported macOS settings onto this Mac
-  --mac-settings-file <p>  Path to exported-settings.sh (default: ~/.config/dev-setup/mac-settings-export/exported-settings.sh)
   --upgrade                Run brew upgrade before provisioning
   --cleanup                Cleanup ansible-pull cache after success
   --dry-run                Preview actions without mutating system
@@ -405,9 +401,6 @@ resolve_selection_from_flags() {
   fi
 
   if [[ ${#SELECTED_GROUPS[@]} -eq 0 && ${#SELECTED_PACKAGE_IDS[@]} -eq 0 ]]; then
-    if import_only_requested; then
-      return 0
-    fi
     if [[ -t 0 && "${AUTO_CONFIRM}" != "true" ]]; then
       WIZARD_MODE=true
     else
@@ -426,8 +419,11 @@ parse_args() {
       --groups) GROUPS_CSV="$2"; shift 2 ;;
       --packages) PACKAGES_CSV="$2"; shift 2 ;;
       --raycast-config) APPLY_RAYCAST_CONFIG=true; shift ;;
-      --import-mac-settings) IMPORT_MAC_SETTINGS=true; shift ;;
-      --mac-settings-file) MAC_SETTINGS_FILE="$2"; shift 2 ;;
+      --import-mac-settings|--mac-settings-file)
+        log "Error: mac settings import moved to mac-settings/import.sh."
+        log "Run: bash mac-settings/import.sh [--source <path>] [--dry-run]"
+        exit 1
+        ;;
       --upgrade) DO_UPGRADE=true; shift ;;
       --cleanup) DO_CLEANUP=true; shift ;;
       --dry-run) DRY_RUN=true; shift ;;
@@ -436,30 +432,6 @@ parse_args() {
       *) log "Unknown option: $1"; usage; exit 1 ;;
     esac
   done
-}
-
-import_only_requested() {
-  [[ "${IMPORT_MAC_SETTINGS}" == "true" ]] \
-    && [[ "${WIZARD_MODE}" != "true" ]] \
-    && [[ -z "${GROUPS_CSV}" ]] \
-    && [[ -z "${PACKAGES_CSV}" ]] \
-    && [[ "${PROFILE_EXPLICIT}" != "true" ]]
-}
-
-apply_mac_settings_import() {
-  if [[ "${IMPORT_MAC_SETTINGS}" != "true" ]]; then
-    return 0
-  fi
-
-  if [[ "${DRY_RUN}" == "true" ]]; then
-    log "Dry-run: would import macOS settings from ${MAC_SETTINGS_FILE}."
-    return 0
-  fi
-
-  local import_script
-  import_script="${SCRIPT_DIR}/mac-settings/import.sh"
-  [[ -x "${import_script}" ]] || { log "Error: import helper not executable at ${import_script}"; exit 1; }
-  bash "${import_script}" --source "${MAC_SETTINGS_FILE}"
 }
 
 build_ansible_vars_file() {
@@ -541,22 +513,11 @@ main() {
   ensure_state_dirs
 
   if should_skip_step "preflight"; then log "Resume: skipping preflight."; else preflight_checks; write_checkpoint "preflight"; fi
-  if should_skip_step "mac_import"; then
-    log "Resume: skipping mac settings import."
-  else
-    apply_mac_settings_import
-    write_checkpoint "mac_import"
-  fi
-
-  if import_only_requested; then
-    log "Mac settings import complete."
-    return 0
-  fi
 
   if should_skip_step "prereqs"; then log "Resume: skipping prereqs."; else run_prerequisites; write_checkpoint "prereqs"; fi
   ensure_catalog_prereqs
 
-  if [[ -f "${PROFILE_PATH}" && "${WIZARD_MODE}" != "true" && -z "${GROUPS_CSV}" && -z "${PACKAGES_CSV}" && ! import_only_requested ]]; then
+  if [[ -f "${PROFILE_PATH}" && "${WIZARD_MODE}" != "true" && -z "${GROUPS_CSV}" && -z "${PACKAGES_CSV}" ]]; then
     load_profile "${PROFILE_PATH}"
   fi
 
