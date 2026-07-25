@@ -10,6 +10,8 @@
 
     # Destination system paths
     git_local_dir: "{{ ansible_facts['env']['HOME'] }}/.config/git"
+    dotfiles_overwrite: "{{ (dotfiles_overwrite_mode | default('never')) == 'always' }}"
+    dotfiles_backup_dir: "{{ ansible_facts['env']['HOME'] }}/.config/dev-setup/backups"
 
   tasks:
     # Update global git file
@@ -18,16 +20,52 @@
         path: "{{ git_local_dir }}"
         state: directory
 
+    - name: Ensure dotfile backup dir exists
+      ansible.builtin.file:
+        path: "{{ dotfiles_backup_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Check if git config exists
+      ansible.builtin.stat:
+        path: "{{ git_local_dir }}/.gitconfig"
+      register: gitconfig_stat
+
+    - name: Backup git config before overwrite
+      ansible.builtin.copy:
+        src: "{{ git_local_dir }}/.gitconfig"
+        dest: "{{ dotfiles_backup_dir }}/.gitconfig.{{ ansible_date_time.epoch }}.bak"
+        remote_src: true
+      when:
+        - gitconfig_stat.stat.exists
+        - dotfiles_overwrite
+
     - name: Copy .gitconfig from {{ root_dir }} to {{ git_local_dir }}
       ansible.builtin.copy:
         src: "{{ gitconfig_repo_url }}"
         dest: "{{ git_local_dir }}/.gitconfig"
-        remote_src: yes
-        force: yes
+        remote_src: true
+        force: "{{ dotfiles_overwrite }}"
+      when: dotfiles_overwrite or not gitconfig_stat.stat.exists
+
+    - name: Check if global gitignore exists
+      ansible.builtin.stat:
+        path: "{{ git_local_dir }}/.gitignore_global"
+      register: gitignore_stat
+
+    - name: Backup global gitignore before overwrite
+      ansible.builtin.copy:
+        src: "{{ git_local_dir }}/.gitignore_global"
+        dest: "{{ dotfiles_backup_dir }}/.gitignore_global.{{ ansible_date_time.epoch }}.bak"
+        remote_src: true
+      when:
+        - gitignore_stat.stat.exists
+        - dotfiles_overwrite
     
     - name: Copy .gitignore_global from {{ root_dir }} to {{ git_local_dir }}
       ansible.builtin.copy:
         src: "{{ gitignore_repo_url }}"
         dest: "{{ git_local_dir }}/.gitignore_global"
-        remote_src: yes
-        force: yes
+        remote_src: true
+        force: "{{ dotfiles_overwrite }}"
+      when: dotfiles_overwrite or not gitignore_stat.stat.exists
