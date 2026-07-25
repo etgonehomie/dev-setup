@@ -1,190 +1,278 @@
 #!/bin/zsh
-# Ensure we use ZSH and not bash to evaluate
 [[ -n "$ZSH_VERSION" ]] || return
+[[ -o interactive ]] || return
 
 ####################################
-# homebrew command needed and order needed to prevent clashing
+# Homebrew bootstrap
 ####################################
-####################################
-# Set Homebrew prefix dynamically
-# OSArchitecture => Homebrew Prefix
-# macOS Apple Silicon => /opt/homebrew
-# macOS Intel => /usr/local
-# Linux Any => /home/linuxbrew/.linuxbrew
-# Windows Any => /home/linuxbrew/.linuxbrew
-# Check for Homebrew and set prefix dynamically
-
 if [[ -x /opt/homebrew/bin/brew ]]; then
   BREW_PREFIX=/opt/homebrew
 elif [[ -x /usr/local/bin/brew ]]; then
   BREW_PREFIX=/usr/local
-elif [[ -x /home/linuxbrew/.linuxbrew/bin/brew ]]; then
-  BREW_PREFIX=/home/linuxbrew/.linuxbrew
 else
   echo "Homebrew not found in common locations"
   return 1
 fi
 
-# Evaluate Homebrew's shell environment with the correct prefix
-eval "$($BREW_PREFIX/bin/brew shellenv)"  
-
-# CLI Plugin Tools (order matters)
-[[ -f "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh" ]] && \
-  source "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
-[[ -f "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] && \
-  source "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
-[[ -f "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh" ]] && \
-  source "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+if [[ "${HOMEBREW_PREFIX:-}" != "$BREW_PREFIX" ]]; then
+  eval "$($BREW_PREFIX/bin/brew shellenv)"
+fi
 
 ####################################
-# Set config Variables
+# Shell plugins (order matters)
+####################################
+source_if_exists() {
+  # Usage: source_if_exists <file-path>
+  # Sources the file only when it exists.
+  [[ -f "$1" ]] && source "$1"
+}
+
+source_if_exists "$BREW_PREFIX/share/zsh-fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh"
+source_if_exists "$BREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+source_if_exists "$BREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh"
+
+####################################
+# Environment and config
 ####################################
 CONFIG_FILE=${CONFIG_FILE:-~/.zshrc}
-PERSONAL_DIR="~/git-projects/personal"
-WORK_DIR="~/git-projects/work"     
+PERSONAL_DIR=~/git-projects/personal
+WORK_DIR=~/git-projects/work
 OH_MY_POSH_THEME_PATH="$BREW_PREFIX/share/oh-my-posh/themes/zen.toml"
 
-########################################################################
-# Set terminal theme
-# Change this to be .config/oh-my-posh/[theme.toml/yaml/json] if desired
-# Info for how to use this theming: https://ohmyposh.dev/docs
-########################################################################
-# Set oh-my-posh theme
-if [ "$TERM_PROGRAM" != "Apple_Terminal" ]; then
-  eval "$(oh-my-posh init zsh --config $OH_MY_POSH_THEME_PATH)"
-fi
-
-####################################
-# Set System ENV Variables
-####################################
 export EDITOR=nvim
 export GIT_CONFIG_GLOBAL=~/.config/git/.gitconfig
-
-# These are for odbc db connection for installing via homebrew on mac
-# use `odbcinst -j` to see if the system exported variables correctly
 export ODBCINI="$BREW_PREFIX/etc/odbc.ini"
-export ODBCINSTINI="$BREW_PREFIX/etc/odbcinst.ini" 
 export ODBCSYSINI="$BREW_PREFIX/etc"
+export ODBCINSTINI="odbcinst.ini"
 
-# Set Terminal Home Starting
-cd ~
-
-####################################
-# Quick links to project dirs
-####################################
-alias home="cd ~"
-alias setup="cd $PERSONAL_DIR/dev-setup"
-alias dev=setup
-alias tesla="cd $PERSONAL_DIR/tesla-tracker"
-alias tes=tesla
-alias auto="cd $PERSONAL_DIR/windsurf/auto-image"
-alias react="cd $PERSONAL_DIR/react-learning/auto-image"
-alias autoimage="react"
-alias auto-image="react"
-alias cc="cd $PERSONAL_DIR/cc-churning-app"
-alias churn=cc
-
-# Use specific SSH keys based on directory
-if [[ $(pwd) == $PERSONAL_DIR/* ]]; then
-  export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_personal"
-elif [[ $(pwd) == $WORK_DIR/* ]]; then
-  export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_work"
+if [[ "$TERM_PROGRAM" != "Apple_Terminal" ]]; then
+  eval "$(oh-my-posh init zsh --config "$OH_MY_POSH_THEME_PATH")"
 fi
 
 ####################################
-# Terminal Config Maintenance
+# Core utility functions
 ####################################
-# Edit Config File Alias
+reload_shell() {
+  # Usage: reload_shell
+  # Reloads this shell config file and prints a success message.
+  source "$CONFIG_FILE"
+  echo "\e[32mConfig reloaded ✓\e[0m"
+}
+
+mkcd() {
+  # Usage: mkcd <directory>
+  # Creates the directory (including parents) and cd's into it.
+  mkdir -p "$1" && cd "$1"
+}
+
+cproj() {
+  # Usage: cproj
+  # Changes directory to the personal projects root.
+  cd ~/git-projects/personal
+}
+
+cwork() {
+  # Usage: cwork
+  # Changes directory to the work projects root.
+  cd ~/git-projects/work
+}
+
+cdf() {
+  # Usage: cdf
+  # Changes directory to the current Finder insertion location (macOS).
+  local target
+  target="$(osascript -e 'tell application "Finder" to POSIX path of (insertion location as alias)' 2>/dev/null)"
+  [[ -n "$target" ]] && cd "$target"
+}
+
+venv_create() {
+  # Usage: venv_create
+  # Creates a Python virtual environment in .venv.
+  python3 -m venv .venv
+}
+
+venv_on() {
+  # Usage: venv_on
+  # Activates the local .venv virtual environment.
+  source .venv/bin/activate
+}
+
+venv_off() {
+  # Usage: venv_off
+  # Deactivates the current Python virtual environment.
+  deactivate
+}
+
+brew_maint() {
+  # Usage: brew_maint
+  # Runs Homebrew maintenance (update, upgrade, cleanup, doctor) and returns nonzero if any step fails.
+  local rc=0
+  brew update || rc=1
+  brew upgrade || rc=1
+  brew cleanup -s || rc=1
+  brew doctor || rc=1
+  return $rc
+}
+
+gsync() {
+  # Usage: gsync
+  # Fetches origin and rebases the current branch onto origin/<current-branch>.
+  local branch
+  branch="$(git branch --show-current)"
+  git fetch origin && git rebase "origin/$branch"
+}
+
+gundo() {
+  # Usage: gundo
+  # Prompts, then undoes the last commit with a soft reset (keeps changes staged).
+  local last_commit
+  last_commit="$(git log -1 --pretty='format:%h %s' 2>/dev/null)" || return 1
+  echo "About to undo commit: $last_commit"
+  read -q "REPLY?Proceed with git reset --soft HEAD~1? [y/N] "
+  echo
+  [[ "$REPLY" =~ ^[Yy]$ ]] || return 1
+  git reset --soft HEAD~1
+}
+
+gprune() {
+  # Usage: gprune
+  # Prompts to delete merged local branches, excluding protected/common branch names.
+  local current candidates
+  current="$(git branch --show-current)"
+  candidates="$(git branch --merged | grep -vE "^\*|main|master|develop|$current$")"
+  [[ -z "$candidates" ]] && {
+    echo "No merged local branches to prune."
+    return 0
+  }
+  echo "Merged branches to delete:"
+  echo "$candidates"
+  read -q "REPLY?Delete these branches? [y/N] "
+  echo
+  [[ "$REPLY" =~ ^[Yy]$ ]] || return 1
+  git fetch --prune
+  echo "$candidates" | xargs -n 1 git branch -d
+}
+
+gpr() {
+  # Usage: gpr <branch-name> <commit-message>
+  # Creates a branch, commits with the message, pushes upstream, and opens a PR to main.
+  if [[ $# -lt 2 ]]; then
+    echo "Usage: gpr <branch-name> <commit-message>"
+    return 1
+  fi
+
+  local branch="$1"
+  shift
+  local commit_msg="$*"
+
+  git switch -c "$branch" || return 1
+  git commit -m "$commit_msg" || return 1
+  git push -u origin "$branch" || return 1
+  gh pr create --base main --head "$branch" --title "$commit_msg" --body "$commit_msg"
+}
+
+gcleanup() {
+  # Usage: gcleanup
+  # Squash-merges the current PR, deletes its branch, then syncs local main.
+  gh pr merge --squash --delete-branch || return 1
+  git switch main || return 1
+  git pull origin main || return 1
+}
+
+groot() {
+  # Usage: groot
+  # Changes directory to the root of the current Git repository.
+  cd "$(git rev-parse --show-toplevel)"
+}
+
+####################################
+# Aliases - config and navigation
+####################################
 alias config='$EDITOR $CONFIG_FILE'
-alias conf='config'
-alias con='config'
 alias z='config'
 
-# Refresh config file code
-refresh_function() {
-    source "$CONFIG_FILE"
-    echo -e "\e[32mConfig file has been refreshed! ✓\e[0m"
-}
-alias refresh='refresh_function'
-alias ref='refresh_function'
-alias r='refresh_function'
-alias reload='refresh_function'
-alias re='refresh_function'
 
-# Homebrew Aliases
-## brew update <-- updates the brew package insataller
-## brew upgrade <-- updates packages that brew installed
-alias brew up='brew update && brew upgrade'
-
-####################################
-# CLI - Random Aliases
-####################################
-
+alias reload='reload_shell'
+alias refresh=reload
 alias ..='cd ..'
-alias test='echo hello-world'
-alias update='sudo apt-get update && sudo apt-get upgrade -y && sudo snap refresh'
-alias upd='update'
-alias yml='$EDITOR docker-compose.yml'
-alias yaml='yml'
-alias myips='ip addr'
-alias myip='myips'
+alias ...='cd ../..'
+alias home='cd ~'
+alias p='cproj'
+alias w='cwork'
 
-# CLI - Modify Files Aliases
-alias ver='version'
-alias mk='touch'
-alias create='touch'
-alias rename='mv'
-
-# Go into Config File to Edit Aliases
+####################################
+# Aliases - editor and files
+####################################
 alias vim='nvim'
 alias vi='nvim'
 alias v='nvim'
 alias vimdiff='nvim -d'
-alias vdif='vimdiff'
-alias vdiff='vimdiff'
+alias yml='$EDITOR docker-compose.yml'
+alias mk='touch'
+alias rename='mv'
 
-# List Aliases
+####################################
+# Aliases - listing and search
+####################################
 alias ls="$BREW_PREFIX/bin/eza --long --all --git --group-directories-first"
-alias l=ls
-# alias ls='ls --color=auto -a'
-# alias lsl='ls -l'
-# alias lsh='ls -h' 
-# alias lsa='ls -a'
-# alias list='ls -l -h -a'
-# alias l='list'
-
-# Grep (find) Aliases
+alias l='ls'
 alias grep='grep --color=auto'
-alias find=grep
 
-# Python Aliases
+####################################
+# Aliases - Python
+####################################
 alias python='python3'
-alias py='python'
+alias py='python3'
 
-# VENV Aliases
-# source [venv_pathname]/activate <- activates the venv
-# deactivate <- deactivates
-# alias v='py -m venv' # this creates a venv where you then have to put a '.' director name after 
-# for example v .my_venv_proj <-- this creates a venv for the project folder .my_venv_proj
-alias deact='deactivate'
+####################################
+# Aliases - Docker/Colima
+####################################
+alias dstart='colima start'
+alias dstop='colima stop'
+alias dstatus='colima status'
 
-# Git Aliases
+####################################
+# Aliases - Git
+####################################
+alias gst='git status'
 alias ga='git add'
 alias gaa='git add . && git status'
+alias gc='git commit -m'
+alias gca='git commit -am'
+alias gco='git checkout'
+alias gcb='git checkout -b'
 alias gb='git branch'
-alias gch='git checkout -b'
-alias gcm='git commit -m'
-alias gcam='git commit -am' # add all and commit with a message
-alias gs='git status'
 alias gsw='git switch'
-alias push='git push origin'
-alias gpush='push'
-alias pull='git pull origin'
-alias gpull='pull'
+alias gl='git log --oneline --graph --decorate -20'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias grh='git reset --hard'
+alias gpf='git push --force-with-lease'
+alias gbl='git blame'
+alias grv='git remote -v'
+alias groot='groot'
+alias gpull='git pull --rebase'
+alias gpush='git push'
+alias gsta='git stash push'
+alias gstp='git stash pop'
+alias gunstage='git restore --staged'
+alias glast='git log -1 --stat'
 
-# SSH Aliases
-# Add private ssh key to agent to enable ssh access to pi
-# ssh-add ~/.ssh/homeserver
+####################################
+# Optional SSH identity by folder
+####################################
+set_git_ssh_identity() {
+  # Usage: set_git_ssh_identity
+  # Sets GIT_SSH_COMMAND based on whether you're in personal or work project folders.
+  if [[ "$PWD" == "$PERSONAL_DIR"/* ]]; then
+    export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_personal"
+  elif [[ "$PWD" == "$WORK_DIR"/* ]]; then
+    export GIT_SSH_COMMAND="ssh -i ~/.ssh/id_ed25519_work"
+  else
+    unset GIT_SSH_COMMAND
+  fi
+}
 
-# Ansible
-alias arun='ansible-playbook ~/homeserver/main.yml'eval "$(/opt/homebrew/bin/brew shellenv)"
+autoload -Uz add-zsh-hook
+add-zsh-hook chpwd set_git_ssh_identity
+set_git_ssh_identity
