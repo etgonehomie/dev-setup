@@ -13,6 +13,10 @@
     # Destination system paths
     themes_local_dir: "{{ brew_prefix }}/share/oh-my-posh/themes"
     themes_symlink_dir: "{{ ansible_facts['env']['HOME'] }}/.config/oh-my-posh/themes"
+    iterm_dynamic_profiles_dir: "{{ ansible_facts['env']['HOME'] }}/Library/Application Support/iTerm2/DynamicProfiles"
+    iterm_profile_filename: "dev-setup-profile.json"
+    iterm_profile_repo_url: "{{ root_dir }}/dotfiles/iterm2/{{ iterm_profile_filename }}"
+    iterm_profile_guid: "B1CD20E9-C2BC-4FA5-8B96-7B66BA639F1E"
 
   tasks:
     # Update terminal config files
@@ -54,3 +58,19 @@
         src: "{{ themes_local_dir }}"
         dest: "{{ themes_symlink_dir }}"
         state: link
+
+    - name: Ensure iTerm2 dynamic profiles dir exists at {{ iterm_dynamic_profiles_dir }}
+      ansible.builtin.file:
+        path: "{{ iterm_dynamic_profiles_dir }}"
+        state: directory
+
+    - name: Copy iTerm2 dynamic profile from {{ root_dir }} to {{ iterm_dynamic_profiles_dir }}
+      ansible.builtin.copy:
+        src: "{{ iterm_profile_repo_url }}"
+        dest: "{{ iterm_dynamic_profiles_dir }}/{{ iterm_profile_filename }}"
+        remote_src: yes
+        force: yes
+
+    - name: Set iTerm2 default profile to Dev Setup Nerd Font profile
+      ansible.builtin.command: defaults write com.googlecode.iterm2 "Default Bookmark Guid" -string "{{ iterm_profile_guid }}"
+      changed_when: false
