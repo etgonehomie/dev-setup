@@ -24,11 +24,14 @@
 
     - name: Install Homebrew Cask Dev Apps via Loop
       block:
+       - name: Ensure Homebrew cask fonts tap is available
+          homebrew_tap:
+            name: homebrew/cask-fonts
+            state: present
         - name: Install Homebrew Cask Dev Apps via Loop
           homebrew_cask:
             name: "{{ item.package }}"
             state: present
-          ignore_errors: true
           loop: "{{ cask_dev_apps | default([], true) }}"
 
     - name: Install Homebrew Cask Browsers via Loop
