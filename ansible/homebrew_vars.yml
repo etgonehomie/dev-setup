@@ -51,9 +51,9 @@ package_catalog:
       - id: python
         type: formula
         desc: Python runtime and tooling
-      - id: fd
+      - id: plocate
         type: formula
-        desc: Fast file and directory finder
+        desc: Fast file search utility
 
   cli-essentials:
     label: CLI Essentials
